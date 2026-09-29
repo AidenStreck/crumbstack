@@ -83,7 +83,7 @@
       "tag": "Tidy Tides",
       "site": "https://aidenstreck.github.io/crumbstack/prototypes/tidy-tides/",
       "icon": "tidytides-icon.svg",
-      "stage": "Heading to TestFlight",
+      "stage": "On TestFlight",
       "checklist": [
         {
           "label": "Playable prototype on the website",
@@ -127,11 +127,11 @@
         },
         {
           "label": "TestFlight build on your iPhone",
-          "done": false
+          "done": true
         },
         {
           "label": "Privacy policy, store screenshots and description",
-          "done": false
+          "done": true
         },
         {
           "label": "Submitted to Apple for review",
@@ -142,6 +142,22 @@
         {
           "label": "Play link to share",
           "url": "https://aidenstreck.github.io/crumbstack/prototypes/tidy-tides/"
+        },
+        {
+          "label": "Store listing",
+          "url": "https://github.com/AidenStreck/crumbstack/blob/main/store/tidy-tides/listing.md"
+        },
+        {
+          "label": "Screenshots",
+          "url": "https://github.com/AidenStreck/crumbstack/tree/main/store/tidy-tides/screenshots"
+        },
+        {
+          "label": "Privacy policy",
+          "url": "https://aidenstreck.github.io/crumbstack/tidytides-privacy.html"
+        },
+        {
+          "label": "Support page",
+          "url": "https://aidenstreck.github.io/crumbstack/tidytides-support.html"
         }
       ],
       "storeName": "Tidy Tides: Beach Cleanup",

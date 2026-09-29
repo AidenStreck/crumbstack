@@ -29,7 +29,7 @@ if (app.proto) {
     css += `@font-face{font-family:"${f.family}";font-weight:${f.weight};font-style:normal;font-display:swap;src:url(fonts/${f.file}) format("truetype")}`;
   }
   html = html.replace(/<link rel="preconnect" href="https:\/\/fonts\.googleapis\.com">\s*/g, '').replace(/<link rel="stylesheet" href="https:\/\/fonts\.googleapis\.com[^>]*>\s*/g, '');
-  html = html.replace('<style>', `<style>${css}html,body{background:${app.bg};overscroll-behavior:none;-webkit-touch-callout:none}`);
+  html = html.replace('<style>', `<style>${css}html,body{background:${app.bg};overscroll-behavior:none;-webkit-touch-callout:none}.proto{display:none!important}`);
   fs.writeFileSync(path.join(out, 'index.html'), html);
   if (/fonts\.googleapis/.test(html)) throw new Error('A Google Fonts link is still in the app page');
 }
