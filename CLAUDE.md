@@ -17,7 +17,7 @@ The owner is not a programmer. He sends requests from the Studio dashboard, revi
 2. Create a branch named `request-<issue number>` from `main`.
 3. Make the change in `src/game.html` (or the relevant file). Keep the game's look: Lilita One + Nunito, plum/butter/pink palette, hand-drawn canvas art.
 4. Check it: run `node scripts/build.mjs`, then load `www/index.html` in a headless browser and play through the affected part. There must be no console errors.
-5. Push the branch. Open a pull request titled `Request #<n>: <short summary>` whose body says `Closes #<n>`, what changed in plain words, and how to try it.
+5. Commit with a message that ends in `Closes #<n>` (so the request closes itself when approved), then push the branch. Open a pull request titled `Request #<n>: <short summary>` whose body says `Closes #<n>`, what changed in plain words, and how to try it. If you can't open pull requests, the pushed branch is enough: Studio shows it for approval.
 6. **Never push to `main` and never merge.** The owner approves by merging the pull request, and that is what makes it go live.
 
 ## Game ideas (issues titled `[Game idea] ...`)
@@ -34,6 +34,7 @@ These are new game concepts, not changes to Crumbstack. Don't build a game.
 - Gameplay clips come from `scripts/clips.cjs` (a bot plays the real game and records 1080×1920 MP4s into `marketing/clips/`). Add a clip entry and run it, e.g. `node scripts/build.mjs && node scripts/clips.cjs <clip-id>`. Clips must show real gameplay. Never fake or stage things the game can't do.
 - **Voiceover videos** (the main pre-launch content): add an entry to `marketing/voiced.json` with a gameplay clip id and 4–6 short spoken lines (keep the voice under about 12 seconds, end with "Free game, no ads. Link in bio."). Add a matching post to `studio/marketing.json` with `"media": {"dir": "voiced", "id": "<id>"}` and `"phase": "now"`. After merge, the **Make videos** GitHub Action renders it with an AI voice (Kokoro), captions and the game's music. Don't render voiceovers yourself.
 - Screenshots come from `scripts/screenshots.cjs`.
+- Weekly batches go on a branch named `marketing-<YYYY-MM-DD>`. Studio shows unmerged `marketing-*` branches as waiting for approval.
 - You draft; the owner posts. Never post anywhere yourself.
 
 ## Guardrails

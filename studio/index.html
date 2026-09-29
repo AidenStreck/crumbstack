@@ -333,7 +333,13 @@ async function loadApp(app){
     gh(app.repo + '/issues?state=all&per_page=40&sort=updated'),
     gh(app.repo + '/branches?per_page=100'),
   ]);
-  return { runs: runs.workflow_runs || [], commits, issues, branches: branches.map(b => b.name) };
+  const names = branches.map(b => b.name);
+  // Marketing batches arrive on marketing-<date> branches; only show ones not yet merged into main.
+  const mk = [];
+  for (const b of names.filter(n => n.startsWith('marketing-'))) {
+    try { const c = await gh(app.repo + '/compare/main...' + encodeURIComponent(b)); if (c.ahead_by > 0) mk.push({ name: b, date: c.commits.length ? c.commits[c.commits.length - 1].commit.author.date : null }); } catch (e) {}
+  }
+  return { runs: runs.workflow_runs || [], commits, issues, branches: names, marketing: mk };
 }
 
 async function load(){
@@ -394,6 +400,9 @@ function render(data){
     const c = d && d.commits[0];
     if (d) {
       allReqs.push(...requestsFor(app, d));
+      (d.marketing || []).forEach(m => { const url = `https://github.com/${app.repo}/compare/main...${m.name}?expand=1`;
+        allReqs.push({ app, status: 'Ready for your approval', cls: 'accent', link: url, linkText: 'Review new videos',
+          issue: { title: 'New marketing videos (' + m.name.replace('marketing-', '') + ')', html_url: url, number: 'videos', created_at: m.date || new Date().toISOString(), updated_at: m.date || new Date().toISOString() } }); });
       d.runs.slice(0, 8).forEach(r => feed.push({ at: r.updated_at, kind: 'run', ok: r.status !== 'completed' ? null : r.conclusion === 'success', text: (r.name === 'Website' ? 'Website' : 'iPhone build') + (r.status !== 'completed' ? ' running' : r.conclusion === 'success' ? ' succeeded' : ' failed'), sub: app.name + ' · ' + (r.display_title || '').split('\n')[0], url: r.html_url }));
       d.commits.slice(0, 6).forEach(cm => feed.push({ at: cm.commit.author.date, kind: 'commit', text: cm.commit.message.split('\n')[0], sub: app.name + ' · change ' + cm.sha.slice(0,7), url: cm.html_url }));
     }
