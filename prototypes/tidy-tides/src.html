@@ -2268,7 +2268,7 @@ function albumAdd(id, quiet){
   if (page.every(x => save.album[x[0]]) && !save.album['page:' + c.page]) { save.album['page:' + c.page] = 1; save.stars += 10; if (!quiet) setTimeout(() => toast(`Album page complete! +10 Sea Stars`), 2600); }
   persist(); return true;
 }
-function albumMilestone(i){ const c = CREATURES[COAST.id] && CREATURES[COAST.id][i]; if (c) albumAdd(c[0]); }
+function albumMilestone(i){ if (S.sailing) return; const c = CREATURES[COAST.id] && CREATURES[COAST.id][i]; if (c) albumAdd(c[0]); }
 function stickerPop(c){
   const el = document.createElement('div'); el.className = 'stickerPop';
   el.appendChild(creatureCanvas(c.kind, c.col, 44)); el.insertAdjacentHTML('beforeend', `<span><small>New sticker!</small>${c.name}</span>`);
@@ -2312,6 +2312,7 @@ function drawCreature(g, kind, col){
 
 // ---------- Surprises: specials that wash up or appear ----------
 function spawnSpecial(type, a, data){
+  if (S.sailing) return { gone: true };
   a = a || hereArea(); const wl = waterline();
   const sp = { type, area: a, x: a.x + rnd(40, AW - 40), y: rnd(Math.max(wl + 24, L.seaHigh + 10), L.trashMax + 10), t: 0, life: { msg: 70, rare: 28, candy: 45, chest: 1e9 }[type], data };
   if (type === 'chest') { sp.x = a.x + rnd(90, 310); sp.y = rnd(L.trashMax + 20, L.machY - 80); }
@@ -2594,7 +2595,7 @@ function loop(now){
   if (S.sailing) return;
   if (running) { update(dt); tutorialTick(); coachTick(dt); featuresTick(dt); saveT += dt; if (saveT > 3) { saveT = 0; persist(); } }
   else S.t += dt;
-  draw(); if (running) hud();
+  if (!window.__nodraw) draw(); if (running) hud();
   requestAnimationFrame(loop);
 }
 document.addEventListener('visibilitychange', () => { if (document.hidden && running) persist(); last = performance.now(); });
