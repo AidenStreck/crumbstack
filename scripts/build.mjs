@@ -13,28 +13,13 @@ fs.mkdirSync(path.join(www, 'icons'), { recursive: true });
 const title = (src.match(/<title>(.*?)<\/title>/) || [, 'Crumbstack'])[1];
 let body = src.replace(/<title>.*?<\/title>\s*/, '');
 
-// 2) Fonts: bundle them for offline play when the font packages are installed,
-//    otherwise keep loading them from Google Fonts.
+// 2) Fonts: bundled from fonts/ (Lilita One + Nunito, SIL Open Font License), so the game
+//    works offline and never contacts Google.
 const fontLinks = /<link rel="preconnect" href="https:\/\/fonts\.googleapis\.com">\s*<link rel="stylesheet" href="https:\/\/fonts\.googleapis\.com[^>]*>\s*/;
-const fontFiles = [
-  ['@fontsource/lilita-one/files/lilita-one-latin-400-normal.woff2', 'Lilita One', 400],
-  ['@fontsource/nunito/files/nunito-latin-700-normal.woff2', 'Nunito', 700],
-  ['@fontsource/nunito/files/nunito-latin-800-normal.woff2', 'Nunito', 800],
-  ['@fontsource/nunito/files/nunito-latin-900-normal.woff2', 'Nunito', 900],
-];
-let fontCss = '';
-if (fontFiles.every(([f]) => fs.existsSync(path.join(root, 'node_modules', f)))) {
-  fs.mkdirSync(path.join(www, 'fonts'));
-  for (const [f, fam, w] of fontFiles) {
-    const name = path.basename(f);
-    fs.copyFileSync(path.join(root, 'node_modules', f), path.join(www, 'fonts', name));
-    fontCss += `@font-face{font-family:"${fam}";font-weight:${w};font-style:normal;font-display:swap;src:url(fonts/${name}) format("woff2")}\n`;
-  }
-  body = body.replace(fontLinks, '');
-  console.log('Fonts bundled for offline play.');
-} else {
-  console.log('Font packages not installed; using Google Fonts.');
-}
+const fontFiles = [['lilita-one-400.woff', 'Lilita One', 400], ['nunito-700.woff', 'Nunito', 700], ['nunito-800.woff', 'Nunito', 800], ['nunito-900.woff', 'Nunito', 900]];
+fs.cpSync(path.join(root, 'fonts'), path.join(www, 'fonts'), { recursive: true });
+const fontCss = fontFiles.map(([f, fam, w]) => `@font-face{font-family:"${fam}";font-weight:${w};font-style:normal;font-display:swap;src:url(fonts/${f}) format("woff")}\n`).join('');
+body = body.replace(fontLinks, '');
 
 // 3) Icons and web-app manifest
 for (const f of fs.readdirSync(path.join(root, 'resources'))) {
@@ -98,6 +83,9 @@ if ('serviceWorker' in navigator && location.protocol === 'https:' && !window.Ca
 fs.writeFileSync(path.join(www, 'index.html'), html);
 fs.writeFileSync(path.join(www, '.nojekyll'), '');
 
-// 6) Studio: the control dashboard, published at /studio/
+// 6) Privacy policy and support pages (URLs for App Store Connect)
+for (const f of fs.readdirSync(path.join(root, 'pages'))) fs.copyFileSync(path.join(root, 'pages', f), path.join(www, f));
+
+// 7) Studio: the control dashboard, published at /studio/
 fs.cpSync(path.join(root, 'studio'), path.join(www, 'studio'), { recursive: true });
 console.log('Built www/ (' + Math.round(html.length / 1024) + ' KB)');

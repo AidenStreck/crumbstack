@@ -1307,6 +1307,12 @@ $('mapInner').addEventListener('click', e=>{
 });
 
 addEventListener('resize', ()=>{ if(screen==='home') sizeHome(); });
+// Screenshot hook for App Store images: only active when the page is opened with #shots.
+if (location.hash === '#shots') window.__cs = {
+  get S(){ return S; }, get W(){ return W; }, get H(){ return Hh; }, get plateY(){ return plateY; },
+  start: startLevel, stop(){ running = false; }, showMap, showHome, openLevel, finish, burst, pop,
+  renderTicket, updateHud, renderHearts, newCustomer, closeModal,
+};
 showHome();
 requestAnimationFrame(loop);
 })();

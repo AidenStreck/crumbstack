@@ -1,0 +1,19 @@
+@font-face{font-family:"Lilita One";font-weight:400;font-display:swap;src:url(fonts/lilita-one-400.woff) format("woff")}
+@font-face{font-family:"Nunito";font-weight:700;font-display:swap;src:url(fonts/nunito-700.woff) format("woff")}
+@font-face{font-family:"Nunito";font-weight:900;font-display:swap;src:url(fonts/nunito-900.woff) format("woff")}
+:root{--bg:#22174A;--paper:#FFF8EA;--ink:#2A1B4F;--ink-2:#6E6392;--butter:#FFD25E;--pink:#D63A78;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);font-family:"Nunito",ui-rounded,system-ui,sans-serif;font-weight:700;line-height:1.6;color:var(--ink)}
+.wrap{max-width:720px;margin:0 auto;padding-inline:16px;padding-block:28px 48px}
+.top{display:flex;align-items:center;gap:12px;margin-bottom:18px;text-decoration:none}
+.top img{width:52px;height:52px;border-radius:12px}
+.top span{font-family:"Lilita One",system-ui,sans-serif;font-size:28px;color:var(--butter);letter-spacing:.3px}
+main{background:var(--paper);border-radius:22px;padding:26px 24px;box-shadow:0 6px 0 #D4C39C}
+h1{font-family:"Lilita One",system-ui,sans-serif;font-weight:400;font-size:34px;line-height:1.1;margin:0 0 4px;text-wrap:balance}
+h2{font-family:"Lilita One",system-ui,sans-serif;font-weight:400;font-size:21px;margin:26px 0 6px}
+.date{color:var(--ink-2);margin:0 0 18px;font-size:14px}
+p,li{font-size:16px;max-width:65ch}
+a{color:var(--pink)}
+.card{background:#fff;border-radius:14px;padding:14px 16px;margin:14px 0}
+footer{color:#B9B0E0;font-size:13px;text-align:center;margin-top:20px}
+footer a{color:#FFD25E}

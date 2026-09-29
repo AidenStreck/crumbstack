@@ -4,22 +4,70 @@
     {
       "id": "crumbstack",
       "name": "Crumbstack",
-      "tagline": "Burger-stacking puzzle · 24 levels",
+      "tagline": "Burger-stacking puzzle \u00b7 24 levels",
       "repo": "AidenStreck/crumbstack",
       "site": "https://aidenstreck.github.io/crumbstack/",
       "icon": "https://aidenstreck.github.io/crumbstack/icons/icon-192.png",
       "stage": "Testing on the web",
       "checklist": [
-        { "label": "Playable game with 24 levels", "done": true },
-        { "label": "Sound, music and vibration", "done": true },
-        { "label": "Website live for testing", "done": true },
-        { "label": "iPhone app builds on GitHub", "done": true },
-        { "label": "Apple Developer account ($99/yr)", "done": false },
-        { "label": "TestFlight build on your iPhone", "done": false },
-        { "label": "Real coin purchases connected", "done": false },
-        { "label": "Privacy policy page", "done": false },
-        { "label": "App Store screenshots and description", "done": false },
-        { "label": "Submitted to Apple for review", "done": false }
+        {
+          "label": "Playable game with 24 levels",
+          "done": true
+        },
+        {
+          "label": "Sound, music and vibration",
+          "done": true
+        },
+        {
+          "label": "Website live for testing",
+          "done": true
+        },
+        {
+          "label": "iPhone app builds on GitHub",
+          "done": true
+        },
+        {
+          "label": "Apple Developer account ($99/yr)",
+          "done": false
+        },
+        {
+          "label": "TestFlight build on your iPhone",
+          "done": false
+        },
+        {
+          "label": "Real coin purchases connected",
+          "done": false
+        },
+        {
+          "label": "Privacy policy page",
+          "done": true
+        },
+        {
+          "label": "App Store screenshots and description",
+          "done": true
+        },
+        {
+          "label": "Submitted to Apple for review",
+          "done": false
+        }
+      ],
+      "links": [
+        {
+          "label": "Store listing",
+          "url": "https://github.com/AidenStreck/crumbstack/blob/main/store/listing.md"
+        },
+        {
+          "label": "Screenshots",
+          "url": "https://github.com/AidenStreck/crumbstack/tree/main/store/screenshots"
+        },
+        {
+          "label": "Privacy policy",
+          "url": "https://aidenstreck.github.io/crumbstack/privacy.html"
+        },
+        {
+          "label": "Support page",
+          "url": "https://aidenstreck.github.io/crumbstack/support.html"
+        }
       ]
     }
   ]

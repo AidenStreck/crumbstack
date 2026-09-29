@@ -93,6 +93,10 @@ header{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .meter{height:8px;background:var(--sunk);border-radius:999px;overflow:hidden}
 .meter i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--plum));border-radius:999px}
 .next{font-size:13px;color:var(--ink-2)} .next b{color:var(--ink)}
+.kit{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px}
+.kit span{font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-right:2px}
+.kit a{text-decoration:none;background:var(--sunk);border-radius:8px;padding:4px 9px;font-weight:500}
+.kit a:hover{text-decoration:underline}
 details summary{cursor:pointer;font-size:13px;color:var(--ink-2);font-weight:500}
 .check{list-style:none;margin:8px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 16px}
 .check li{display:flex;gap:8px;align-items:flex-start;font-size:13px}
@@ -320,6 +324,7 @@ function render(data){
         <div class="launchTop"><b>App Store launch</b><span class="mono">${done} of ${app.checklist.length} steps</span></div>
         <div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="${app.checklist.length}" aria-valuenow="${done}"><i style="width:${done/app.checklist.length*100}%"></i></div>
         ${next ? `<div class="next">Next step: <b>${esc(next.label)}</b></div>` : '<div class="next"><b>Live on the App Store</b></div>'}
+        ${app.links && app.links.length ? `<div class="kit"><span>Launch kit</span>${app.links.map(l => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)}</a>`).join('')}</div>` : ''}
         <details><summary>Show all steps</summary><ul class="check">${app.checklist.map(x => `<li class="${x.done ? 'done' : ''}">${esc(x.label)}</li>`).join('')}</ul></details>
       </div>
     </article>`;
