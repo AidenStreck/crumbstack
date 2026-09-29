@@ -501,7 +501,7 @@ const postedKey = id => 'posted:' + id;
 async function loadMarketing(){
   if (!MK) { try { MK = await (await fetch('marketing.json', { cache: 'no-cache' })).json(); } catch (e) { $('plan').innerHTML = '<p>Couldn\'t load the marketing plan. Press Refresh.</p>'; return; } }
   const P = MK.plan;
-  $('plan').innerHTML = `<div style="min-width:0"><h3>The pitch</h3><p class="lead">${esc(P.oneLiner)}</p><p>${esc(P.audience)}</p>
+  $('plan').innerHTML = (MK.paused ? `<div class="banner" style="grid-column:1/-1">${esc(MK.paused)}</div>` : '') + `<div style="min-width:0"><h3>The pitch</h3><p class="lead">${esc(P.oneLiner)}</p><p>${esc(P.audience)}</p>
       <div class="pillars">${P.pillars.map(x => `<div class="pillar"><b>${esc(x.name)}</b><span>${esc(x.why)}</span></div>`).join('')}</div></div>
     <div class="planSide"><div><h3>Where to post</h3><ul>${P.channels.map(c => `<li><b>${esc(c.name)}.</b> ${esc(c.note)}</li>`).join('')}</ul></div>
       <div><h3>How often</h3><p style="font-size:13px">${esc(P.cadence)}</p></div>

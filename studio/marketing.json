@@ -4,14 +4,32 @@
     "oneLiner": "A cozy, chaotic burger-stacking game. Free, and no ads.",
     "audience": "Casual puzzle players, mostly 16–35, who play in short breaks and are tired of games that interrupt them with ads.",
     "pillars": [
-      { "name": "No ads", "why": "Players hate ads in free games. \"Free and no ads\" is rare and easy to remember, so it goes in every post." },
-      { "name": "Satisfying stacks", "why": "Tall wobbly towers and near-topples make people watch to the end." },
-      { "name": "Cute, demanding customers", "why": "Grumpy VIPs and flies give each clip a tiny story." }
+      {
+        "name": "No ads",
+        "why": "Players hate ads in free games. \"Free and no ads\" is rare and easy to remember, so it goes in every post."
+      },
+      {
+        "name": "Satisfying stacks",
+        "why": "Tall wobbly towers and near-topples make people watch to the end."
+      },
+      {
+        "name": "Cute, demanding customers",
+        "why": "Grumpy VIPs and flies give each clip a tiny story."
+      }
     ],
     "channels": [
-      { "name": "TikTok", "note": "Main channel. Post each video here first." },
-      { "name": "Instagram Reels", "note": "Same video file, same caption." },
-      { "name": "YouTube Shorts", "note": "Same again. Shorts keep getting views for months." }
+      {
+        "name": "TikTok",
+        "note": "Main channel. Post each video here first."
+      },
+      {
+        "name": "Instagram Reels",
+        "note": "Same video file, same caption."
+      },
+      {
+        "name": "YouTube Shorts",
+        "note": "Same again. Shorts keep getting views for months."
+      }
     ],
     "cadence": "3 posts a week. Before launch, the link in your bio goes to the free web version. After launch, it goes to the App Store.",
     "tips": [
@@ -21,55 +39,106 @@
     ]
   },
   "phases": [
-    { "id": "now", "name": "Now: build an audience", "note": "Faceless \"I'm making a game\" videos with a narrator. They don't ask anyone to download from the App Store, so they work before launch." },
-    { "id": "launch", "name": "Launch week", "note": "Save these for when the App Store link works (or pre-orders are open). Post one a day that week." }
+    {
+      "id": "now",
+      "name": "Now: build an audience",
+      "note": "Faceless \"I'm making a game\" videos with a narrator. They don't ask anyone to download from the App Store, so they work before launch."
+    },
+    {
+      "id": "launch",
+      "name": "Launch week",
+      "note": "Save these for when the App Store link works (or pre-orders are open). Post one a day that week."
+    }
   ],
   "posts": [
     {
-      "id": "n1-no-ads", "phase": "now", "title": "Making a game with no ads", "week": 1,
-      "media": { "dir": "voiced", "id": "vo-no-ads" },
+      "id": "n1-no-ads",
+      "phase": "now",
+      "title": "Making a game with no ads",
+      "week": 1,
+      "media": {
+        "dir": "voiced",
+        "id": "vo-no-ads"
+      },
       "hook": "I'm making a mobile game with zero ads.",
       "caption": "day 1 of making a mobile game with zero ads 🍔 would you play it? free to try, link in bio",
       "hashtags": "#indiedev #gamedev #mobilegames #noads #cozygames"
     },
     {
-      "id": "n2-vip", "phase": "now", "title": "Meet the VIP", "week": 1,
-      "media": { "dir": "voiced", "id": "vo-vip" },
+      "id": "n2-vip",
+      "phase": "now",
+      "title": "Meet the VIP",
+      "week": 1,
+      "media": {
+        "dir": "voiced",
+        "id": "vo-vip"
+      },
       "hook": "Meet the VIP.",
       "caption": "the VIPs in my game are ruthless 😤 could you keep him happy? free, no ads, link in bio",
       "hashtags": "#indiedev #mobilegames #puzzlegame #cozygames #gaming"
     },
     {
-      "id": "n3-topple", "phase": "now", "title": "Eight layers", "week": 1,
-      "media": { "dir": "voiced", "id": "vo-topple" },
+      "id": "n3-topple",
+      "phase": "now",
+      "title": "Eight layers",
+      "week": 1,
+      "media": {
+        "dir": "voiced",
+        "id": "vo-topple"
+      },
       "hook": "Eight layers. One wobbly plate.",
       "caption": "how high could you stack it? 🍔 free game, no ads, link in bio",
       "hashtags": "#satisfying #mobilegames #indiegame #cozygames #fyp"
     },
     {
-      "id": "l1-lunch-rush", "phase": "launch", "title": "The lunch rush", "week": 1,
-      "media": { "dir": "clips", "id": "lunch-rush" },
+      "id": "l1-lunch-rush",
+      "phase": "launch",
+      "title": "The lunch rush",
+      "week": 1,
+      "media": {
+        "dir": "clips",
+        "id": "lunch-rush"
+      },
       "hook": "POV: the lunch rush just hit",
       "caption": "every customer wants it EXACTLY their way 🍔 out now on iPhone. free, zero ads",
       "hashtags": "#cozygames #mobilegames #burger #indiegame #satisfying"
     },
     {
-      "id": "l2-vip", "phase": "launch", "title": "The VIP", "week": 1,
-      "media": { "dir": "clips", "id": "vip-patience" },
+      "id": "l2-vip",
+      "phase": "launch",
+      "title": "The VIP",
+      "week": 1,
+      "media": {
+        "dir": "clips",
+        "id": "vip-patience"
+      },
       "hook": "He tips double. He has zero patience.",
       "caption": "the VIPs are ruthless 😤 would you survive the rooftop grill? free on the App Store, no ads",
       "hashtags": "#mobilegames #indiedev #puzzlegame #gaming #cozygames"
     },
     {
-      "id": "l3-topple", "phase": "launch", "title": "Don't let it topple", "week": 1,
-      "media": { "dir": "clips", "id": "dont-topple" },
+      "id": "l3-topple",
+      "phase": "launch",
+      "title": "Don't let it topple",
+      "week": 1,
+      "media": {
+        "dir": "clips",
+        "id": "dont-topple"
+      },
       "hook": "Don't. Let. It. Topple.",
       "caption": "8 layers at midnight. my hands were shaking 😭 free on the App Store, no ads",
       "hashtags": "#satisfying #mobilegames #burgertower #indiegame #fyp"
     }
   ],
   "paidLater": [
-    { "name": "Apple Search Ads", "note": "Ads at the top of App Store search for words like 'burger game' and 'cooking game'. Start small (about $5/day) after launch." },
-    { "name": "TikTok Spark Ads", "note": "Pay to boost a post that's already doing well on its own. Only boost winners." }
-  ]
+    {
+      "name": "Apple Search Ads",
+      "note": "Ads at the top of App Store search for words like 'burger game' and 'cooking game'. Start small (about $5/day) after launch."
+    },
+    {
+      "name": "TikTok Spark Ads",
+      "note": "Pay to boost a post that's already doing well on its own. Only boost winners."
+    }
+  ],
+  "paused": "Paused until Crumbstack can be downloaded from the App Store. Turn it back on right after launch."
 }

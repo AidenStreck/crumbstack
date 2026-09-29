@@ -49,6 +49,10 @@
         {
           "label": "Submitted to Apple for review",
           "done": false
+        },
+        {
+          "label": "Turn marketing back on: Monday marketing agent + Buffer posting",
+          "done": false
         }
       ],
       "links": [

@@ -30,6 +30,9 @@ These are new game concepts, not changes to Crumbstack. Don't build a game.
 
 ## Marketing (requests typed `[Marketing]`)
 
+**Marketing is paused until Crumbstack is on the App Store.** The owner wants people able to download before any posting. When the App Store submission is live, remind him to turn the Monday marketing agent back on (it's a scheduled task named "Crumbstack marketing agent") and set up Buffer.
+
+
 - Social posts live in `studio/marketing.json` and show in Studio's Marketing tab. Add new posts there with a hook, caption and hashtags. Always keep "free, no ads".
 - Gameplay clips come from `scripts/clips.cjs` (a bot plays the real game and records 1080×1920 MP4s into `marketing/clips/`). Add a clip entry and run it, e.g. `node scripts/build.mjs && node scripts/clips.cjs <clip-id>`. Clips must show real gameplay. Never fake or stage things the game can't do.
 - **Voiceover videos** (the main pre-launch content): add an entry to `marketing/voiced.json` with a gameplay clip id and 4–6 short spoken lines (keep the voice under about 12 seconds, end with "Free game, no ads. Link in bio."). Add a matching post to `studio/marketing.json` with `"media": {"dir": "voiced", "id": "<id>"}` and `"phase": "now"`. After merge, the **Make videos** GitHub Action renders it with an AI voice (Kokoro), captions and the game's music. Don't render voiceovers yourself.
