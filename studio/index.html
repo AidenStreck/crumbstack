@@ -555,7 +555,7 @@ function renderIdeas(){
   $('board').innerHTML = lanes.map(stage => {
     const cards = stage === 'New'
       ? fresh.map(i => `<a class="idea" href="${esc(i.html_url)}" target="_blank" rel="noopener"><b>${esc(i.title.replace(/^\[Game idea\]\s*/i, ''))}</b><p>${esc((i.body || '').split('\n---')[0].slice(0, 160))}</p><small>Waiting for an agent to write it up · #${i.number}</small></a>`)
-      : IDEAS.ideas.filter(x => x.stage === stage).map(x => `<div class="idea"><b>${esc(x.name)}</b><p>${esc(x.pitch)}</p>${x.notes ? `<small>${esc(x.notes)}</small>` : ''}<small>Idea by ${esc(x.by)}</small></div>`);
+      : IDEAS.ideas.filter(x => x.stage === stage).map(x => `<div class="idea"><b>${esc(x.name)}</b><p>${esc(x.pitch)}</p>${x.notes ? `<small>${esc(x.notes)}</small>` : ''}${x.stage === 'Prototype' ? `<a class="btn primary" style="justify-content:center;margin-top:4px" href="../prototypes/${esc(x.id)}/" target="_blank" rel="noopener">Play prototype</a>` : ''}<small>Idea by ${esc(x.by)}</small></div>`);
     return `<div class="lane"><h3>${stage}<span>${cards.length}</span></h3>${cards.join('') || '<div class="none">Nothing here</div>'}</div>`;
   }).join('');
 }

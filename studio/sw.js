@@ -1,5 +1,5 @@
 // Lets Studio install as a desktop app and open offline with the last saved page.
-const CACHE = 'studio-v6';
+const CACHE = 'studio-v7';
 self.addEventListener('install', e => { self.skipWaiting(); e.waitUntil(caches.open(CACHE).then(c => c.addAll(['./', './index.html', './apps.json', './manifest.webmanifest', './icon-192.png']))); });
 self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
 self.addEventListener('fetch', e => {

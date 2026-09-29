@@ -1,6 +1,13 @@
 {
   "updated": "2026-09-28",
-  "stages": ["Idea", "Prototype", "Testing", "Launching", "Live", "Dropped"],
+  "stages": [
+    "Idea",
+    "Prototype",
+    "Testing",
+    "Launching",
+    "Live",
+    "Dropped"
+  ],
   "ideas": [
     {
       "id": "crumbstack",
@@ -9,6 +16,14 @@
       "stage": "Launching",
       "by": "You",
       "notes": "Apple Developer account in review. Next: TestFlight."
+    },
+    {
+      "id": "tidy-tides",
+      "name": "Tidy Tides",
+      "pitch": "Idle-arcade beach cleanup: collect washed-up trash at low tide, recycle it into beads, bracelets and toy boats, sell them to tourists, and hire hermit-crab helpers. The beach visibly comes back to life as you clean.",
+      "stage": "Prototype",
+      "by": "You",
+      "notes": "Play it: aidenstreck.github.io/crumbstack/prototypes/tidy-tides/ · Stands out in a genre full of restaurants and farms, and has no ads (the genre's #1 complaint)."
     },
     {
       "id": "sunsprout",

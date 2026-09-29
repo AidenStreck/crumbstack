@@ -26,7 +26,7 @@ These are new game concepts, not changes to Crumbstack. Don't build a game.
 
 1. On branch `request-<n>`, add the idea to `studio/ideas.json` at stage `"Idea"` with `"by": "You"`. Tighten the pitch to 1–2 sentences and add a one-line `notes` on what would make it stand out (and anything that makes it too close to an existing game, since Apple rejects lookalikes).
 2. Open the pull request as usual (`Closes #<n>`). Merging adds it to the board.
-3. When the owner asks to move an idea to **Prototype**, build a small playable version as a single file at `prototypes/<id>/index.html` (same approach as `src/game.html`) and set its stage to `"Prototype"`. It will be playable at `https://aidenstreck.github.io/crumbstack/prototypes/<id>/`. Put that link in the idea's `notes`.
+3. When the owner asks to move an idea to **Prototype**, build a small playable version as a single file at `prototypes/<id>/src.html` (no doctype/head: the build wraps it) (same approach as `src/game.html`) and set its stage to `"Prototype"`. It will be playable at `https://aidenstreck.github.io/crumbstack/prototypes/<id>/`. Put that link in the idea's `notes`.
 
 ## Marketing (requests typed `[Marketing]`)
 

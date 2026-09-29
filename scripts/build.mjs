@@ -89,8 +89,28 @@ for (const f of fs.readdirSync(path.join(root, 'pages'))) fs.copyFileSync(path.j
 // 7) Studio: the control dashboard, published at /studio/
 fs.cpSync(path.join(root, 'studio'), path.join(www, 'studio'), { recursive: true });
 
-// 9) Game prototypes, each playable at /prototypes/<id>/
-if (fs.existsSync(path.join(root, 'prototypes'))) fs.cpSync(path.join(root, 'prototypes'), path.join(www, 'prototypes'), { recursive: true });
+// 9) Game prototypes, each playable at /prototypes/<id>/ . Each is one file, prototypes/<id>/src.html,
+//    wrapped here in a full page (same way as the main game).
+if (fs.existsSync(path.join(root, 'prototypes'))) {
+  for (const id of fs.readdirSync(path.join(root, 'prototypes'))) {
+    const dir = path.join(root, 'prototypes', id), srcFile = path.join(dir, 'src.html');
+    if (!fs.existsSync(srcFile)) continue;
+    const out = path.join(www, 'prototypes', id); fs.mkdirSync(out, { recursive: true });
+    const p = fs.readFileSync(srcFile, 'utf8');
+    const t = (p.match(/<title>(.*?)<\/title>/) || [, id])[1];
+    fs.writeFileSync(path.join(out, 'index.html'), `<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>${t}</title><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="${t}">
+<style>[hidden]{display:none!important}</style></head>
+<body>
+${p.replace(/<title>.*?<\/title>\s*/, '')}
+</body></html>
+`);
+    for (const f of fs.readdirSync(dir)) if (f !== 'src.html') fs.cpSync(path.join(dir, f), path.join(out, f), { recursive: true });
+  }
+}
 
 // 8) Marketing clips (shown and downloadable in Studio)
 if (fs.existsSync(path.join(root, 'marketing'))) fs.cpSync(path.join(root, 'marketing'), path.join(www, 'marketing'), { recursive: true });
