@@ -34,14 +34,22 @@ To install it on your computer as an app, open it in **Chrome or Edge** and clic
 
 This project uses **Capacitor**, which wraps the game in a real native iPhone app. Building an iPhone app needs Apple's Xcode, which only runs on a Mac, so GitHub builds it on a Mac in the cloud. Open the **Actions** tab to see each build. A green check means the app compiled.
 
-## Before the App Store (needs the $99/year Apple Developer account)
+## Getting it onto the App Store
 
-1. Join the Apple Developer Program at developer.apple.com.
-2. Create the app in App Store Connect with the bundle ID `com.crumbstack.game` (or change it in `capacitor.config.json` first).
-3. Create an App Store Connect API key and add it to this repo's secrets.
-4. Add the signing + TestFlight upload step to `ios.yml`.
-5. Set up the coin packs as in-app purchases and connect them to the shop. Add a **Restore purchases** button.
-6. Add a privacy policy page, App Store screenshots and the description.
+Apple Developer account: done (accepted Sept 29, 2026).
+
+1. **Register the app ID.** developer.apple.com → Certificates, IDs & Profiles → Identifiers → + → App IDs → App. Description `Crumbstack`, Bundle ID (Explicit) `com.crumbstack.game`. Tick **In-App Purchase** (it's usually on already).
+2. **Create the app.** appstoreconnect.apple.com → Apps → + → New App: iOS, name `Crumbstack`, language English (U.S.), bundle ID `com.crumbstack.game`, SKU `crumbstack`, Full Access.
+3. **Make an API key** (lets GitHub's Mac sign and upload for you). App Store Connect → Users and Access → Integrations → App Store Connect API → Team Keys → +. Name `GitHub`, access **Admin**. Download the `.p8` file (Apple only lets you download it once). Note the **Key ID** and the **Issuer ID** shown above the list.
+4. **Find your Team ID.** developer.apple.com/account → Membership details → Team ID (10 letters/numbers).
+5. **Add four secrets to GitHub.** github.com/AidenStreck/crumbstack → Settings → Secrets and variables → Actions → New repository secret:
+   - `ASC_KEY_ID`: the Key ID
+   - `ASC_ISSUER_ID`: the Issuer ID
+   - `ASC_KEY_P8`: open the .p8 file in Notepad and paste all of it, including the BEGIN/END lines
+   - `APPLE_TEAM_ID`: the Team ID
+6. **Send a build.** GitHub → Actions → iPhone app → Run workflow (or push anything to main). About 15–30 minutes later it appears in App Store Connect → TestFlight. Install the **TestFlight** app on your iPhone and add yourself as an internal tester to play it.
+7. **Paid Apps agreement** (needed for coin purchases): App Store Connect → Business → sign the Paid Apps agreement and fill in tax and bank info. Then the coin packs get set up as in-app purchases and connected, with a Restore purchases button.
+8. Fill in the store page from `store/listing.md` and the screenshots, then submit for review.
 
 ## Working on it yourself (optional)
 

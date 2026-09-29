@@ -28,7 +28,7 @@
         },
         {
           "label": "Apple Developer account ($99/yr)",
-          "done": false
+          "done": true
         },
         {
           "label": "TestFlight build on your iPhone",
