@@ -143,7 +143,9 @@
           "label": "Play link to share",
           "url": "https://aidenstreck.github.io/crumbstack/prototypes/tidy-tides/"
         }
-      ]
+      ],
+      "storeName": "Tidy Tides: Beach Cleanup",
+      "bundleId": "com.aidenstreck.tidytides"
     },
     {
       "id": "sunsprout",
