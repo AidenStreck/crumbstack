@@ -1,0 +1,30 @@
+{
+  "updated": "2026-09-28",
+  "stages": ["Idea", "Prototype", "Testing", "Launching", "Live", "Dropped"],
+  "ideas": [
+    {
+      "id": "crumbstack",
+      "name": "Crumbstack",
+      "pitch": "Catch falling ingredients and stack burgers exactly as ordered.",
+      "stage": "Launching",
+      "by": "You",
+      "notes": "Apple Developer account in review. Next: TestFlight."
+    },
+    {
+      "id": "sunsprout",
+      "name": "Sunsprout",
+      "pitch": "Calm puzzle: rotate mirrors in a tiny garden so each seed gets exactly the sunlight it needs. A new daily puzzle, and your garden grows over time.",
+      "stage": "Idea",
+      "by": "Claude",
+      "notes": "Daily puzzle games keep players coming back every day."
+    },
+    {
+      "id": "moon-mail",
+      "name": "Moon Mail",
+      "pitch": "One-thumb arcade: a cat mail carrier hops between tiny spinning planets delivering letters. Tap to jump, chase high scores.",
+      "stage": "Idea",
+      "by": "Claude",
+      "notes": "High-score games spread well on TikTok: people post their best runs."
+    }
+  ]
+}

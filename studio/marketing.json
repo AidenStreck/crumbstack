@@ -1,0 +1,86 @@
+{
+  "updated": "2026-09-28",
+  "plan": {
+    "oneLiner": "A cozy, chaotic burger-stacking game. Free, and no ads.",
+    "audience": "Casual puzzle players, mostly 16–35, who play in short breaks and are tired of games that interrupt them with ads.",
+    "pillars": [
+      { "name": "No ads", "why": "Players hate ads in free games. \"Free and no ads\" is rare and easy to remember, so it goes in every post." },
+      { "name": "Satisfying stacks", "why": "Tall wobbly towers and near-topples make people watch to the end." },
+      { "name": "Cute, demanding customers", "why": "Grumpy VIPs and flies give each clip a tiny story." }
+    ],
+    "channels": [
+      { "name": "TikTok", "note": "Main channel. Post the same vertical video here first." },
+      { "name": "Instagram Reels", "note": "Repost the TikTok video (without the TikTok watermark: use the original file)." },
+      { "name": "YouTube Shorts", "note": "Same video again. Shorts keep getting views for months." }
+    ],
+    "cadence": "3 posts a week. Before launch, the link in your bio goes to the free web version. After launch, it goes to the App Store.",
+    "tips": [
+      "Add an upbeat trending sound inside TikTok before posting. The clips are silent on purpose so you can.",
+      "Reply to comments with a new video. It's the easiest way to get a second post out of one.",
+      "Don't pay for ads yet. Paid ads start after launch, once Studio shows each player earns more than they cost."
+    ]
+  },
+  "posts": [
+    {
+      "id": "p1-lunch-rush",
+      "title": "The lunch rush",
+      "week": 1,
+      "video": "lunch-rush",
+      "hook": "POV: the lunch rush just hit",
+      "caption": "every customer wants it EXACTLY their way 🍔 free game, zero ads. link in bio",
+      "hashtags": "#cozygames #mobilegames #burger #indiegame #satisfying"
+    },
+    {
+      "id": "p2-vip",
+      "title": "The VIP",
+      "week": 1,
+      "video": "vip-patience",
+      "hook": "He tips double. He has zero patience.",
+      "caption": "the VIPs in this game are ruthless 😤 would you survive the rooftop grill? (free, no ads, link in bio)",
+      "hashtags": "#mobilegames #indiedev #puzzlegame #gaming #cozygames"
+    },
+    {
+      "id": "p3-topple",
+      "title": "Don't let it topple",
+      "week": 1,
+      "video": "dont-topple",
+      "hook": "Don't. Let. It. Topple.",
+      "caption": "8 layers at midnight. my hands were shaking 😭 free game, no ads, link in bio",
+      "hashtags": "#satisfying #mobilegames #burgertower #indiegame #fyp"
+    },
+    {
+      "id": "p4-no-ads",
+      "title": "\"I made a game with no ads\"",
+      "week": 2,
+      "video": "lunch-rush",
+      "hook": "I made a mobile game with no ads. On purpose.",
+      "caption": "tired of watching a 30 second ad every time you lose? me too. so i made crumbstack. free, no ads. link in bio",
+      "hashtags": "#indiedev #gamedev #mobilegames #noads #cozygames",
+      "note": "Talking-head style works best: film yourself saying the hook for 3 seconds, then cut to this clip. Use TikTok's green-screen effect if you'd rather not be on camera."
+    },
+    {
+      "id": "p5-rate-my-burger",
+      "title": "Rate my burger",
+      "week": 2,
+      "video": "dont-topple",
+      "hook": "Rate this burger 1–10",
+      "caption": "be honest. is 8 layers too many? 🍔 (free game, no ads, link in bio)",
+      "hashtags": "#ratemyburger #mobilegames #satisfying #cozygames #fyp",
+      "note": "Questions in the hook get comments, and comments push the video to more people."
+    },
+    {
+      "id": "p6-world-reveal",
+      "title": "Three worlds",
+      "week": 2,
+      "video": null,
+      "hook": "Which world are you picking?",
+      "caption": "diner, rooftop grill, or midnight food truck? 🍔🌇🌙 free game, no ads, link in bio",
+      "hashtags": "#mobilegames #cozygames #indiegame #gaming",
+      "note": "No clip yet: screen-record the level map on your phone (Control Center → Screen Recording) and scroll from world 1 to world 3."
+    }
+  ],
+  "paidLater": [
+    { "name": "Apple Search Ads", "note": "Ads at the top of App Store search for words like 'burger game' and 'cooking game'. Start small (about $5/day) after launch." },
+    { "name": "TikTok Spark Ads", "note": "Pay to boost a post that's already doing well on its own. Only boost winners." }
+  ]
+}

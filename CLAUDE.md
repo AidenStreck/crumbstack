@@ -20,6 +20,21 @@ The owner is not a programmer. He sends requests from the Studio dashboard, revi
 5. Push the branch. Open a pull request titled `Request #<n>: <short summary>` whose body says `Closes #<n>`, what changed in plain words, and how to try it.
 6. **Never push to `main` and never merge.** The owner approves by merging the pull request, and that is what makes it go live.
 
+## Game ideas (issues titled `[Game idea] ...`)
+
+These are new game concepts, not changes to Crumbstack. Don't build a game.
+
+1. On branch `request-<n>`, add the idea to `studio/ideas.json` at stage `"Idea"` with `"by": "You"`. Tighten the pitch to 1–2 sentences and add a one-line `notes` on what would make it stand out (and anything that makes it too close to an existing game, since Apple rejects lookalikes).
+2. Open the pull request as usual (`Closes #<n>`). Merging adds it to the board.
+3. When the owner asks to move an idea to **Prototype**, build a small playable version as a single file at `prototypes/<id>/index.html` (same approach as `src/game.html`) and set its stage to `"Prototype"`. It will be playable at `https://aidenstreck.github.io/crumbstack/prototypes/<id>/`. Put that link in the idea's `notes`.
+
+## Marketing (requests typed `[Marketing]`)
+
+- Social posts live in `studio/marketing.json` and show in Studio's Marketing tab. Add new posts there with a hook, caption and hashtags. Always keep "free, no ads".
+- Gameplay clips come from `scripts/clips.cjs` (a bot plays the real game and records 1080×1920 MP4s into `marketing/clips/`). Add a clip entry and run it, e.g. `node scripts/build.mjs && node scripts/clips.cjs <clip-id>`. Clips must show real gameplay. Never fake or stage things the game can't do.
+- Screenshots come from `scripts/screenshots.cjs`.
+- You draft; the owner posts. Never post anywhere yourself.
+
 ## Guardrails
 
 - Player saves live in `localStorage` under `crumbstack-save-v2`. Never rename the key or drop fields. Add new fields with defaults.

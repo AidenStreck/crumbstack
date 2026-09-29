@@ -791,8 +791,9 @@ function spawn(){
   } else if(r < powerChance + L.flies){
     S.items.push({kind:'fly', x, bx:x, y:-20, vy:baseV*.7, ph:Math.random()*6, amp:rnd(30,80), state:'fall'});
   } else {
-    const need = S.order[S.idx];
-    const t = Math.random() < .45 ? need : pick(ALL);
+    // Mostly the ingredient needed now, often the one after it (so there's no dead wait between catches), sometimes anything.
+    const need = S.order[S.idx], next = S.order[S.idx+1], roll = Math.random();
+    const t = roll < .4 ? need : (next && roll < .62) ? next : pick(ALL);
     S.items.push({kind:'ing', type:t, x, y:-10, vy:baseV*rnd(.85,1.15), rot:rnd(-.3,.3), vr:rnd(-1,1), state:'fall', vx:0});
   }
 }

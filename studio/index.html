@@ -138,7 +138,52 @@ textarea{min-height:92px;resize:vertical}
 .mono{font-family:var(--mono);font-size:12px}
 .skeleton{color:var(--ink-3)}
 
-@media (max-width:900px){ .cols{grid-template-columns:minmax(0,1fr)} }
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);overflow-x:auto}
+.tabs button{border:0;background:none;padding:9px 14px;font-weight:600;font-size:14px;color:var(--ink-2);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.tab{display:flex;flex-direction:column;gap:18px}
+input[type=text]{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 10px;font-size:14px;width:100%}
+.plan{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:18px}
+.plan .lead{font-family:var(--display);font-size:22px;line-height:1.2;margin:0 0 8px;text-wrap:balance}
+.plan h3{margin:0 0 6px;font-size:11px;letter-spacing:.9px;text-transform:uppercase;color:var(--ink-3)}
+.plan p{margin:0;color:var(--ink-2)}
+.pillars{display:grid;gap:8px;margin-top:14px}
+.pillar{background:var(--sunk);border-radius:12px;padding:10px 12px}
+.pillar b{display:block}
+.pillar span{font-size:13px;color:var(--ink-2)}
+.plan ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px;color:var(--ink-2);font-size:13px}
+.plan ul b{color:var(--ink)}
+.planSide{display:flex;flex-direction:column;gap:14px;min-width:0}
+.posts{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.post{background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column}
+.post.done{opacity:.6}
+.post video,.post .novid{width:100%;aspect-ratio:9/16;max-height:420px;object-fit:cover;background:#150F33;display:block}
+.post .novid{display:grid;place-items:center;color:#B9B0E0;font-size:13px;padding:20px;text-align:center;box-sizing:border-box}
+.postBody{padding:12px 14px 14px;display:flex;flex-direction:column;gap:8px;flex:1}
+.postTop{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.postTop b{font-family:var(--display);font-size:15px}
+.hookLine{font-size:13px;color:var(--ink-2)} .hookLine i{font-style:normal;color:var(--ink);font-weight:600}
+.caption{background:var(--sunk);border-radius:10px;padding:9px 10px;font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere}
+.caption small{display:block;color:var(--info);margin-top:4px}
+.postNote{font-size:12px;color:var(--ink-2);background:var(--warn-bg);border-radius:10px;padding:7px 10px}
+.postActions{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto}
+.postActions .btn{flex:1;justify-content:center}
+.later{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.later div{background:var(--panel);border:1px dashed var(--line);border-radius:14px;padding:12px 14px;font-size:13px;color:var(--ink-2)}
+.later b{display:block;color:var(--ink);font-size:14px;margin-bottom:2px}
+.ideasTop{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}
+.how h2{margin:0;font-family:var(--display);font-size:15px}
+.how ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--ink-2)}
+.how ol b{color:var(--ink)}
+.board{display:grid;grid-template-columns:repeat(7,minmax(200px,1fr));gap:10px;overflow-x:auto;padding-bottom:6px}
+.lane{background:var(--sunk);border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.lane h3{margin:0;font-size:12px;letter-spacing:.8px;text-transform:uppercase;color:var(--ink-2);display:flex;justify-content:space-between}
+.idea{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 11px;display:flex;flex-direction:column;gap:5px;text-decoration:none}
+.idea b{font-family:var(--display);font-size:15px}
+.idea p{margin:0;font-size:12.5px;color:var(--ink-2);line-height:1.4}
+.idea small{font-size:11.5px;color:var(--ink-3)}
+.lane .none{font-size:12px;color:var(--ink-3);padding:4px 2px}
+@media (max-width:900px){ .cols{grid-template-columns:minmax(0,1fr)} .plan,.ideasTop{grid-template-columns:minmax(0,1fr)} }
 @media (max-width:640px){
   .wrap{padding-inline:16px}
   .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -164,6 +209,13 @@ textarea{min-height:92px;resize:vertical}
 
   <div class="banner" id="banner" hidden></div>
 
+  <nav class="tabs" role="tablist" aria-label="Studio sections">
+    <button type="button" role="tab" data-tab="overview" aria-selected="true">Overview</button>
+    <button type="button" role="tab" data-tab="marketing" aria-selected="false">Marketing</button>
+    <button type="button" role="tab" data-tab="ideas" aria-selected="false">Ideas</button>
+  </nav>
+
+  <div class="tab" id="tab-overview" role="tabpanel">
   <div class="stats" id="stats">
     <div class="stat"><b class="skeleton">–</b><span>Games</span></div>
     <div class="stat"><b class="skeleton">–</b><span>Builds passing</span></div>
@@ -210,6 +262,43 @@ textarea{min-height:92px;resize:vertical}
       </section>
     </div>
   </div>
+  </div>
+
+  <div class="tab" id="tab-marketing" role="tabpanel" hidden>
+    <section class="plan" id="plan"><p class="skeleton">Loading…</p></section>
+    <section class="sec">
+      <div class="secH"><h2>Posts ready to go</h2><small id="postCount"></small></div>
+      <p class="hint" style="margin-top:-4px">Download the video, copy the caption, post it on TikTok, then repost on Reels and Shorts. Mark it posted here so you can keep track.</p>
+      <div class="posts" id="posts"></div>
+    </section>
+    <section class="sec">
+      <div class="secH"><h2>Paid ads, later</h2><small>After launch</small></div>
+      <div class="later" id="later"></div>
+    </section>
+  </div>
+
+  <div class="tab" id="tab-ideas" role="tabpanel" hidden>
+    <div class="ideasTop">
+      <section class="panel" aria-labelledby="ideaH" style="min-width:0">
+        <div class="secH"><h2 id="ideaH">Add a game idea</h2></div>
+        <label class="f" for="ideaName">Working name<input id="ideaName" type="text" placeholder="Example: Pizza Tower Rush"></label>
+        <label class="f" for="ideaPitch">What's the game?<textarea id="ideaPitch" placeholder="One or two sentences: what the player does and why it's fun."></textarea></label>
+        <button class="btn primary" id="ideaSend" type="button" style="justify-content:center;padding:10px">Add idea</button>
+        <p class="hint">Opens GitHub with your idea filled in. Click <b>Create</b>. An agent writes up the idea and adds it to the board for you to approve. Nothing gets built until you move it to Prototype.</p>
+      </section>
+      <section class="panel how">
+        <h2>How ideas become games</h2>
+        <ol>
+          <li><b>Idea.</b> A one-line pitch.</li>
+          <li><b>Prototype.</b> A playable web version in a few days.</li>
+          <li><b>Testing.</b> Friends and short TikTok clips. Do people come back?</li>
+          <li><b>Launching.</b> Only the winners go to the App Store.</li>
+        </ol>
+        <p class="hint">Most ideas should get dropped. Testing many small games cheaply is how studios find their hits.</p>
+      </section>
+    </div>
+    <div class="board" id="board" tabindex="0" aria-label="Idea board"></div>
+  </div>
 </div>
 
 <script>
@@ -217,7 +306,7 @@ textarea{min-height:92px;resize:vertical}
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const API = 'https://api.github.com/repos/';
-let CONFIG = null, lastLoad = 0, type = 'Idea';
+let CONFIG = null, lastLoad = 0, type = 'Idea', lastData = {}, MK = null, IDEAS = null;
 
 function rel(ts){
   const s = (Date.now() - new Date(ts)) / 1000;
@@ -277,7 +366,7 @@ function runState(r){
 // A request is an issue. Its status comes from linked pull requests or a request-N branch.
 function requestsFor(app, d){
   const prs = d.issues.filter(i => i.pull_request);
-  return d.issues.filter(i => !i.pull_request).map(i => {
+  return d.issues.filter(i => !i.pull_request && !/^\[Game idea\]/i.test(i.title)).map(i => {
     const pr = prs.find(p => p.state === 'open' && new RegExp('#' + i.number + '\\b').test((p.title||'') + ' ' + (p.body||'')));
     const br = d.branches.find(b => b === 'request-' + i.number || b.startsWith('request-' + i.number + '-'));
     let status, cls, link = null, linkText = '';
@@ -291,6 +380,7 @@ function requestsFor(app, d){
 }
 
 function render(data){
+  lastData = data; renderIdeas();
   const apps = CONFIG.apps;
   let passing = 0, total = 0, allReqs = [], feed = [];
   const html = apps.map(app => {
@@ -383,6 +473,85 @@ $('send').addEventListener('click', () => {
   setTimeout(load, 15000);
 });
 $('refresh').addEventListener('click', load);
+
+// ---------- Tabs ----------
+function showTab(name){
+  document.querySelectorAll('.tabs button').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === name));
+  document.querySelectorAll('.tab').forEach(t => t.hidden = t.id !== 'tab-' + name);
+  if (name === 'marketing') loadMarketing();
+  if (name === 'ideas') loadIdeas();
+  if (location.hash.slice(1) !== name) history.replaceState(null, '', name === 'overview' ? location.pathname : '#' + name);
+}
+document.querySelector('.tabs').addEventListener('click', e => { const b = e.target.closest('button[data-tab]'); if (b) showTab(b.dataset.tab); });
+
+// ---------- Marketing ----------
+const postedKey = id => 'posted:' + id;
+async function loadMarketing(){
+  if (!MK) { try { MK = await (await fetch('marketing.json', { cache: 'no-cache' })).json(); } catch (e) { $('plan').innerHTML = '<p>Couldn\'t load the marketing plan. Press Refresh.</p>'; return; } }
+  const P = MK.plan;
+  $('plan').innerHTML = `<div style="min-width:0"><h3>The pitch</h3><p class="lead">${esc(P.oneLiner)}</p><p>${esc(P.audience)}</p>
+      <div class="pillars">${P.pillars.map(x => `<div class="pillar"><b>${esc(x.name)}</b><span>${esc(x.why)}</span></div>`).join('')}</div></div>
+    <div class="planSide"><div><h3>Where to post</h3><ul>${P.channels.map(c => `<li><b>${esc(c.name)}.</b> ${esc(c.note)}</li>`).join('')}</ul></div>
+      <div><h3>How often</h3><p style="font-size:13px">${esc(P.cadence)}</p></div>
+      <div><h3>Tips</h3><ul>${P.tips.map(t => `<li>${esc(t)}</li>`).join('')}</ul></div></div>`;
+  renderPosts();
+  $('later').innerHTML = MK.paidLater.map(x => `<div><b>${esc(x.name)}</b>${esc(x.note)}</div>`).join('');
+}
+function renderPosts(){
+  const done = MK.posts.filter(p => cache(postedKey(p.id))).length;
+  $('postCount').textContent = `${done} of ${MK.posts.length} posted`;
+  $('posts').innerHTML = MK.posts.map(p => {
+    const posted = !!cache(postedKey(p.id));
+    const vid = p.video ? `<video src="../marketing/clips/${esc(p.video)}.mp4" poster="../marketing/clips/${esc(p.video)}.jpg" controls muted playsinline preload="none"></video>` : `<div class="novid">No clip yet. See the note below.</div>`;
+    return `<article class="post ${posted ? 'done' : ''}">${vid}<div class="postBody">
+      <div class="postTop"><b>${esc(p.title)}</b><span class="pill ${posted ? 'good' : 'warn'}">${posted ? 'Posted' : 'Week ' + p.week}</span></div>
+      <div class="hookLine">On-screen hook: <i>${esc(p.hook)}</i></div>
+      <div class="caption" id="cap-${esc(p.id)}">${esc(p.caption)}<small>${esc(p.hashtags)}</small></div>
+      ${p.note ? `<div class="postNote">${esc(p.note)}</div>` : ''}
+      <div class="postActions">
+        <button class="btn" type="button" data-copy="${esc(p.id)}">Copy caption</button>
+        ${p.video ? `<a class="btn" href="../marketing/clips/${esc(p.video)}.mp4" download="crumbstack-${esc(p.video)}.mp4">Download video</a>` : ''}
+        <button class="btn ${posted ? '' : 'primary'}" type="button" data-posted="${esc(p.id)}">${posted ? 'Undo' : 'Mark posted'}</button>
+      </div></div></article>`;
+  }).join('');
+}
+$('posts').addEventListener('click', async e => {
+  const c = e.target.closest('[data-copy]');
+  if (c) { const p = MK.posts.find(x => x.id === c.dataset.copy); const text = p.caption + '\n\n' + p.hashtags;
+    try { await navigator.clipboard.writeText(text); c.textContent = 'Copied'; } catch (_) { const r = document.createRange(); r.selectNodeContents($('cap-' + p.id)); getSelection().removeAllRanges(); getSelection().addRange(r); c.textContent = 'Selected: press Ctrl+C'; }
+    setTimeout(() => c.textContent = 'Copy caption', 1800); return; }
+  const m = e.target.closest('[data-posted]');
+  if (m) { const k = postedKey(m.dataset.posted); if (cache(k)) { try { localStorage.removeItem('studio:' + k); } catch (_) {} } else cache(k, Date.now()); renderPosts(); }
+});
+
+// ---------- Ideas ----------
+async function loadIdeas(){
+  if (!IDEAS) { try { IDEAS = await (await fetch('ideas.json', { cache: 'no-cache' })).json(); } catch (e) { $('board').innerHTML = '<p>Couldn\'t load ideas. Press Refresh.</p>'; return; } }
+  renderIdeas();
+}
+function renderIdeas(){
+  if (!IDEAS || !CONFIG) return;
+  const fresh = [];
+  for (const app of CONFIG.apps) { const d = lastData[app.id]; if (!d) continue;
+    d.issues.filter(i => !i.pull_request && i.state === 'open' && /^\[Game idea\]/i.test(i.title)).forEach(i => fresh.push(i)); }
+  const lanes = ['New', ...IDEAS.stages];
+  $('board').innerHTML = lanes.map(stage => {
+    const cards = stage === 'New'
+      ? fresh.map(i => `<a class="idea" href="${esc(i.html_url)}" target="_blank" rel="noopener"><b>${esc(i.title.replace(/^\[Game idea\]\s*/i, ''))}</b><p>${esc((i.body || '').split('\n---')[0].slice(0, 160))}</p><small>Waiting for an agent to write it up · #${i.number}</small></a>`)
+      : IDEAS.ideas.filter(x => x.stage === stage).map(x => `<div class="idea"><b>${esc(x.name)}</b><p>${esc(x.pitch)}</p>${x.notes ? `<small>${esc(x.notes)}</small>` : ''}<small>Idea by ${esc(x.by)}</small></div>`);
+    return `<div class="lane"><h3>${stage}<span>${cards.length}</span></h3>${cards.join('') || '<div class="none">Nothing here</div>'}</div>`;
+  }).join('');
+}
+$('ideaSend').addEventListener('click', () => {
+  const name = $('ideaName').value.trim(), pitch = $('ideaPitch').value.trim();
+  if (!name || !pitch) { (name ? $('ideaPitch') : $('ideaName')).focus(); return; }
+  const repo = CONFIG.apps[0].repo;
+  const body = `${pitch}\n\n---\nNew game idea sent from Studio. An agent writes it up and adds it to the Idea board. Nothing gets built until the owner moves it to Prototype.`;
+  window.open(`https://github.com/${repo}/issues/new?title=${encodeURIComponent('[Game idea] ' + name)}&body=${encodeURIComponent(body)}`, '_blank', 'noopener');
+  $('ideaName').value = ''; $('ideaPitch').value = '';
+  setTimeout(load, 15000);
+});
+if (['marketing', 'ideas'].includes(location.hash.slice(1))) showTab(location.hash.slice(1));
 addEventListener('focus', () => { if (Date.now() - lastLoad > 60000) load(); });
 
 load();

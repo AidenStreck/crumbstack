@@ -88,4 +88,10 @@ for (const f of fs.readdirSync(path.join(root, 'pages'))) fs.copyFileSync(path.j
 
 // 7) Studio: the control dashboard, published at /studio/
 fs.cpSync(path.join(root, 'studio'), path.join(www, 'studio'), { recursive: true });
+
+// 9) Game prototypes, each playable at /prototypes/<id>/
+if (fs.existsSync(path.join(root, 'prototypes'))) fs.cpSync(path.join(root, 'prototypes'), path.join(www, 'prototypes'), { recursive: true });
+
+// 8) Marketing clips (shown and downloadable in Studio)
+if (fs.existsSync(path.join(root, 'marketing'))) fs.cpSync(path.join(root, 'marketing'), path.join(www, 'marketing'), { recursive: true });
 console.log('Built www/ (' + Math.round(html.length / 1024) + ' KB)');
