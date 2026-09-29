@@ -60,7 +60,7 @@ jobs:
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
           <plist version="1.0"><dict>
             <key>method</key><string>app-store-connect</string>
-            <key>destination</key><string>upload</string>
+            <key>destination</key><string>export</string>
             <key>teamID</key><string>$TEAM_ID</string>
             <key>signingStyle</key><string>automatic</string>
             <key>manageAppVersionAndBuildNumber</key><false/>
@@ -70,5 +70,9 @@ jobs:
             -exportOptionsPlist "$RUNNER_TEMP/export.plist" -exportPath "$RUNNER_TEMP/out" \
             "${AUTH[@]}" > "$RUNNER_TEMP/export.log" 2>&1 || { tail -60 "$RUNNER_TEMP/export.log"; grep -iE "error|fail|no account|no profile|certificate" "$RUNNER_TEMP/export.log" | sort -u | head -8 | sed 's/^/::error title=Upload::/'; exit 1; }
           tail -5 "$RUNNER_TEMP/export.log"
-          rm -f "$KEY"
+          IPA=$(ls "$RUNNER_TEMP"/out/*.ipa | head -1); echo "Uploading $IPA"
+          mkdir -p ~/private_keys && cp "$KEY" ~/private_keys/
+          xcrun altool --upload-app --type ios -f "$IPA" --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID" > "$RUNNER_TEMP/upload.log" 2>&1 || { cat "$RUNNER_TEMP/upload.log" | tail -40; grep -iE "error|fail|could not|no suitable|bundle" "$RUNNER_TEMP/upload.log" | sort -u | head -8 | cut -c1-400 | sed 's/^/::error title=Upload::/'; exit 1; }
+          tail -5 "$RUNNER_TEMP/upload.log"
+          rm -f "$KEY" ~/private_keys/AuthKey_*.p8
           echo "${{ matrix.app }} build ${{ github.run_number }} sent to TestFlight."
