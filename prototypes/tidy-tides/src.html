@@ -2603,7 +2603,11 @@ $('play').onclick = start;
 layout(); S.player.y = L.row0 - 10;
 if (COAST_N > 0) { $('coastTag').hidden = false; $('coastTag').textContent = 'Coast ' + (COAST_N + 1) + ' · ' + COAST.name; }
 // keep the play area below the top bar whenever the bar changes height
-if (window.ResizeObserver) { let lastH = 0; new ResizeObserver(() => { const h = document.querySelector('.hud').getBoundingClientRect().bottom; if (Math.abs(h - lastH) > 1) { lastH = h; layout(); } }).observe(document.querySelector('.hud')); }
+// keep the goal strip under the top bar. In the iPhone app the notch gap (safe area) arrives a moment after
+// start-up and only changes the bar's padding, so watch the whole box and re-check a few times.
+{ let lastH = 0; const hud = document.querySelector('.hud'), check = () => { const h = hud.getBoundingClientRect().bottom; if (Math.abs(h - lastH) > 1) { lastH = h; layout(); } };
+  if (window.ResizeObserver) new ResizeObserver(check).observe(hud, { box: 'border-box' });
+  [100, 400, 1000, 2500].forEach(ms => setTimeout(check, ms)); addEventListener('orientationchange', () => setTimeout(check, 300)); document.addEventListener('visibilitychange', () => setTimeout(check, 200)); }
 if (document.fonts) document.fonts.ready.then(() => { layout(); if (!running) S.player.y = L.row0 - 10; });
 if (location.hash.includes('test')) window.__tt = { S, save, AREAS, MACHINES, MBY, get L(){ return L; }, get camX(){ return camX; }, pads, waterline, mst, built, dispCount, dispCap, goalAt, goalProgress, claimGoal, areaUpCost, machUpCost, globalCost, AREA_UPS, GLOBAL_UPS, ensureHelpers, cap, coachQ, edgeTabs, drawItem, spawnSpecial, openJournal, postcard, dailyTasks, albumAdd, EVENT, startPlacing, DECOR, CREATURES, drawCreature, COAST, COAST_N, NEXT_COAST, doSail, openSail, openStars, starsNow, PERKS, salePrice, get tut(){ return tutStep; }, endTutorial, start, openBoard, closeBoard };
 requestAnimationFrame(loop);
