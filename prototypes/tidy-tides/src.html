@@ -26,9 +26,21 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
 .health .bar{height:7px;background:#E2EEF2;border-radius:999px;margin-top:3px;overflow:hidden}
 .health .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#8BD3A5,var(--leaf));border-radius:999px;transition:width .4s}
 .health .next{font-size:10.5px;color:var(--ink-2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.side{display:flex;gap:6px;flex:none;pointer-events:auto}
-.iconBtn{position:relative;width:36px;height:36px;border-radius:50%;border:0;background:rgba(255,255,255,.94);box-shadow:0 3px 0 rgba(22,50,74,.18);display:grid;place-items:center;padding:0}
+.side{display:flex;gap:5px;flex:none;pointer-events:auto}
+.iconBtn{position:relative;width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.94);box-shadow:0 3px 0 rgba(22,50,74,.18);display:grid;place-items:center;padding:0}
 .iconBtn svg{width:20px;height:20px}
+.iconBtn .cnt{position:absolute;bottom:-4px;right:-5px;min-width:17px;height:15px;padding:0 3px;box-sizing:border-box;border-radius:8px;background:var(--ink);color:#fff;font-size:10px;font-weight:700;font-style:normal;display:grid;place-items:center;box-shadow:0 0 0 2px #fff}
+.star{display:inline-block;width:22px;height:22px;background:var(--gold);clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);flex:none}
+.star.sm{width:16px;height:16px;vertical-align:-3px}
+.modal .amt .star{width:38px;height:38px}
+.modal .list{width:100%;max-height:52vh;text-align:left}
+.keep{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;text-align:left}
+.keep div{background:#fff;border-radius:12px;padding:8px 10px;font-size:13px;line-height:1.35;color:var(--ink-2);font-weight:500;box-shadow:0 2px 0 var(--line)}
+.keep b{display:block;color:var(--ink);font-size:13px;margin-bottom:2px}
+.twist{background:#FFF1C2;border-radius:12px;padding:8px 10px;width:100%;box-sizing:border-box}
+.btn.ghost{background:none;box-shadow:none;color:var(--ink-2);font-size:17px;padding:6px 20px}
+.buy.stars{background:linear-gradient(#FFF3B8,#FFD65A)}
+.coastTag{color:#FFE58A;font-weight:700;font-size:16px;letter-spacing:.5px}
 .iconBtn .dot{position:absolute;top:1px;right:1px;width:11px;height:11px;border-radius:50%;background:var(--coral);box-shadow:0 0 0 2px #fff}
 .goal{position:fixed;left:10px;right:10px;top:calc(var(--hudb,60px) + 6px);z-index:2;max-width:540px;margin:0 auto;box-sizing:border-box;background:rgba(255,255,255,.93);border-radius:13px;padding:6px 10px 7px;box-shadow:0 3px 0 rgba(22,50,74,.18);display:grid;grid-template-columns:auto 1fr auto;gap:3px 7px;align-items:center;min-height:40px}
 .goal small{font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:#fff;background:var(--ink-2);border-radius:6px;padding:1px 5px;font-weight:600}
@@ -100,6 +112,7 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
   <div class="side">
     <button class="iconBtn" id="mute" aria-label="Sound on"><svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12.5 5v14l-5-4.5H4z" fill="currentColor"/><path id="waves" d="M15.5 9a4 4 0 010 6M18 6.5a7.5 7.5 0 010 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
     <button class="iconBtn" id="giftBtn" aria-label="Daily gift"><svg viewBox="0 0 24 24"><rect x="3.5" y="9" width="17" height="11.5" rx="2" fill="#FF7A6B"/><rect x="2.5" y="6.5" width="19" height="4" rx="1.5" fill="#FF9A8C"/><rect x="10.8" y="6.5" width="2.4" height="14" fill="#FFC83D"/><path d="M12 6.5c-2-4-6-3-4.5-.5M12 6.5c2-4 6-3 4.5-.5" fill="none" stroke="#FFC83D" stroke-width="2" stroke-linecap="round"/></svg><i class="dot" id="giftDot" hidden></i></button>
+    <button class="iconBtn" id="starBtn" aria-label="Sea Stars" hidden><svg viewBox="0 0 24 24"><path d="M12 2.5l2.8 6.1 6.7.7-5 4.5 1.4 6.6L12 17l-5.9 3.4 1.4-6.6-5-4.5 6.7-.7z" fill="#FFC83D" stroke="#D99A12" stroke-width="1.2" stroke-linejoin="round"/></svg><i class="cnt" id="starCnt">0</i></button>
     <button class="iconBtn" id="wardBtn" aria-label="Wardrobe"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="15" rx="10" ry="3.2" fill="#FFC83D"/><path d="M6.5 15c0-5 2.5-8 5.5-8s5.5 3 5.5 8z" fill="#FFC83D"/><rect x="6.6" y="12.2" width="10.8" height="2" fill="#FF7A6B"/></svg></button>
   </div>
 </div>
@@ -108,6 +121,7 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
 <div class="proto">PROTOTYPE</div>
 <div class="overlay" id="title">
   <div class="logo">Tidy<span>Tides</span></div>
+  <div class="coastTag" id="coastTag" hidden></div>
   <div class="tag">Clean the coast. Build a business. Bring it back to life.</div>
   <button class="btn big" id="play">Play</button>
 </div>
@@ -124,42 +138,95 @@ const fmt = n => n >= 10000 ? (n/1000).toFixed(n >= 100000 ? 0 : 1) + 'k' : Stri
 
 // ================= DATA =================
 const AW = 400; // each area is 400 units wide
-const AREAS = [
-  { id:'beach', name:'Sunny Beach', cost:0, mult:1, stall:'TIDY TIDES',
-    machines:[
-      { id:'kiln',  name:'Sea-Glass Kiln', input:'bottle', output:'beads',    cost:0,   col:'#35C6D8', shape:'kiln',  dx:75 },
-      { id:'loom',  name:'Rope Loom',      input:'rope',   output:'bracelet', cost:25,  col:'#F2A65A', shape:'loom',  dx:200 },
-      { id:'press', name:'Can Press',      input:'can',    output:'boat',     cost:100, col:'#E4606D', shape:'press', dx:325 } ] },
-  { id:'pier', name:'Old Pier', cost:1500, mult:3, stall:'PIER MARKET',
-    machines:[
-      { id:'mender',   name:'Net Mender',     input:'net',  output:'hammock',   cost:0,   col:'#2FA39A', shape:'loom',  dx:75 },
-      { id:'workshop', name:'Driftwood Shop', input:'wood', output:'birdhouse', cost:200, col:'#B97A44', shape:'bench', dx:200 },
-      { id:'painter',  name:'Buoy Painter',   input:'buoy', output:'lantern',   cost:450, col:'#8E7CF0', shape:'booth', dx:325 } ] },
-  { id:'cove', name:'Lighthouse Cove', cost:8000, mult:9, stall:'COVE BOUTIQUE',
-    machines:[
-      { id:'stitcher',  name:'Sandal Stitcher',  input:'sandal', output:'keychain',  cost:0,    col:'#FF9AC4', shape:'press', dx:75 },
-      { id:'terrarium', name:'Terrarium Studio', input:'jar',    output:'terrarium', cost:900, col:'#4CC38A', shape:'dome',  dx:200 },
-      { id:'planter',   name:'Tire Planter',     input:'tire',   output:'planter',   cost:1800, col:'#6B7B86', shape:'bench', dx:325 } ] },
+const KEY = 'tidytides-save-v2';
+let stored = null; try { stored = JSON.parse(localStorage.getItem(KEY)); } catch(e){}
+
+// ---- Coasts ----
+// Each coast is a fresh map: 3 areas, 9 machines, its own trash, goods, helper animals, wildlife and hats.
+// Finishing a coast lets you "set sail" to the next one: coins and buildings start fresh, but Sea Stars,
+// perks and hats are kept (like moving to a new city in Eatventure). Prices are the same on every coast.
+// After the last hand-made coast the game keeps going with "tours" of earlier coasts, each with a twist.
+// To add a coast: add an entry here (same shape), draw its new items in drawItem, then bump nothing else.
+// Machine: [id, name, input, output, colour, shape]. Shapes: kiln, loom, press, bench, booth, dome.
+const COASTS = [
+  { id:'sunny', name:'Sunny Coast', blurb:'Sandy beaches, an old pier and a lighthouse.',
+    sand:['#CBB995','#F6DDA4'], seaTop:['#3F5F63','#1C7F9A'], seaLow:['#6E8F86','#46CFDD'], tree:'palm', grass:'#7DB36A', decor:['', 'pier', 'lighthouse'],
+    collector:{ kind:'crab', name:'Hermit crab', plural:'hermit crabs' }, carrier:{ kind:'pelican', name:'Pelican courier', short:'pelican', plural:'pelicans' },
+    big:{ col:'#7FA7C6', w:14, h:5 }, turtle:'#3F7B4F',
+    wild:[['seagulls return','The seagulls are back!'], ['a sea turtle nests','A sea turtle came to nest!'], ['the water clears','The water is clearing up!'], ['starfish return','Starfish everywhere!'], ['dolphins','Dolphins! This spot is healed!']],
+    hats:['captain', 'snorkel', 'flower'],
+    areas:[
+      { id:'beach', name:'Sunny Beach', short:'beach', stall:'TIDY TIDES', machines:[
+        ['kiln','Sea-Glass Kiln','bottle','beads','#35C6D8','kiln'], ['loom','Rope Loom','rope','bracelet','#F2A65A','loom'], ['press','Can Press','can','boat','#E4606D','press'] ] },
+      { id:'pier', name:'Old Pier', short:'pier', stall:'PIER MARKET', machines:[
+        ['mender','Net Mender','net','hammock','#2FA39A','loom'], ['workshop','Driftwood Shop','wood','birdhouse','#B97A44','bench'], ['painter','Buoy Painter','buoy','lantern','#8E7CF0','booth'] ] },
+      { id:'cove', name:'Lighthouse Cove', short:'cove', stall:'COVE BOUTIQUE', machines:[
+        ['stitcher','Sandal Stitcher','sandal','keychain','#FF9AC4','press'], ['terrarium','Terrarium Studio','jar','terrarium','#4CC38A','dome'], ['planter','Tire Planter','tire','planter','#6B7B86','bench'] ] } ] },
+  { id:'coral', name:'Coral Bay', blurb:'A tropical lagoon, mangrove boardwalks and a coral reef.',
+    sand:['#C9AFA0','#FBE3D6'], seaTop:['#3D5E62','#0F9DB0'], seaLow:['#6C938B','#3FE0D0'], tree:'palm', grass:'#6CC08A', decor:['', 'huts', 'reef'],
+    collector:{ kind:'turtle', name:'Sea turtle', plural:'sea turtles' }, carrier:{ kind:'parrot', name:'Parrot courier', short:'parrot', plural:'parrots' },
+    big:{ col:'#34495E', w:18, h:6 }, turtle:'#2E8B6E',
+    wild:[['parrotfish return','Parrotfish are back!'], ['a turtle nests','A green turtle came to nest!'], ['the water turns blue','The water is turquoise again!'], ['coral blooms','The coral is blooming!'], ['manta rays','Manta rays! This spot is healed!']],
+    hats:['straw', 'bandana', 'hibiscus'],
+    areas:[
+      { id:'lagoon', name:'Palm Lagoon', short:'lagoon', stall:'LAGOON SHACK', machines:[
+        ['capbench','Cap Mosaic Bench','caps','mosaic','#E4606D','bench'], ['bagweaver','Bag Weaver','pbag','tote','#6CC6B8','loom'], ['chimes','Chime Workshop','straw','chime','#FF9AC4','booth'] ] },
+      { id:'mangrove', name:'Mangrove Walk', short:'mangrove', stall:'MANGROVE MART', machines:[
+        ['crateshop','Crate Carpenter','crate','stool','#C99A5E','bench'], ['cuppress','Cup Press','cup','seedpot','#D98C5F','press'], ['dreamloom','Dreamcatcher Loom','line','dream','#8E7CF0','loom'] ] },
+      { id:'reef', name:'Reef Point', short:'reef', stall:'REEF BOUTIQUE', machines:[
+        ['solegrinder','Sole Grinder','sneaker','mat','#5AA7F0','press'], ['brushbench','Brush Bench','brush','scrub','#4CC38A','kiln'], ['kitestudio','Kite Studio','balloon','kite','#FFC83D','dome'] ] } ] },
+  { id:'fjord', name:'Frosty Fjord', blurb:'Pebble shores, a fishing village and a glacier bay.',
+    sand:['#9EA3A2','#E4E8E6'], seaTop:['#2E4652','#1B5E88'], seaLow:['#5E7A80','#5FB4DA'], tree:'pine', grass:'#8FB7A0', decor:['', 'cabins', 'glacier'],
+    collector:{ kind:'penguin', name:'Penguin', plural:'penguins' }, carrier:{ kind:'puffin', name:'Puffin courier', short:'puffin', plural:'puffins' },
+    big:{ col:'#1E2328', w:16, h:6, orca:true }, turtle:'#8C9AA3',
+    wild:[['puffins return','The puffins are back!'], ['a seal pup arrives','A seal pup is sunbathing!'], ['the water clears','The water is clearing up!'], ['sea urchins return','Sea urchins everywhere!'], ['orcas','Orcas! This spot is healed!']],
+    hats:['beanie', 'viking', 'earmuffs'],
+    areas:[
+      { id:'shore', name:'Pebble Shore', short:'shore', stall:'SHORE HUT', machines:[
+        ['puppetloom','Puppet Loom','glove','puppet','#E4606D','loom'], ['sledshop','Sled Shaper','foam','sled','#35C6D8','bench'], ['corkpress','Cork Press','cork','corkboard','#C9A06A','press'] ] },
+      { id:'village', name:'Fishing Village', short:'village', stall:'VILLAGE MARKET', machines:[
+        ['trapshop','Trap Carpenter','trap','shelf','#4F6B80','bench'], ['skateforge','Skate Forge','boot','skates','#FFC83D','kiln'], ['feederbooth','Feeder Booth','jug','feeder','#4CC38A','booth'] ] },
+      { id:'glacier', name:'Glacier Bay', short:'bay', stall:'GLACIER GIFTS', machines:[
+        ['drumforge','Drum Forge','drum','stove','#2E6DB4','kiln'], ['tentloom','Tent Loom','tarp','tent','#2FA39A','loom'], ['lampdome','Cone Lamp Dome','cone','lamp','#FF8A3D','dome'] ] } ] },
 ];
-AREAS.forEach((a, i) => { a.i = i; a.x = i * AW; a.machines.forEach(m => { m.area = a; m.x = a.x + m.dx; }); });
+// Tours: after the hand-made coasts, earlier coasts come back with a twist
+const TWISTS = [
+  { id:'rush',    name:'Tourist rush',     desc:'Tourists arrive twice as fast.' },
+  { id:'tides',   name:'Spring tides',     desc:'Twice as much trash washes up.' },
+  { id:'golden',  name:'Golden goods',     desc:'Everything sells for 50% more.' },
+  { id:'bargain', name:"Builder's bargain", desc:'Machines and upgrades cost 30% less.' },
+];
+function coastInfo(n){
+  const base = COASTS[n % COASTS.length], tour = Math.floor(n / COASTS.length) + 1;
+  return { ...base, n, tour, name: tour > 1 ? `${base.name} · Tour ${tour}` : base.name, twist: n >= COASTS.length ? TWISTS[(n - COASTS.length) % TWISTS.length] : null };
+}
+const COAST_N = stored && stored.v === 2 ? stored.coast || 0 : 0;
+const COAST = coastInfo(COAST_N), NEXT_COAST = coastInfo(COAST_N + 1);
+const twist = id => !!(COAST.twist && COAST.twist.id === id);
+
+// Same prices on every coast (by position), so nothing gets endlessly more expensive
+const AREA_COST = [0, 1500, 8000], AREA_MULT = [1, 3, 9];
+const MACH_COST = [[0, 25, 100], [0, 200, 450], [0, 900, 1800]];
+const SLOT_PRICE = [4, 7, 12, 16, 24, 36, 45, 70, 100];
+const AREAS = COAST.areas.map((a, i) => ({ id: a.id, name: a.name, short: a.short, stall: a.stall, i, x: i * AW, cost: AREA_COST[i], mult: AREA_MULT[i],
+  machines: a.machines.map(([id, name, input, output, col, shape], j) => ({ id, name, input, output, col, shape, dx: 75 + j * 125, cost: Math.round(MACH_COST[i][j] * (twist('bargain') ? .7 : 1)), slot: i * 3 + j })) }));
+AREAS.forEach(a => a.machines.forEach(m => { m.area = a; m.x = a.x + m.dx; }));
 const MACHINES = AREAS.flatMap(a => a.machines);
 const MBY = Object.fromEntries(MACHINES.map(m => [m.id, m]));
-const PRICE = { beads:4, bracelet:7, boat:12, hammock:16, birdhouse:24, lantern:36, keychain:45, terrarium:70, planter:100 };
+const PRICE = Object.fromEntries(MACHINES.map(m => [m.output, SLOT_PRICE[m.slot]]));
 const LABEL = { beads:'Sea-glass beads', bracelet:'Rope bracelets', boat:'Tin toy boats', hammock:'Hammocks', birdhouse:'Birdhouses', lantern:'Buoy lanterns', keychain:'Flip-flop keychains', terrarium:'Terrariums', planter:'Tire planters',
-  bottle:'bottles', rope:'rope', can:'cans', net:'nets', wood:'driftwood', buoy:'buoys', sandal:'flip-flops', jar:'jars', tire:'tires' };
-const MILESTONES = [
-  { at:5,   text:'The seagulls are back!', short:'seagulls return' },
-  { at:15,  text:'A sea turtle came to nest!', short:'a sea turtle nests' },
-  { at:35,  text:'The water is clearing up!', short:'the water clears' },
-  { at:60,  text:'Starfish everywhere!', short:'starfish return' },
-  { at:100, text:'Dolphins! This spot is healed!', short:'dolphins' },
-];
+  bottle:'bottles', rope:'rope', can:'cans', net:'nets', wood:'driftwood', buoy:'buoys', sandal:'flip-flops', jar:'jars', tire:'tires',
+  mosaic:'Mosaic coasters', tote:'Woven totes', chime:'Wind chimes', stool:'Crate stools', seedpot:'Seed pots', dream:'Dreamcatchers', mat:'Yoga mats', scrub:'Scrub brushes', kite:'Kites',
+  caps:'bottle caps', pbag:'plastic bags', straw:'straws', crate:'crates', cup:'coffee cups', line:'fishing line', sneaker:'sneakers', brush:'toothbrushes', balloon:'balloons',
+  puppet:'Finger puppets', sled:'Snow sleds', corkboard:'Corkboards', shelf:'Trap shelves', skates:'Ice skates', feeder:'Bird feeders', stove:'Camp stoves', tent:'Tents', lamp:'Cone lamps',
+  glove:'lost gloves', foam:'foam chunks', cork:'corks', trap:'lobster traps', boot:'rubber boots', jug:'plastic jugs', drum:'old drums', tarp:'tarps', cone:'traffic cones' };
+const MILESTONES = [5, 15, 35, 60, 100].map((at, i) => ({ at, short: COAST.wild[i][0], text: COAST.wild[i][1] }));
 // Upgrades on each area's Crew & Upgrades board. Costs scale with the area.
 const AREA_UPS = [
-  { k:'crabs',    name:'Hermit crab',    desc:'Collects trash and fills baskets.',          base:[50,120,240],     max:3 },
-  { k:'pelicans', name:'Pelican courier',desc:'Carries finished goods to the counter.',     base:[140,380],        max:2 },
-  { k:'display',  name:'Bigger counter', desc:'Holds 8 more goods for sale.',               base:[60,150,350],     max:3 },
-  { k:'umbrella', name:'Beach umbrellas',desc:'More tourists, arriving faster.',            base:[180,500],        max:2 },
+  { k:'crabs',    name: COAST.collector.name, desc:'Collects trash and fills baskets.',      base:[50,120,240], max:3 },
+  { k:'pelicans', name: COAST.carrier.name,   desc:'Carries finished goods to the counter.', base:[140,380],    max:2 },
+  { k:'display',  name:'Bigger counter',      desc:'Holds 8 more goods for sale.',           base:[60,150,350], max:3 },
+  { k:'umbrella', name:'Beach umbrellas',     desc:'More tourists, arriving faster.',        base:[180,500],    max:2 },
 ];
 const GLOBAL_UPS = [
   { k:'bag',   name:'Bigger bag', desc:'Carry 3 more items.',  costs:[30,80,160,320,640,1200], max:6 },
@@ -167,80 +234,77 @@ const GLOBAL_UPS = [
 ];
 const MACH_UP = [40, 100, 220, 450]; // x area multiplier
 const HATS = [
-  { id:'sun',     name:'Sun hat',      how:'free' },
-  { id:'captain', name:'Captain cap',  how:'goal', note:'Restore the Old Pier' },
-  { id:'pirate',  name:'Pirate hat',   how:'buy', cost:500 },
-  { id:'snorkel', name:'Snorkel',      how:'goal', note:'Restore Lighthouse Cove' },
-  { id:'flower',  name:'Flower crown', how:'goal', note:'Fully heal Sunny Beach' },
-  { id:'crown',   name:'Crown',        how:'buy', cost:5000 },
+  { id:'sun',      name:'Sun hat',      how:'free' },
+  { id:'flower',   name:'Flower crown', how:'goal' },
+  { id:'captain',  name:'Captain cap',  how:'goal' },
+  { id:'snorkel',  name:'Snorkel',      how:'goal' },
+  { id:'pirate',   name:'Pirate hat',   how:'buy', cost:500 },
+  { id:'crown',    name:'Crown',        how:'buy', cost:5000 },
+  { id:'hibiscus', name:'Hibiscus',     how:'goal' },
+  { id:'straw',    name:'Straw fedora', how:'goal' },
+  { id:'bandana',  name:'Bandana',      how:'goal' },
+  { id:'earmuffs', name:'Earmuffs',     how:'goal' },
+  { id:'beanie',   name:'Beanie',       how:'goal' },
+  { id:'viking',   name:'Viking helmet',how:'goal' },
 ];
-const GOALS = [
-  { t:'recycle', item:'bottle', n:5, r:15 },
-  { t:'sell', item:'beads', n:6, r:20 },
-  { t:'build', id:'loom', r:25 },
-  { t:'global', k:'bag', lv:1, r:30, text:'Get a bigger bag' },
-  { t:'sell', item:'bracelet', n:8, r:40 },
-  { t:'hire', area:'beach', k:'crabs', n:1, r:40, text:'Hire a hermit crab' },
-  { t:'mlv', id:'kiln', lv:1, r:50, text:'Upgrade the Sea-Glass Kiln' },
-  { t:'build', id:'press', r:60 },
-  { t:'hire', area:'beach', k:'pelicans', n:1, r:80, text:'Hire a pelican courier' },
-  { t:'health', area:'beach', pct:50, r:100 },
-  { t:'sell', item:'boat', n:15, r:100 },
-  { t:'hire', area:'beach', k:'crabs', n:2, r:120, text:'Hire a second hermit crab' },
-  { t:'mlv', id:'loom', lv:2, r:150, text:'Upgrade the Rope Loom to ★2' },
-  { t:'health', area:'beach', pct:100, r:200, hat:'flower' },
-  { t:'earn', n:1500, r:200, text:'Earn 1,500 coins' },
-  { t:'area', id:'pier', r:300, text:'Restore the Old Pier', hat:'captain' },
-  { t:'sell', item:'hammock', n:10, r:250 },
-  { t:'build', id:'workshop', r:250 },
-  { t:'hire', area:'pier', k:'crabs', n:1, r:300, text:'Hire a crab at the pier' },
-  { t:'sell', item:'birdhouse', n:12, r:350 },
-  { t:'build', id:'painter', r:400 },
-  { t:'hire', area:'pier', k:'pelicans', n:1, r:450, text:'Hire a pelican at the pier' },
-  { t:'mlv', id:'mender', lv:2, r:500, text:'Upgrade the Net Mender to ★2' },
-  { t:'sell', item:'lantern', n:15, r:500 },
-  { t:'health', area:'pier', pct:50, r:600 },
-  { t:'mlv', id:'workshop', lv:2, r:600, text:'Upgrade the Driftwood Shop to ★2' },
-  { t:'mlv', id:'painter', lv:2, r:700, text:'Upgrade the Buoy Painter to ★2' },
-  { t:'hire', area:'pier', k:'pelicans', n:2, r:800, text:'Hire a second pier pelican' },
-  { t:'health', area:'pier', pct:100, r:1000 },
-  { t:'earn', n:8000, r:1000, text:'Earn 8,000 coins' },
-  { t:'area', id:'cove', r:1500, text:'Restore Lighthouse Cove', hat:'snorkel' },
-  { t:'sell', item:'keychain', n:15, r:1200 },
-  { t:'build', id:'terrarium', r:1500 },
-  { t:'build', id:'planter', r:2000 },
-  { t:'health', area:'cove', pct:100, r:4000, text:'Heal the whole coast' },
+// where each goal hat comes from (coast hats: [restore area 2, restore area 3, heal area 1])
+COASTS.forEach(c => c.hats.forEach((h, i) => { const hat = HATS.find(x => x.id === h); if (hat) hat.note = `${c.name}: ${i === 2 ? 'heal ' + c.areas[0].name : 'restore ' + c.areas[i + 1].name}`; }));
+// Goals, written by position (m = machine 0-8, a = area 0-2) so every coast gets the same shape
+const GOAL_PLAN = [
+  { t:'recycle', m:0, n:5, r:15 }, { t:'sell', m:0, n:6, r:20 }, { t:'build', m:1, r:25 }, { t:'global', k:'bag', lv:1, r:30, text:'Get a bigger bag' },
+  { t:'sell', m:1, n:8, r:40 }, { t:'hire', a:0, k:'crabs', n:1, r:40 }, { t:'mlv', m:0, lv:1, r:50 }, { t:'build', m:2, r:60 },
+  { t:'hire', a:0, k:'pelicans', n:1, r:80 }, { t:'health', a:0, pct:50, r:100 }, { t:'sell', m:2, n:15, r:100 }, { t:'hire', a:0, k:'crabs', n:2, r:120 },
+  { t:'mlv', m:1, lv:2, r:150 }, { t:'health', a:0, pct:100, r:200, hat:2 }, { t:'earn', n:1500, r:200, text:'Earn 1,500 coins' }, { t:'area', a:1, r:300, hat:0 },
+  { t:'sell', m:3, n:10, r:250 }, { t:'build', m:4, r:250 }, { t:'hire', a:1, k:'crabs', n:1, r:300 }, { t:'sell', m:4, n:12, r:350 },
+  { t:'build', m:5, r:400 }, { t:'hire', a:1, k:'pelicans', n:1, r:450 }, { t:'mlv', m:3, lv:2, r:500 }, { t:'sell', m:5, n:15, r:500 },
+  { t:'health', a:1, pct:50, r:600 }, { t:'mlv', m:4, lv:2, r:600 }, { t:'mlv', m:5, lv:2, r:700 }, { t:'hire', a:1, k:'pelicans', n:2, r:800 },
+  { t:'health', a:1, pct:100, r:1000 }, { t:'earn', n:8000, r:1000, text:'Earn 8,000 coins' }, { t:'area', a:2, r:1500, hat:1 }, { t:'sell', m:6, n:15, r:1200 },
+  { t:'build', m:7, r:1500 }, { t:'build', m:8, r:2000 }, { t:'health', a:2, pct:100, r:4000, text:'Heal the whole coast' },
 ];
+const GOALS = GOAL_PLAN.map(p => { const g = { ...p }, m = p.m != null ? MACHINES[p.m] : null;
+  if (m) { g.id = m.id; g.item = p.t === 'recycle' ? m.input : m.output; }
+  if (p.a != null) { g.area = AREAS[p.a].id; if (p.t === 'area') g.id = g.area; }
+  g.hat = p.hat != null && COAST.tour === 1 ? COAST.hats[p.hat] : null;
+  return g; });
 // What each area needs before you can pay to restore it
-const REQS = {
-  pier: [
-    { t:'health', area:'beach', pct:100, text:'Heal Sunny Beach to 100%' },
-    { t:'allBuilt', area:'beach', text:'Build all 3 beach machines' },
-    { t:'hire', area:'beach', k:'crabs', n:2, text:'2 hermit crabs at the beach' },
-    { t:'hire', area:'beach', k:'pelicans', n:1, text:'A pelican at the beach' } ],
-  cove: [
-    { t:'health', area:'pier', pct:100, text:'Heal the Old Pier to 100%' },
-    { t:'allBuilt', area:'pier', text:'Build all 3 pier machines' },
-    { t:'mlvAll', area:'pier', lv:2, text:'Every pier machine at ★2' },
-    { t:'hire', area:'pier', k:'pelicans', n:2, text:'2 pelicans at the pier' } ],
-};
+const REQS = {};
+REQS[AREAS[1].id] = [{ t:'health', a:0, pct:100 }, { t:'allBuilt', a:0 }, { t:'hire', a:0, k:'crabs', n:2 }, { t:'hire', a:0, k:'pelicans', n:1 }];
+REQS[AREAS[2].id] = [{ t:'health', a:1, pct:100 }, { t:'allBuilt', a:1 }, { t:'mlvAll', a:1, lv:2 }, { t:'hire', a:1, k:'pelicans', n:2 }];
+Object.values(REQS).forEach(list => list.forEach(r => { const a = AREAS[r.a]; r.area = a.id;
+  r.text = r.t === 'health' ? `Heal ${a.name} to 100%` : r.t === 'allBuilt' ? `Build all 3 ${a.short} machines` : r.t === 'mlvAll' ? `Every ${a.short} machine at ★${r.lv}`
+    : r.k === 'crabs' ? `${r.n} ${COAST.collector.plural} at the ${a.short}` : r.n === 1 ? `A ${COAST.carrier.short} at the ${a.short}` : `${r.n} ${COAST.carrier.plural} at the ${a.short}`; }));
 function goalText(g){
   if (g.text) return g.text;
+  const a = g.area && AREAS.find(x => x.id === g.area);
   if (g.t === 'recycle') return `Recycle ${g.n} ${LABEL[g.item]}`;
   if (g.t === 'sell') return `Sell ${g.n} ${LABEL[g.item].toLowerCase()}`;
   if (g.t === 'build') return `Build the ${MBY[g.id].name}`;
-  if (g.t === 'health') return `Heal ${AREAS.find(a => a.id === g.area).name} to ${g.pct}%`;
+  if (g.t === 'mlv') return `Upgrade the ${MBY[g.id].name}${g.lv > 1 ? ' to ★' + g.lv : ''}`;
+  if (g.t === 'health') return `Heal ${a.name} to ${g.pct}%`;
+  if (g.t === 'area') return `Restore ${a.name}`;
+  if (g.t === 'hire') { const h = g.k === 'crabs' ? COAST.collector : COAST.carrier, where = a.i ? ` at ${a.name}` : '';
+    return g.n === 1 ? `Hire a ${h.name.toLowerCase()}${where}` : `Get ${g.n} ${h.plural}${where}`; }
   return 'Keep cleaning';
 }
+// ---- Sea Stars: earned by setting sail, spent on perks that last forever ----
+const PERKS = [
+  { k:'income',   name:'Tide profits',  desc:'+10% coins from every sale.',                   max:20, cost: lv => 3 + lv * 2 },
+  { k:'machines', name:'Busy machines', desc:'Every machine works 8% faster.',                max:10, cost: lv => 4 + lv * 2 },
+  { k:'start',    name:'Head start',    desc:'Start each new coast with 150 more coins.',     max:5,  cost: lv => 3 + lv * 3 },
+  { k:'bag',      name:'Deep pockets',  desc:'Start each new coast with a bigger bag.',       max:3,  cost: lv => 5 + lv * 4 },
+  { k:'shoes',    name:'Quick feet',    desc:'Start each new coast with faster flip-flops.',  max:2,  cost: lv => 5 + lv * 4 },
+  { k:'crew',     name:'Loyal crew',    desc:'A helper is waiting at the first area of each new coast.', max:1, cost: () => 12 },
+  { k:'night',    name:'Night shift',   desc:'Your crew works 1 more hour while you\'re away.', max:5, cost: lv => 4 + lv * 2 },
+];
 
 // ================= SAVE =================
-const KEY = 'tidytides-save-v2';
 function freshArea(a){ return { unlocked: a.i === 0, built: a.i === 0 ? { [a.machines[0].id]: true } : {}, mlv: {}, st: {}, crabs:0, pelicans:0, display:0, umbrella:0, disp:{}, recycled:0 }; }
-let save = { v:2, coins:0, bag:0, shoes:0, areas:{}, pads:{}, stats:{ rec:{}, sold:{}, earned:0 }, goal:0, goalBase:0, tutDone:false, lastSeen:0, giftDay:'', streak:0, hats:{ sun:true }, hat:'sun', muted:false };
+let save = { v:2, coins:0, bag:0, shoes:0, areas:{}, pads:{}, stats:{ rec:{}, sold:{}, earned:0 }, goal:0, goalBase:0, tutDone:false, lastSeen:0, giftDay:'', streak:0, hats:{ sun:true }, hat:'sun', muted:false,
+  coast:0, stars:0, starsEarned:0, perks:{}, sails:0, coached:{} };
 AREAS.forEach(a => save.areas[a.id] = freshArea(a));
 try {
-  const s = JSON.parse(localStorage.getItem(KEY));
-  if (s && s.v === 2) { save = Object.assign(save, s); AREAS.forEach(a => save.areas[a.id] = Object.assign(freshArea(a), s.areas && s.areas[a.id])); }
+  const s = stored;
+  if (s && s.v === 2) { save = Object.assign(save, s); save.areas = {}; AREAS.forEach(a => save.areas[a.id] = Object.assign(freshArea(a), s.areas && s.areas[a.id])); }
   else {
     const o = JSON.parse(localStorage.getItem('tidytides-save-v1'));   // bring over progress from the first prototype
     if (o && o.unlocked) {
@@ -251,6 +315,7 @@ try {
     }
   }
 } catch(e){}
+const perk = k => save.perks[k] || 0;
 function persist(){ save.lastSeen = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(save)); } catch(e){} }
 const A = id => save.areas[id];
 
@@ -358,12 +423,129 @@ function drawItem(c, type, x, y, s){
       c.fillStyle = '#FFC83D'; c.beginPath(); c.ellipse(0, 3, 7, 4, 0, 0, 7); c.fill(); c.strokeStyle = '#E09E1F'; c.lineWidth = 1.5; c.stroke();
       c.fillStyle = '#6B4A2E'; c.beginPath(); c.ellipse(0, 1.5, 4.5, 2, 0, 0, 7); c.fill();
       [['#FF7A6B', -3, -3], ['#FF9AC4', 2, -4], ['#fff', 0, -1]].forEach(([col, a, b]) => { c.fillStyle = col; c.beginPath(); c.arc(a, b, 2.4, 0, 7); c.fill(); }); break;
+    // ---- Coral Bay trash ----
+    case 'caps':
+      [[-4, 2, '#E4606D'], [4, 3, '#35C6D8'], [0, -4, '#FFC83D']].forEach(([a, b, col]) => { c.fillStyle = col; c.beginPath(); c.arc(a, b, 3.8, 0, 7); c.fill(); c.strokeStyle = 'rgba(0,0,0,.25)'; c.lineWidth = 1; c.setLineDash([1, 1]); c.stroke(); c.setLineDash([]); c.fillStyle = 'rgba(255,255,255,.45)'; c.beginPath(); c.arc(a - 1, b - 1, 1.3, 0, 7); c.fill(); }); break;
+    case 'pbag':
+      c.fillStyle = 'rgba(236,244,250,.95)'; c.strokeStyle = 'rgba(120,140,160,.7)'; c.lineWidth = 1;
+      c.beginPath(); c.moveTo(-6, -2); c.lineTo(6, -2); c.quadraticCurveTo(8, 4, 5, 7); c.lineTo(-5, 7); c.quadraticCurveTo(-8, 4, -6, -2); c.fill(); c.stroke();
+      c.lineWidth = 1.6; c.beginPath(); c.arc(-3, -2, 2.6, Math.PI, 0); c.arc(3, -2, 2.6, Math.PI, 0); c.stroke(); break;
+    case 'straw':
+      [[-3, '#FF7A6B'], [0, '#35C6D8'], [3, '#FFC83D']].forEach(([dx, col], i) => { c.save(); c.translate(dx, 0); c.rotate(-.5 + i * .35); c.fillStyle = '#fff'; c.fillRect(-1.3, -8, 2.6, 15); c.fillStyle = col; for (let y = -8; y < 7; y += 4) c.fillRect(-1.3, y, 2.6, 2); c.restore(); }); break;
+    case 'crate':
+      c.rotate(.15); c.fillStyle = '#C99A5E'; c.fillRect(-7, -6, 14, 12); c.strokeStyle = '#8B5A34'; c.lineWidth = 1.2; c.strokeRect(-7, -6, 14, 12);
+      c.beginPath(); c.moveTo(-7, -2); c.lineTo(7, -2); c.moveTo(-7, 2); c.lineTo(7, 2); c.moveTo(-7, -6); c.lineTo(7, 6); c.stroke(); break;
+    case 'cup':
+      c.rotate(.3); c.fillStyle = '#fff'; c.beginPath(); c.moveTo(-5, -6); c.lineTo(5, -6); c.lineTo(3.5, 7); c.lineTo(-3.5, 7); c.closePath(); c.fill();
+      c.fillStyle = '#B97A44'; c.fillRect(-4.6, -1, 9, 4); c.fillStyle = '#16324A'; c.beginPath(); c.roundRect(-6, -8.5, 12, 3, 1.5); c.fill(); break;
+    case 'line':
+      c.strokeStyle = '#6FD3C4'; c.lineWidth = 1.1; for (let i = 0; i < 4; i++) { c.beginPath(); c.ellipse(Math.sin(i) * 2, Math.cos(i * 2), 6 - i, 4 + i * .5, i, 0, 7); c.stroke(); }
+      c.strokeStyle = '#9AA7B1'; c.lineWidth = 1.4; c.beginPath(); c.moveTo(5, 2); c.lineTo(5, 7); c.arc(3, 7, 2, 0, Math.PI); c.stroke(); break;
+    case 'sneaker':
+      c.fillStyle = '#5AA7F0'; c.beginPath(); c.moveTo(-8, 3); c.lineTo(-7, -3); c.quadraticCurveTo(-2, -4, 0, -1); c.lineTo(7, 1); c.quadraticCurveTo(9, 3, 8, 4); c.lineTo(-8, 4); c.fill();
+      c.fillStyle = '#fff'; c.fillRect(-8.5, 3, 17, 2.4); c.strokeStyle = '#fff'; c.lineWidth = 1; c.beginPath(); c.moveTo(-3, -2); c.lineTo(-1, 0); c.moveTo(-1, -2.5); c.lineTo(1, -.5); c.stroke(); break;
+    case 'brush':
+      c.rotate(-.6); c.fillStyle = '#FF9AC4'; c.beginPath(); c.roundRect(-9, -1.5, 13, 3, 1.5); c.fill(); c.fillStyle = '#fff'; c.fillRect(4, -3, 5, 3); c.fillStyle = '#35C6D8'; c.fillRect(4, -3, 5, 1); break;
+    case 'balloon':
+      c.fillStyle = '#E4606D'; c.beginPath(); c.moveTo(-6, -2); c.quadraticCurveTo(-4, -8, 2, -6); c.quadraticCurveTo(7, -3, 3, 1); c.quadraticCurveTo(-2, 4, -6, -2); c.fill();
+      c.strokeStyle = '#6B4A2E'; c.lineWidth = 1; c.beginPath(); c.moveTo(3, 1); c.quadraticCurveTo(6, 5, 2, 8); c.stroke(); break;
+    // ---- Coral Bay goods ----
+    case 'mosaic':
+      c.fillStyle = '#F4EBDD'; c.beginPath(); c.arc(0, 0, 7, 0, 7); c.fill(); c.strokeStyle = '#C98D52'; c.lineWidth = 1.2; c.stroke();
+      ['#E4606D', '#35C6D8', '#FFC83D', '#4CC38A', '#8E7CF0', '#FF9AC4'].forEach((col, i) => { const a = i * 1.05; c.fillStyle = col; c.fillRect(Math.cos(a) * 3.8 - 1.4, Math.sin(a) * 3.8 - 1.4, 2.8, 2.8); }); c.fillStyle = '#35C6D8'; c.fillRect(-1.3, -1.3, 2.6, 2.6); break;
+    case 'tote':
+      c.fillStyle = '#6CC6B8'; c.beginPath(); c.roundRect(-6, -3, 12, 10, 2); c.fill(); c.strokeStyle = 'rgba(255,255,255,.55)'; c.lineWidth = 1;
+      for (let i = -4; i <= 4; i += 2.5) { c.beginPath(); c.moveTo(i, -3); c.lineTo(i, 7); c.stroke(); } c.strokeStyle = '#2FA39A'; c.lineWidth = 1.6; c.beginPath(); c.arc(0, -3, 4, Math.PI, 0); c.stroke(); break;
+    case 'chime':
+      c.fillStyle = '#8B5A34'; c.fillRect(-7, -8, 14, 2.2); c.strokeStyle = '#8B5A34'; c.lineWidth = .6;
+      [[-5, '#FF7A6B', 9], [-1.7, '#35C6D8', 12], [1.7, '#FFC83D', 10], [5, '#FF9AC4', 8]].forEach(([x, col, h]) => { c.beginPath(); c.moveTo(x, -6); c.lineTo(x, -4); c.stroke(); c.fillStyle = col; c.fillRect(x - 1.2, -4, 2.4, h); }); break;
+    case 'stool':
+      c.strokeStyle = '#8B5A34'; c.lineWidth = 2; c.beginPath(); c.moveTo(-5, -1); c.lineTo(-7, 8); c.moveTo(5, -1); c.lineTo(7, 8); c.moveTo(0, 0); c.lineTo(0, 8); c.stroke();
+      c.fillStyle = '#C99A5E'; c.beginPath(); c.ellipse(0, -2, 8, 3.2, 0, 0, 7); c.fill(); c.fillStyle = '#E0B77E'; c.beginPath(); c.ellipse(0, -2.6, 6.5, 2, 0, 0, 7); c.fill(); break;
+    case 'seedpot':
+      c.fillStyle = '#D98C5F'; c.beginPath(); c.moveTo(-6, -1); c.lineTo(6, -1); c.lineTo(4, 7); c.lineTo(-4, 7); c.closePath(); c.fill(); c.fillStyle = '#C0764A'; c.fillRect(-6.5, -2, 13, 2.5);
+      c.strokeStyle = '#3E9E5C'; c.lineWidth = 1.4; c.beginPath(); c.moveTo(0, -2); c.lineTo(0, -6); c.stroke(); c.fillStyle = '#4CC38A'; c.beginPath(); c.ellipse(-2.5, -6.5, 2.6, 1.4, -.5, 0, 7); c.ellipse(2.5, -7, 2.6, 1.4, .5, 0, 7); c.fill(); break;
+    case 'dream':
+      c.strokeStyle = '#C98D52'; c.lineWidth = 1.8; c.beginPath(); c.arc(0, -2, 6, 0, 7); c.stroke(); c.strokeStyle = 'rgba(255,255,255,.9)'; c.lineWidth = .7;
+      for (let i = 0; i < 6; i++) { const a = i * 1.047; c.beginPath(); c.moveTo(Math.cos(a) * 5.5, -2 + Math.sin(a) * 5.5); c.lineTo(Math.cos(a + 2.1) * 5.5, -2 + Math.sin(a + 2.1) * 5.5); c.stroke(); }
+      [[-4, '#8E7CF0'], [0, '#FF9AC4'], [4, '#35C6D8']].forEach(([x, col]) => { c.fillStyle = col; c.beginPath(); c.ellipse(x, 7.5, 1.4, 2.8, 0, 0, 7); c.fill(); }); break;
+    case 'mat':
+      c.fillStyle = '#8E7CF0'; c.beginPath(); c.roundRect(-8, -4, 14, 8, 3); c.fill(); c.fillStyle = '#A99BF5'; c.beginPath(); c.ellipse(6, 0, 3, 4, 0, 0, 7); c.fill();
+      c.strokeStyle = '#6B5BD0'; c.lineWidth = .9; c.beginPath(); c.arc(6, 0, 1.8, 0, 5); c.stroke(); break;
+    case 'scrub':
+      c.fillStyle = '#C98D52'; c.beginPath(); c.roundRect(-7, -5, 14, 6, 3); c.fill(); c.fillStyle = '#E0A968'; c.fillRect(-6, -5, 12, 1.6);
+      c.fillStyle = '#FFE58A'; for (let x = -6; x <= 5; x += 2.2) c.fillRect(x, 1, 1.4, 4); break;
+    case 'kite':
+      c.rotate(.2); [['#FF7A6B', 0, -8, -6, 0], ['#FFC83D', 0, -8, 6, 0], ['#35C6D8', 0, 8, -6, 0], ['#8E7CF0', 0, 8, 6, 0]].forEach(([col, x1, y1, x2, y2]) => { c.fillStyle = col; c.beginPath(); c.moveTo(0, 0); c.lineTo(x1, y1); c.lineTo(x2, y2); c.closePath(); c.fill(); });
+      c.strokeStyle = '#16324A'; c.lineWidth = .8; c.beginPath(); c.moveTo(0, 8); c.quadraticCurveTo(3, 11, 1, 14); c.stroke(); break;
+    // ---- Frosty Fjord trash ----
+    case 'glove':
+      c.rotate(-.3); c.fillStyle = '#E4606D'; c.beginPath(); c.roundRect(-4.5, -2, 9, 9, 2.5); c.fill();
+      for (let i = 0; i < 4; i++) { c.beginPath(); c.roundRect(-4.4 + i * 2.3, -7, 2, 6, 1); c.fill(); } c.beginPath(); c.ellipse(-5.5, 1, 1.6, 3, -.6, 0, 7); c.fill(); c.fillStyle = '#fff'; c.fillRect(-4.5, 5, 9, 2); break;
+    case 'foam':
+      c.fillStyle = '#F5F7F8'; c.strokeStyle = '#B9C3C6'; c.lineWidth = 1; c.beginPath(); c.moveTo(-7, -3); c.lineTo(-2, -6); c.lineTo(6, -4); c.lineTo(7, 3); c.lineTo(1, 6); c.lineTo(-6, 4); c.closePath(); c.fill(); c.stroke();
+      c.fillStyle = '#D5DCE3'; [[-3, -1], [2, 1], [-1, 3], [3, -3]].forEach(([a, b]) => { c.beginPath(); c.arc(a, b, .9, 0, 7); c.fill(); }); break;
+    case 'cork':
+      [[-3, 1, .4], [3, -1, -.3]].forEach(([a, b, r]) => { c.save(); c.translate(a, b); c.rotate(r); c.fillStyle = '#C9A06A'; c.beginPath(); c.roundRect(-3, -5, 6, 10, 2); c.fill(); c.fillStyle = '#A97F48'; c.beginPath(); c.ellipse(0, -5, 3, 1.2, 0, 0, 7); c.fill(); c.restore(); }); break;
+    case 'trap':
+      c.fillStyle = 'rgba(79,107,128,.25)'; c.fillRect(-8, -5, 16, 11); c.strokeStyle = '#4F6B80'; c.lineWidth = 1; c.strokeRect(-8, -5, 16, 11);
+      for (let x = -5; x < 8; x += 3) { c.beginPath(); c.moveTo(x, -5); c.lineTo(x, 6); c.stroke(); } c.beginPath(); c.moveTo(-8, 0); c.lineTo(8, 0); c.stroke(); c.strokeStyle = '#FFC83D'; c.lineWidth = 1.4; c.beginPath(); c.moveTo(8, -5); c.quadraticCurveTo(11, -8, 9, -10); c.stroke(); break;
+    case 'boot':
+      c.fillStyle = '#FFC83D'; c.beginPath(); c.moveTo(-5, -8); c.lineTo(2, -8); c.lineTo(2, 1); c.lineTo(8, 2); c.quadraticCurveTo(9, 6, 7, 6); c.lineTo(-5, 6); c.closePath(); c.fill();
+      c.fillStyle = '#16324A'; c.fillRect(-5.5, 5, 13.5, 2); c.fillStyle = '#E0A91F'; c.fillRect(-5, -8, 7, 2); break;
+    case 'jug':
+      c.fillStyle = '#F2F6F8'; c.beginPath(); c.roundRect(-5, -4, 10, 11, 3); c.fill(); c.fillRect(-2, -7, 4, 4); c.fillStyle = '#35C6D8'; c.fillRect(-2.5, -8.5, 5, 2);
+      c.strokeStyle = '#B9C3C6'; c.lineWidth = 1.8; c.beginPath(); c.arc(4, -1, 3, -1.4, 1.4); c.stroke(); c.fillStyle = '#FF7A6B'; c.fillRect(-4, 1, 8, 3); break;
+    case 'drum':
+      c.fillStyle = '#2E6DB4'; c.fillRect(-6, -6, 12, 13); c.fillStyle = '#4A8AD0'; c.beginPath(); c.ellipse(0, -6, 6, 2.2, 0, 0, 7); c.fill();
+      c.strokeStyle = '#1D4F8A'; c.lineWidth = 1.2; c.beginPath(); c.moveTo(-6, -1); c.lineTo(6, -1); c.moveTo(-6, 3); c.lineTo(6, 3); c.stroke(); c.fillStyle = 'rgba(40,30,20,.35)'; c.beginPath(); c.arc(-2, 5, 1.6, 0, 7); c.fill(); break;
+    case 'tarp':
+      c.rotate(-.2); c.fillStyle = '#3A7BD5'; c.beginPath(); c.moveTo(-8, -4); c.lineTo(7, -6); c.lineTo(8, 4); c.lineTo(-6, 6); c.closePath(); c.fill();
+      c.strokeStyle = '#2A5DA8'; c.lineWidth = 1; c.beginPath(); c.moveTo(-7, 1); c.lineTo(8, -1); c.stroke(); c.fillStyle = '#D5DCE3'; [[-6, -3], [6, -5], [6, 3], [-5, 5]].forEach(([a, b]) => { c.beginPath(); c.arc(a, b, 1, 0, 7); c.fill(); }); break;
+    case 'cone':
+      c.fillStyle = '#FF8A3D'; c.beginPath(); c.moveTo(0, -8); c.lineTo(5, 6); c.lineTo(-5, 6); c.closePath(); c.fill(); c.fillStyle = '#fff'; c.beginPath(); c.moveTo(-2.6, -1); c.lineTo(2.6, -1); c.lineTo(3.4, 1.5); c.lineTo(-3.4, 1.5); c.fill();
+      c.fillStyle = '#E86F24'; c.fillRect(-7, 6, 14, 2.4); break;
+    // ---- Frosty Fjord goods ----
+    case 'puppet':
+      c.fillStyle = '#E4606D'; c.beginPath(); c.roundRect(-4, -2, 8, 10, 3); c.fill(); c.fillStyle = '#F7D2B0'; c.beginPath(); c.arc(0, -4.5, 4, 0, 7); c.fill();
+      c.fillStyle = '#16324A'; c.beginPath(); c.arc(-1.4, -5, .8, 0, 7); c.arc(1.4, -5, .8, 0, 7); c.fill(); c.fillStyle = '#FFC83D'; c.beginPath(); c.arc(0, -8.5, 2, 0, 7); c.fill(); break;
+    case 'sled':
+      c.strokeStyle = '#9AA7B1'; c.lineWidth = 1.6; c.beginPath(); c.moveTo(-8, 5); c.lineTo(6, 5); c.quadraticCurveTo(9, 5, 9, 2); c.stroke();
+      c.strokeStyle = '#8B5A34'; c.lineWidth = 1.4; c.beginPath(); c.moveTo(-5, 1); c.lineTo(-5, 5); c.moveTo(4, 1); c.lineTo(4, 5); c.stroke();
+      c.fillStyle = '#E4606D'; c.beginPath(); c.roundRect(-8, -2, 16, 4, 2); c.fill(); break;
+    case 'corkboard':
+      c.fillStyle = '#8B5A34'; c.fillRect(-8, -6, 16, 12); c.fillStyle = '#D2A873'; c.fillRect(-6.5, -4.5, 13, 9);
+      c.fillStyle = '#fff'; c.fillRect(-5, -3.5, 4, 4); c.fillStyle = '#FFE58A'; c.fillRect(1, -2.5, 4, 4); c.fillStyle = '#E4606D'; c.beginPath(); c.arc(-3, -3.5, 1, 0, 7); c.arc(3, -2.5, 1, 0, 7); c.fill(); break;
+    case 'shelf':
+      c.strokeStyle = '#4F6B80'; c.lineWidth = 1.4; c.strokeRect(-7, -7, 14, 14); c.beginPath(); c.moveTo(-7, 0); c.lineTo(7, 0); c.stroke();
+      c.fillStyle = '#FF9AC4'; c.fillRect(-5, -5.5, 3, 5); c.fillStyle = '#35C6D8'; c.fillRect(-1, -4.5, 3, 4); c.fillStyle = '#4CC38A'; c.beginPath(); c.arc(3, 4, 2.5, 0, 7); c.fill(); break;
+    case 'skates':
+      c.fillStyle = '#fff'; c.beginPath(); c.moveTo(-5, -8); c.lineTo(1, -8); c.lineTo(1, -1); c.lineTo(6, 0); c.quadraticCurveTo(7, 3, 5, 3); c.lineTo(-5, 3); c.closePath(); c.fill(); c.strokeStyle = '#B9C3C6'; c.lineWidth = 1; c.stroke();
+      c.strokeStyle = '#9AA7B1'; c.lineWidth = 1.6; c.beginPath(); c.moveTo(-6, 6); c.lineTo(7, 6); c.moveTo(-3, 3); c.lineTo(-3, 6); c.moveTo(4, 3); c.lineTo(4, 6); c.stroke(); break;
+    case 'feeder':
+      c.fillStyle = '#4CC38A'; c.beginPath(); c.moveTo(-7, -3); c.lineTo(0, -9); c.lineTo(7, -3); c.closePath(); c.fill(); c.fillStyle = 'rgba(230,240,245,.9)'; c.fillRect(-4.5, -3, 9, 7);
+      c.fillStyle = '#C98D52'; c.fillRect(-4, 0, 8, 4); c.fillStyle = '#8B5A34'; c.fillRect(-7, 4, 14, 2.2); break;
+    case 'stove':
+      c.fillStyle = 'rgba(255,170,60,.9)'; c.beginPath(); c.moveTo(-3, -3); c.quadraticCurveTo(-1, -9, 0, -10); c.quadraticCurveTo(1, -6, 3, -3); c.fill();
+      c.fillStyle = '#2E6DB4'; c.beginPath(); c.roundRect(-6, -3, 12, 10, 2); c.fill(); c.fillStyle = '#16324A'; c.fillRect(-6, -3, 12, 2); c.fillStyle = '#FFE58A'; c.beginPath(); c.arc(0, 3, 2, 0, 7); c.fill(); break;
+    case 'tent':
+      c.fillStyle = '#2FA39A'; c.beginPath(); c.moveTo(-8, 6); c.lineTo(0, -7); c.lineTo(8, 6); c.closePath(); c.fill(); c.fillStyle = '#1F7D76'; c.beginPath(); c.moveTo(-2.5, 6); c.lineTo(0, 0); c.lineTo(2.5, 6); c.fill();
+      c.strokeStyle = '#FFC83D'; c.lineWidth = 1; c.beginPath(); c.moveTo(0, -7); c.lineTo(0, -9); c.stroke(); break;
+    case 'lamp':
+      c.fillStyle = 'rgba(255,220,120,.35)'; c.beginPath(); c.arc(0, 1, 8, 0, 7); c.fill(); c.fillStyle = '#FF8A3D'; c.beginPath(); c.moveTo(-5, 2); c.lineTo(-2, -6); c.lineTo(2, -6); c.lineTo(5, 2); c.closePath(); c.fill();
+      c.fillStyle = '#fff'; c.fillRect(-3, -3, 6, 1.6); c.fillStyle = '#FFE58A'; c.beginPath(); c.arc(0, 3, 2.2, 0, 7); c.fill(); c.fillStyle = '#4F6B80'; c.fillRect(-.8, 3, 1.6, 4); c.fillRect(-4, 7, 8, 1.6); break;
   }
   c.restore();
 }
 
 // ================= ART: characters =================
 function drawHat(c, id){
+  if (id === 'straw') { c.fillStyle = '#E8C77A'; c.beginPath(); c.ellipse(0, -17, 12.5, 3.8, 0, 0, 7); c.fill(); c.fillStyle = '#F2D48E'; c.beginPath(); c.roundRect(-6.5, -25, 13, 8, 3); c.fill(); c.fillStyle = '#16324A'; c.fillRect(-6.5, -20, 13, 2.2); }
+  if (id === 'bandana') { c.fillStyle = '#E4606D'; c.beginPath(); c.ellipse(0, -16, 9.5, 5.5, 0, Math.PI, 0); c.fill(); c.fillRect(-9.5, -16.5, 19, 2.5); c.beginPath(); c.moveTo(-8, -15); c.lineTo(-14, -12); c.lineTo(-12, -17); c.fill(); c.fillStyle = '#fff'; [[-4, -18], [2, -19], [5, -16]].forEach(([a, b]) => { c.beginPath(); c.arc(a, b, 1, 0, 7); c.fill(); }); }
+  if (id === 'hibiscus') { c.save(); c.translate(7, -17); for (let i = 0; i < 5; i++) { c.fillStyle = '#FF5E8A'; c.beginPath(); c.ellipse(Math.cos(i * 1.26) * 3.2, Math.sin(i * 1.26) * 3.2, 3, 2, i * 1.26, 0, 7); c.fill(); } c.fillStyle = '#FFC83D'; c.beginPath(); c.arc(0, 0, 1.6, 0, 7); c.fill(); c.restore(); }
+  if (id === 'beanie') { c.fillStyle = '#35C6D8'; c.beginPath(); c.ellipse(0, -17, 9.5, 7.5, 0, Math.PI, 0); c.fill(); c.fillStyle = '#2A9DB0'; c.beginPath(); c.roundRect(-10, -18, 20, 4, 2); c.fill(); c.fillStyle = '#fff'; c.beginPath(); c.arc(0, -25.5, 2.8, 0, 7); c.fill(); }
+  if (id === 'viking') { c.fillStyle = '#F4EBDD'; c.beginPath(); c.moveTo(-8, -20); c.quadraticCurveTo(-14, -22, -13, -29); c.quadraticCurveTo(-11, -24, -6, -23); c.fill(); c.beginPath(); c.moveTo(8, -20); c.quadraticCurveTo(14, -22, 13, -29); c.quadraticCurveTo(11, -24, 6, -23); c.fill(); c.fillStyle = '#9AA7B1'; c.beginPath(); c.ellipse(0, -17, 9.5, 8, 0, Math.PI, 0); c.fill(); c.fillStyle = '#C9A06A'; c.fillRect(-9.5, -18, 19, 2.6); }
+  if (id === 'earmuffs') { c.strokeStyle = '#8E7CF0'; c.lineWidth = 2.2; c.beginPath(); c.arc(0, -14, 9.5, Math.PI * 1.05, Math.PI * 1.95); c.stroke(); c.fillStyle = '#FF9AC4'; c.beginPath(); c.arc(-9, -13, 4, 0, 7); c.arc(9, -13, 4, 0, 7); c.fill(); c.fillStyle = 'rgba(255,255,255,.6)'; c.beginPath(); c.arc(-10, -14.5, 1.4, 0, 7); c.arc(8, -14.5, 1.4, 0, 7); c.fill(); }
   if (id === 'sun') { c.fillStyle = '#FFC83D'; c.beginPath(); c.ellipse(0, -17, 12, 4, 0, 0, 7); c.fill(); c.beginPath(); c.ellipse(0, -20, 6.5, 4.5, 0, Math.PI, 0); c.fill(); c.fillStyle = '#FF7A6B'; c.fillRect(-6.5, -19.5, 13, 2); }
   if (id === 'captain') { c.fillStyle = '#16324A'; c.beginPath(); c.ellipse(0, -16.5, 9, 2.6, 0, 0, 7); c.fill(); c.fillStyle = '#fff'; c.beginPath(); c.roundRect(-8, -24, 16, 7, 3); c.fill(); c.fillStyle = '#16324A'; c.fillRect(-8, -19.5, 16, 2.5); c.fillStyle = '#FFC83D'; c.beginPath(); c.arc(0, -21, 1.8, 0, 7); c.fill(); }
   if (id === 'pirate') { c.fillStyle = '#2F2A36'; c.beginPath(); c.moveTo(-13, -16); c.quadraticCurveTo(0, -30, 13, -16); c.quadraticCurveTo(0, -20, -13, -16); c.fill(); c.fillStyle = '#fff'; c.beginPath(); c.arc(0, -21, 2, 0, 7); c.fill(); c.fillStyle = '#FFC83D'; c.fillRect(-11, -17.5, 22, 1.4); }
@@ -394,6 +576,9 @@ function drawOtter(c, p, hat, noStack){
   c.restore();
 }
 function drawCrab(c, k){
+  const kind = COAST.collector.kind;
+  if (kind === 'turtle') return drawTurtleHelper(c, k);
+  if (kind === 'penguin') return drawPenguin(c, k);
   c.save(); c.translate(k.x, k.y);
   c.fillStyle = 'rgba(40,30,20,.2)'; c.beginPath(); c.ellipse(0, 6, 10, 3.5, 0, 0, 7); c.fill();
   const w = reduce ? 0 : Math.sin(S.t*14 + k.seed) * (k.moving ? 1.5 : .3);
@@ -406,16 +591,46 @@ function drawCrab(c, k){
   if (k.carry && k.carry.length) k.carry.forEach((it, i) => drawItem(c, it, 0, -14 - i*8, 12));
   c.restore();
 }
+function drawTurtleHelper(c, k){
+  c.save(); c.translate(k.x, k.y);
+  c.fillStyle = 'rgba(40,30,20,.2)'; c.beginPath(); c.ellipse(0, 7, 12, 4, 0, 0, 7); c.fill();
+  const w = reduce ? 0 : Math.sin(S.t * 10 + k.seed) * (k.moving ? .5 : .1);
+  c.fillStyle = '#7CC49A'; [[-9, -3, -.6 + w], [9, -3, .6 - w], [-8, 5, .5 - w], [8, 5, -.5 + w]].forEach(([a, b, r]) => { c.beginPath(); c.ellipse(a, b, 4.5, 2.4, r, 0, 7); c.fill(); });
+  c.beginPath(); c.arc(0, -9, 3.6, 0, 7); c.fill();
+  c.fillStyle = '#2E8B6E'; c.beginPath(); c.ellipse(0, 1, 8.5, 7.5, 0, 0, 7); c.fill();
+  c.strokeStyle = '#8FD6AE'; c.lineWidth = 1; c.beginPath(); c.arc(0, 1, 3.2, 0, 7); for (let i = 0; i < 6; i++) { const a = i * 1.047; c.moveTo(Math.cos(a) * 3.2, 1 + Math.sin(a) * 3.2); c.lineTo(Math.cos(a) * 7.5, 1 + Math.sin(a) * 6.5); } c.stroke();
+  c.fillStyle = '#16324A'; c.beginPath(); c.arc(-1.4, -10, .9, 0, 7); c.arc(1.4, -10, .9, 0, 7); c.fill();
+  if (k.carry && k.carry.length) k.carry.forEach((it, i) => drawItem(c, it, 0, -2 - i * 8, 12));
+  c.restore();
+}
+function drawPenguin(c, k){
+  c.save(); c.translate(k.x, k.y);
+  c.fillStyle = 'rgba(40,30,20,.2)'; c.beginPath(); c.ellipse(0, 8, 9, 3.5, 0, 0, 7); c.fill();
+  const w = reduce ? 0 : Math.sin(S.t * 12 + k.seed) * (k.moving ? .25 : .03);
+  c.rotate(w);
+  c.fillStyle = '#FF9A3D'; c.beginPath(); c.ellipse(-3, 8, 3, 1.6, 0, 0, 7); c.ellipse(3, 8, 3, 1.6, 0, 0, 7); c.fill();
+  c.fillStyle = '#2F3A42'; c.beginPath(); c.ellipse(0, 0, 7.5, 9.5, 0, 0, 7); c.fill();
+  c.beginPath(); c.ellipse(-7, 1, 2.2, 6, .3, 0, 7); c.ellipse(7, 1, 2.2, 6, -.3, 0, 7); c.fill();
+  c.fillStyle = '#fff'; c.beginPath(); c.ellipse(0, 2.5, 5, 7, 0, 0, 7); c.fill(); c.beginPath(); c.arc(-2.3, -5, 2.2, 0, 7); c.arc(2.3, -5, 2.2, 0, 7); c.fill();
+  c.fillStyle = '#16324A'; c.beginPath(); c.arc(-2.2, -5, 1, 0, 7); c.arc(2.2, -5, 1, 0, 7); c.fill();
+  c.fillStyle = '#FF9A3D'; c.beginPath(); c.moveTo(-1.6, -3); c.lineTo(1.6, -3); c.lineTo(0, -.5); c.fill();
+  c.restore();
+  if (k.carry && k.carry.length) k.carry.forEach((it, i) => drawItem(c, it, k.x, k.y - 16 - i * 8, 12));
+}
+const CARRIER_LOOK = { pelican:{ wing:'#F4F1EA', body:'#fff', head:'#fff', beak:'#FFB547', long:true }, parrot:{ wing:'#35C6D8', body:'#E4606D', head:'#E4606D', beak:'#FFE58A', tip:'#FFC83D' }, puffin:{ wing:'#2F3A42', body:'#fff', head:'#2F3A42', beak:'#FF7A3D', face:'#fff' } };
 function drawPelican(c, k){
+  const look = CARRIER_LOOK[COAST.carrier.kind] || CARRIER_LOOK.pelican;
   const fl = reduce ? 0 : Math.sin(S.t * 9 + k.seed) * 6, alt = 26;
   c.save();
   c.fillStyle = 'rgba(40,30,20,.16)'; c.beginPath(); c.ellipse(k.x, k.y + 8, 12, 4, 0, 0, 7); c.fill();
   c.translate(k.x, k.y - alt);
-  c.fillStyle = '#F4F1EA'; c.beginPath(); c.moveTo(-3, 0); c.quadraticCurveTo(-18, -6 - fl, -24, 2 - fl); c.quadraticCurveTo(-14, 2, -3, 4); c.fill();
+  c.fillStyle = look.wing; c.beginPath(); c.moveTo(-3, 0); c.quadraticCurveTo(-18, -6 - fl, -24, 2 - fl); c.quadraticCurveTo(-14, 2, -3, 4); c.fill();
   c.beginPath(); c.moveTo(3, 0); c.quadraticCurveTo(18, -6 - fl, 24, 2 - fl); c.quadraticCurveTo(14, 2, 3, 4); c.fill();
-  c.fillStyle = '#fff'; c.beginPath(); c.ellipse(0, 2, 7, 9, 0, 0, 7); c.fill();
-  c.beginPath(); c.arc(0, -8, 5, 0, 7); c.fill();
-  c.fillStyle = '#FFB547'; c.beginPath(); c.moveTo(-2, -6); c.lineTo(2, -6); c.lineTo(0, 6); c.fill();
+  if (look.tip) { c.fillStyle = look.tip; c.beginPath(); c.ellipse(-20, 1 - fl, 4, 2, 0, 0, 7); c.ellipse(20, 1 - fl, 4, 2, 0, 0, 7); c.fill(); }
+  c.fillStyle = look.body; c.beginPath(); c.ellipse(0, 2, 7, 9, 0, 0, 7); c.fill();
+  c.fillStyle = look.head; c.beginPath(); c.arc(0, -8, 5, 0, 7); c.fill();
+  if (look.face) { c.fillStyle = look.face; c.beginPath(); c.ellipse(0, -8, 3.4, 3, 0, 0, 7); c.fill(); }
+  c.fillStyle = look.beak; c.beginPath(); if (look.long) { c.moveTo(-2, -6); c.lineTo(2, -6); c.lineTo(0, 6); } else { c.moveTo(-2.4, -6.5); c.lineTo(2.4, -6.5); c.lineTo(0, -1.5); } c.fill();
   c.fillStyle = '#16324A'; c.beginPath(); c.arc(-2, -9, 1, 0, 7); c.arc(2, -9, 1, 0, 7); c.fill();
   if (k.carry.length) k.carry.forEach((it, i) => drawItem(c, it, 0, 12 + i * 5, 10));
   c.restore();
@@ -499,6 +714,46 @@ function drawLighthouse(ax){
 function drawTidePool(x, y, s){ ctx.fillStyle = '#9AA4A8'; ctx.beginPath(); ctx.ellipse(x, y, 22 * s, 12 * s, 0, 0, 7); ctx.fill(); ctx.fillStyle = '#5FC9D6'; ctx.beginPath(); ctx.ellipse(x, y - 1, 17 * s, 8 * s, 0, 0, 7); ctx.fill();
   ctx.fillStyle = '#FF7A6B'; ctx.beginPath(); ctx.arc(x - 6 * s, y - 1, 2.2 * s, 0, 7); ctx.fill(); ctx.fillStyle = '#FFC83D'; ctx.beginPath(); ctx.arc(x + 5 * s, y + 1, 1.8 * s, 0, 7); ctx.fill(); }
 
+function drawTree(x, y, dir){ if (COAST.tree === 'pine') drawPine(x, y, dir); else drawPalm(x, y, dir); }
+function drawPine(x, y, dir){
+  ctx.save(); ctx.translate(x, y);
+  ctx.fillStyle = 'rgba(30,50,60,.16)'; ctx.beginPath(); ctx.ellipse(dir * 20, 16, 32, 12, 0, 0, 7); ctx.fill();
+  ctx.fillStyle = '#7A5230'; ctx.fillRect(-4, -4, 8, 20);
+  [[-10, 26, '#2F7A5C'], [-30, 21, '#379069'], [-48, 15, '#3FA476']].forEach(([yy, w, col]) => { ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(-w, yy + 18); ctx.lineTo(0, yy - 16); ctx.lineTo(w, yy + 18); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,.85)'; ctx.beginPath(); ctx.moveTo(-w * .45, yy); ctx.lineTo(0, yy - 16); ctx.lineTo(w * .45, yy); ctx.quadraticCurveTo(0, yy + 4, -w * .45, yy); ctx.fill(); });
+  ctx.restore();
+}
+// landmarks for each coast's 2nd and 3rd areas
+function drawLandmark(kind, ax, wl){
+  if (kind === 'pier') return drawPierDeck(ax, wl);
+  if (kind === 'lighthouse') { drawTidePool(ax + 70, L.trashMax + 30, 1.1); drawTidePool(ax + 330, L.trashMax + 60, .8); drawTidePool(ax + 190, L.machY - 60, .7); return drawLighthouse(ax); }
+  if (kind === 'huts') { // stilt huts over the water
+    [[ax + 300, 1, 0], [ax + 360, .8, 14]].forEach(([x, s, dy]) => { const y = L.seaHigh + 8 + dy; ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+      shade(4, 20, 26, 6, .18); ctx.fillStyle = '#6B4A2E'; [-16, -6, 6, 16].forEach(px => ctx.fillRect(px - 1.5, 4, 3, 14));
+      ctx.fillStyle = '#C99A5E'; ctx.fillRect(-20, -14, 40, 20); ctx.fillStyle = '#8B5A34'; ctx.fillRect(-4, -6, 8, 12);
+      ctx.fillStyle = '#E3C27A'; ctx.beginPath(); ctx.moveTo(-26, -12); ctx.lineTo(0, -34); ctx.lineTo(26, -12); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = 'rgba(140,100,40,.5)'; ctx.lineWidth = 1; for (let i = -20; i <= 20; i += 5) { ctx.beginPath(); ctx.moveTo(i * .9, -12); ctx.lineTo(0, -32); ctx.stroke(); } ctx.restore(); });
+    return;
+  }
+  if (kind === 'reef') { // coral heads showing through the clear water
+    [[ax + 60, .6, '#FF7A6B'], [ax + 150, .45, '#FF9AC4'], [ax + 250, .7, '#FFC83D'], [ax + 330, .5, '#8E7CF0']].forEach(([x, k, col], i) => { const y = wl * k;
+      ctx.fillStyle = col; ctx.globalAlpha = .75; for (let j = 0; j < 5; j++) { ctx.beginPath(); ctx.ellipse(x + (j - 2) * 6, y - Math.abs(j - 2) * -3, 3, 7 + (j % 2) * 3, (j - 2) * .3, 0, 7); ctx.fill(); }
+      ctx.globalAlpha = 1; });
+    return;
+  }
+  if (kind === 'cabins') { // red fishing cabins by the water
+    [[ax + 250, '#C0463C'], [ax + 330, '#D9A42B']].forEach(([x, col]) => { const y = L.seaHigh + 6; shade(x + 6, y + 18, 30, 6, .18);
+      ctx.fillStyle = col; ctx.fillRect(x - 22, y - 12, 44, 28); ctx.fillStyle = '#fff'; ctx.fillRect(x - 12, y - 4, 8, 8); ctx.fillRect(x + 6, y - 2, 8, 18);
+      ctx.fillStyle = '#3A444C'; ctx.beginPath(); ctx.moveTo(x - 27, y - 10); ctx.lineTo(x, y - 30); ctx.lineTo(x + 27, y - 10); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.moveTo(x - 20, y - 15); ctx.lineTo(x, y - 30); ctx.lineTo(x + 20, y - 15); ctx.quadraticCurveTo(x, y - 20, x - 20, y - 15); ctx.fill(); });
+    return;
+  }
+  if (kind === 'glacier') { // a glacier wall and floating ice
+    const gx = ax + 300; ctx.fillStyle = '#E8F4FA'; ctx.beginPath(); ctx.moveTo(gx - 60, 0); ctx.lineTo(ax + AW + 40, 0); ctx.lineTo(ax + AW + 40, wl * .7); ctx.lineTo(gx + 40, wl * .8); ctx.lineTo(gx, wl * .55); ctx.lineTo(gx - 30, wl * .6); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#BFE3F2'; ctx.beginPath(); ctx.moveTo(gx - 20, wl * .2); ctx.lineTo(gx + 10, wl * .5); ctx.lineTo(gx + 30, wl * .25); ctx.closePath(); ctx.fill();
+    [[ax + 120, .5, 1], [ax + 200, .75, .7]].forEach(([x, k, s]) => { const y = wl * k + (reduce ? 0 : Math.sin(S.t + x) * 2); ctx.fillStyle = 'rgba(255,255,255,.95)'; ctx.beginPath(); ctx.moveTo(x - 14 * s, y); ctx.lineTo(x - 6 * s, y - 9 * s); ctx.lineTo(x + 8 * s, y - 6 * s); ctx.lineTo(x + 15 * s, y); ctx.closePath(); ctx.fill(); });
+  }
+}
 // ================= ART: machines =================
 function belt(x, y1, y2, working){
   ctx.fillStyle = '#4E5A63'; ctx.beginPath(); ctx.roundRect(x - 8, y1, 16, y2 - y1, 5); ctx.fill();
@@ -619,19 +874,22 @@ function drawBoard(ax){
   if (canAffordAny(areaAt(ax + 1))) { const b = reduce ? 0 : Math.sin(S.t * 5) * 2; ctx.fillStyle = '#FF7A6B'; ctx.beginPath(); ctx.arc(x + 26, y - 38 + b, 7, 0, 7); ctx.fill(); ctx.fillStyle = '#fff'; ctx.font = '700 10px Fredoka, sans-serif'; ctx.fillText('!', x + 26, y - 34.5 + b); }
 }
 function drawPad(pad){
-  const paid = save.pads[pad.key] || 0, k = paid / pad.cost, active = S.payKey === pad.key, big = pad.kind === 'area', w = big ? 96 : 60, h = big ? 64 : 52;
+  const paid = save.pads[pad.key] || 0, k = paid / pad.cost, active = S.payKey === pad.key, big = pad.kind !== 'machine', w = big ? 96 : 60, h = big ? 64 : 52;
   ctx.fillStyle = 'rgba(50,32,15,.18)'; ctx.beginPath(); ctx.roundRect(pad.x - w / 2 + 2, pad.y - h / 2 + 4, w, h, 12); ctx.fill();
   ctx.fillStyle = active ? '#FFF1C2' : 'rgba(255,248,232,.85)'; ctx.beginPath(); ctx.roundRect(pad.x - w / 2, pad.y - h / 2, w, h, 12); ctx.fill();
   ctx.save(); ctx.beginPath(); ctx.roundRect(pad.x - w / 2, pad.y - h / 2, w, h, 12); ctx.clip(); ctx.fillStyle = 'rgba(76,195,138,.5)'; ctx.fillRect(pad.x - w / 2, pad.y + h / 2 - h * k, w, h * k); ctx.restore();
   ctx.strokeStyle = active ? '#D99A12' : 'rgba(22,50,74,.45)'; ctx.setLineDash([6, 5]); ctx.lineWidth = 2; ctx.beginPath(); ctx.roundRect(pad.x - w / 2, pad.y - h / 2, w, h, 12); ctx.stroke(); ctx.setLineDash([]);
   if (pad.kind === 'machine') drawItem(ctx, pad.icon, pad.x, pad.y - 8, 15);
+  else if (pad.kind === 'sail') drawItem(ctx, 'boat', pad.x, pad.y - 13, 24);
   else if (pad.locked) { ctx.fillStyle = '#8A949A'; ctx.beginPath(); ctx.roundRect(pad.x - 7, pad.y - 16, 14, 11, 3); ctx.fill(); ctx.strokeStyle = '#8A949A'; ctx.lineWidth = 2.4; ctx.beginPath(); ctx.arc(pad.x, pad.y - 16, 4.5, Math.PI, 0); ctx.stroke(); }
   else { ctx.fillStyle = '#4CC38A'; ctx.beginPath(); ctx.arc(pad.x, pad.y - 12, 9, 0, 7); ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 2.4; ctx.beginPath(); ctx.moveTo(pad.x - 4, pad.y - 12); ctx.lineTo(pad.x - 1, pad.y - 9); ctx.lineTo(pad.x + 5, pad.y - 16); ctx.stroke(); }
   ctx.fillStyle = '#16324A'; ctx.textAlign = 'center'; ctx.font = `600 ${big ? 9.5 : 9}px Fredoka, sans-serif`;
   const lines = pad.label.toUpperCase().split('\n'); lines.forEach((ln, i) => ctx.fillText(ln, pad.x, pad.y + (big ? 5 : 8) + i * 10));
+  if (pad.kind === 'sail') { starShape(pad.x - 14, pad.y + h / 2 - 9, 6); ctx.font = '700 12px Fredoka, sans-serif'; ctx.fillStyle = '#8A5A00'; ctx.textAlign = 'left'; ctx.fillText('+' + pad.cost, pad.x - 6, pad.y + h / 2 - 4.5); ctx.textAlign = 'center'; return; }
   ctx.fillStyle = '#FFC83D'; ctx.beginPath(); ctx.arc(pad.x - 12, pad.y + h / 2 - 9, 4.5, 0, 7); ctx.fill(); ctx.strokeStyle = '#D99A12'; ctx.lineWidth = 1; ctx.stroke();
   ctx.font = '700 12px Fredoka, sans-serif'; ctx.fillStyle = pad.locked ? '#8A949A' : '#8A5A00'; ctx.textAlign = 'left'; ctx.fillText(fmt(pad.cost - paid), pad.x - 5, pad.y + h / 2 - 4.5); ctx.textAlign = 'center';
 }
+function starShape(x, y, r, g){ g = g || ctx; g.fillStyle = '#FFC83D'; g.strokeStyle = '#D99A12'; g.lineWidth = 1; g.beginPath(); for (let k = 0; k < 10; k++) { const rr = k % 2 ? r * .45 : r, a = -Math.PI / 2 + k * Math.PI / 5; g.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); } g.closePath(); g.fill(); g.stroke(); }
 
 // ================= STATE =================
 const S = {
@@ -643,7 +901,7 @@ const S = {
 AREAS.forEach(a => { S.trash[a.id] = []; S.spawnT[a.id] = 0; S.touristT[a.id] = 1 + a.i; });
 function mst(m){ const st = A(m.area.id).st; return st[m.id] || (st[m.id] = { in:0, out:0, t:0 }); }
 function mlv(m){ return A(m.area.id).mlv[m.id] || 0; }
-function mtime(m){ return 1.1 * Math.pow(.78, mlv(m)); }
+function mtime(m){ return 1.1 * Math.pow(.78, mlv(m)) / (1 + .08 * perk('machines')); }
 function mcap(m){ return 20 + mlv(m) * 10; }
 function built(m){ return !!A(m.area.id).built[m.id]; }
 function cap(){ return 6 + save.bag * 3; }
@@ -664,8 +922,13 @@ function reqMet(r){
 function reqsMet(a){ return (REQS[a.id] || []).every(reqMet); }
 function waterline(){ const k = (Math.sin(S.t * 2 * Math.PI / 40) + 1) / 2; return L.seaLow + (L.seaHigh - L.seaLow) * k; }
 function builtOutputs(a){ return (a ? a.machines : MACHINES).filter(built).map(m => m.output); }
-function areaUpCost(a, u){ const lv = A(a.id)[u.k]; return lv < u.max ? u.base[lv] * a.mult : null; }
-function machUpCost(m){ const lv = mlv(m); return lv < MACH_UP.length ? MACH_UP[lv] * m.area.mult : null; }
+const bargain = () => twist('bargain') ? .7 : 1;
+function areaUpCost(a, u){ const lv = A(a.id)[u.k]; return lv < u.max ? Math.round(u.base[lv] * a.mult * bargain()) : null; }
+function machUpCost(m){ const lv = mlv(m); return lv < MACH_UP.length ? Math.round(MACH_UP[lv] * m.area.mult * bargain()) : null; }
+function salePrice(it){ return Math.round(PRICE[it] * (1 + .1 * perk('income')) * (twist('golden') ? 1.5 : 1)); }
+// Sea Stars for setting sail now: 10, plus up to 30 more for healing every area, plus a bonus on later tours
+function starsMax(){ return 40 + 5 * (COAST.tour - 1); }
+function starsNow(){ return 10 + 5 * (COAST.tour - 1) + Math.floor(AREAS.reduce((s, a) => s + health(a) * 100, 0) / 10); }
 function globalCost(u){ const lv = save[u.k]; return lv < u.max ? u.costs[lv] : null; }
 function canAffordAny(a){
   if (!A(a.id).unlocked) return false;
@@ -749,6 +1012,9 @@ function pads(){
   const nl = nextLocked();
   if (nl) { const prev = AREAS[nl.i - 1]; if (prev.machines.filter(built).length >= 2)
     list.push({ key: 'a:' + nl.id, x: nl.x + 58, y: (L.machY + L.row0) / 2, cost: nl.cost, label: 'Restore\n' + nl.name, kind: 'area', area: nl, locked: !reqsMet(nl) }); }
+  // the whole coast is open: a dock appears at the far end to sail on
+  const last = AREAS[AREAS.length - 1];
+  if (!nl) list.push({ key: 'sail', x: last.x + 335, y: L.row1 - 6, cost: starsNow(), label: 'Set sail', kind: 'sail' });
   return list;
 }
 function complete(pad){
@@ -773,7 +1039,7 @@ function spawnTrash(dt){
   const wl = waterline(), receding = wl < S.lastWater; S.lastWater = wl;
   for (const a of AREAS) {
     const st = A(a.id); if (!st.unlocked) continue;
-    S.spawnT[a.id] -= dt * (S.storm ? 1.8 : 1);
+    S.spawnT[a.id] -= dt * (S.storm ? 1.8 : 1) * (twist('tides') ? 2 : 1);
     const max = 10 + st.crabs * 3 + (S.storm ? 6 : 0);
     if (S.spawnT[a.id] <= 0 && S.trash[a.id].length < max) { S.spawnT[a.id] = receding ? rnd(.5, 1) : rnd(1.6, 2.6); spawnOne(a); }
   }
@@ -836,11 +1102,12 @@ function update(dt){
   // pay into pads by standing on them
   S.payT -= dt; let onPad = null;
   for (const pad of pads()) {
-    const w = pad.kind === 'area' ? 46 : 30;
+    const w = pad.kind === 'machine' ? 30 : 46;
     if (Math.abs(p.x - pad.x) < w && Math.abs(p.y - pad.y) < 28) { onPad = pad;
       if (S.payKey !== pad.key) { S.payKey = pad.key; S.dwell = 0; }
       S.dwell += dt;
       const paid = save.pads[pad.key] || 0;
+      if (pad.kind === 'sail') { if (S.dwell > .5 && !S.sailAsked && !S.modal) { S.sailAsked = true; openSail(); } continue; }
       if (pad.locked) { if (S.dwell > .35 && S.lockMsg !== pad.key) { S.lockMsg = pad.key; toast('Finish the checklist on the sign first'); } continue; }
       if (S.dwell > .35 && S.payT <= 0 && save.coins > 0 && paid < pad.cost) {
         const step = Math.min(save.coins, pad.cost - paid, Math.max(1, Math.ceil(pad.cost / 30)));
@@ -849,7 +1116,7 @@ function update(dt){
       }
     }
   }
-  if (!onPad) { S.payKey = null; S.lockMsg = null; }
+  if (!onPad) { S.payKey = null; S.lockMsg = null; S.sailAsked = false; }
 
   // Crew & Upgrades boards
   let onBoard = null;
@@ -864,7 +1131,7 @@ function update(dt){
     S.touristT[a.id] -= dt;
     const outs = builtOutputs(a), all = builtOutputs();
     if (S.touristT[a.id] <= 0 && line.length < maxQ && all.length) {
-      S.touristT[a.id] = rnd(2.4, 4) / (1 + st.umbrella * .5);
+      S.touristT[a.id] = rnd(2.4, 4) / (1 + st.umbrella * .5) / (twist('rush') ? 2 : 1);
       // tourists mostly ask for what's on the counter, so the line keeps moving
       const onShow = Object.keys(A(a.id).disp).filter(k => A(a.id).disp[k] > 0);
       const want = onShow.length && Math.random() < .75 ? pick(onShow) : outs.length ? pick(outs) : pick(all);
@@ -880,7 +1147,7 @@ function update(dt){
     if (t.arrived && !t.leaving) {
       t.wait += dt; t.buyT -= dt;
       if (t.buyT <= 0 && d[t.want] > 0) {
-        d[t.want]--; t.left--; t.buyT = .35; t.wait = 0; const v = PRICE[t.want];
+        d[t.want]--; t.left--; t.buyT = .35; t.wait = 0; const v = salePrice(t.want);
         save.stats.sold[t.want] = (save.stats.sold[t.want] || 0) + 1; earn(v, t.x, t.y - 20);
         pop('+' + v, t.x, t.y - 40, '#FFC83D'); SFX.sell(); fly(t.want, a.x + 200, L.counterY - 12, t.x, t.y - 6, .2);
         if (t.left <= 0) { t.leaving = true; t.happy = true; t.bag = t.want; const k = t.slot; S.tourists.forEach(o => { if (o.area === a && !o.leaving && o.slot > k) o.slot--; }); }
@@ -952,7 +1219,7 @@ function update(dt){
 // ================= GOALS =================
 function goalAt(i){
   if (i < GOALS.length) return GOALS[i];
-  const k = i - GOALS.length + 1; return { t:'recycleAny', n: 100 + 50 * k, r: 500 * k, text: `Recycle ${100 + 50 * k} more things` };
+  return { t:'sail', r:0, text:`Set sail to ${NEXT_COAST.name}` };
 }
 function statFor(g){
   if (g.t === 'recycle') return save.stats.rec[g.item] || 0;
@@ -971,6 +1238,7 @@ function goalProgress(g){
     case 'mlv': return [Math.min(g.lv, mlv(MBY[g.id])), g.lv];
     case 'health': return [Math.min(g.pct, Math.round(health(AREAS.find(a => a.id === g.area)) * 100)), g.pct];
     case 'area': return [A(g.id).unlocked ? 1 : 0, 1];
+    case 'sail': return [0, 1];
   }
   return [0, 1];
 }
@@ -987,6 +1255,7 @@ function goalTarget(){
   if (!save.tutDone) return null;
   const g = goalAt(save.goal);
   if (g.t === 'build') { const pd = pads().find(x => x.key === 'm:' + g.id); return pd ? { x: pd.x, y: pd.y - 30 } : null; }
+  if (g.t === 'sail') { const pd = pads().find(x => x.key === 'sail'); return pd ? { x: pd.x, y: pd.y - 36 } : null; }
   if (g.t === 'area') { const pd = pads().find(x => x.key === 'a:' + g.id); return pd ? { x: pd.x, y: pd.y - 36 } : null; }
   if (g.t === 'hire' || g.t === 'mlv' || g.t === 'global') { const a = g.area ? AREAS.find(x => x.id === g.area) : (g.id ? MBY[g.id].area : areaAt(S.player.x)); if (!A(a.id).unlocked) return null; const [c, n] = goalProgress(g); return c < n ? { x: a.x + 44, y: L.row0 - 44 } : null; }
   return null;
@@ -1002,7 +1271,7 @@ function draw(){
   const vis = a => a.x + AW > X0 - 60 && a.x < X1 + 60;
   const span = a => [a.i === 0 ? Math.min(X0, a.x) : a.x, a.i === AREAS.length - 1 ? Math.max(X1, a.x + AW) : a.x + AW];
   // sand (each area heals separately)
-  for (const a of AREAS) { const [x0, x1] = span(a); if (x1 < X0 || x0 > X1) continue; ctx.fillStyle = lerpC('#CBB995', '#F6DDA4', health(a)); ctx.fillRect(x0, 0, x1 - x0, viewH); }
+  for (const a of AREAS) { const [x0, x1] = span(a); if (x1 < X0 || x0 > X1) continue; ctx.fillStyle = lerpC(COAST.sand[0], COAST.sand[1], health(a)); ctx.fillRect(x0, 0, x1 - x0, viewH); }
   if (sandTex) { ctx.globalAlpha = .7; ctx.fillStyle = ctx.createPattern(sandTex, 'repeat'); ctx.fillRect(X0, 0, X1 - X0, viewH); ctx.globalAlpha = 1; }
   const light = ctx.createRadialGradient(camX + 80, L.machY - 120, 20, camX + 80, L.machY - 120, 460);
   light.addColorStop(0, 'rgba(255,250,225,.32)'); light.addColorStop(1, 'rgba(255,250,225,0)'); ctx.fillStyle = light; ctx.fillRect(X0, 0, X1 - X0, viewH);
@@ -1012,14 +1281,13 @@ function draw(){
   ctx.globalAlpha = 1;
   for (const sh of L.shells) if (sh.x > X0 - 10 && sh.x < X1 + 10) drawShell(sh);
   for (const rk of L.rocks) if (rk.x > X0 - 30 && rk.x < X1 + 30) drawRock(rk);
-  if (vis(AREAS[2])) { drawTidePool(870, L.trashMax + 30, 1.1); drawTidePool(1130, L.trashMax + 60, .8); drawTidePool(990, L.machY - 60, .7); }
   for (const a of AREAS) if (vis(a) && A(a.id).recycled >= 60) [[40, L.trashMax + 20], [362, L.trashMax + 55], [150, L.row0 + 30], [250, L.row1 + 18]].forEach(([x, y], i) => drawStar(a.x + x, y, i + a.i));
   // trash (faint under water)
   for (const a of AREAS) for (const tr of S.trash[a.id]) { if (tr.x < X0 - 20 || tr.x > X1 + 20) continue; ctx.save(); ctx.globalAlpha = tr.y < wl ? .35 : 1; shade(tr.x + 2, tr.y + 6, 8, 3, .2);
     ctx.translate(tr.x, tr.y - (tr.y > wl && !reduce ? Math.abs(Math.sin(t * 2 + tr.x)) * 1.2 : 0)); ctx.rotate(tr.rot); drawItem(ctx, tr.type, 0, 0, 16); ctx.restore(); }
   // sea, each area clears up separately
   for (const a of AREAS) { const [x0, x1] = span(a); if (x1 < X0 || x0 > X1) continue; const hp = health(a);
-    const sea = ctx.createLinearGradient(0, 0, 0, wl); sea.addColorStop(0, lerpC('#3F5F63', '#1C7F9A', hp)); sea.addColorStop(1, lerpC('#6E8F86', '#46CFDD', hp));
+    const sea = ctx.createLinearGradient(0, 0, 0, wl); sea.addColorStop(0, lerpC(COAST.seaTop[0], COAST.seaTop[1], hp)); sea.addColorStop(1, lerpC(COAST.seaLow[0], COAST.seaLow[1], hp));
     ctx.fillStyle = sea; ctx.beginPath(); ctx.moveTo(x0, 0); ctx.lineTo(x1 + 1, 0); for (let x = x1 + 1; x >= x0 - 1; x -= 8) ctx.lineTo(x, wave(x, wl)); ctx.closePath(); ctx.fill(); }
   const sh2 = ctx.createLinearGradient(0, wl - 26, 0, wl); sh2.addColorStop(0, 'rgba(255,255,255,0)'); sh2.addColorStop(1, 'rgba(210,250,245,.45)');
   ctx.fillStyle = sh2; ctx.fillRect(X0, wl - 26, X1 - X0, 26);
@@ -1036,17 +1304,16 @@ function draw(){
       [[50, .5, '#FF7A6B'], [130, .65, '#FFC83D'], [260, .45, '#8E7CF0'], [345, .6, '#FF9AC4']].forEach(([x, k, col]) => { ctx.fillStyle = col; ctx.globalAlpha = .55; for (let i = 0; i < 4; i++) { ctx.beginPath(); ctx.arc(ax + x + i * 6 - 9, wl * k + (i % 2) * 5, 4, 0, 7); ctx.fill(); } ctx.globalAlpha = 1; });
       for (let i = 0; i < 3; i++) { const fx = ax + (t * 30 + i * 140) % (AW + 40) - 20, fy = wl * (.3 + i * .15); ctx.fillStyle = '#FFC83D'; ctx.beginPath(); ctx.ellipse(fx, fy, 5, 3, 0, 0, 7); ctx.fill(); ctx.beginPath(); ctx.moveTo(fx - 4, fy); ctx.lineTo(fx - 9, fy - 3); ctx.lineTo(fx - 9, fy + 3); ctx.fill(); }
     }
-    if (rc >= 100) { const k = ((t + a.i * 2) % 6) / 6; if (k < .5) { const x = ax + 60 + k * 2 * 280, y = wl * .45 - Math.sin(k * 2 * Math.PI) * 26; ctx.fillStyle = '#7FA7C6'; ctx.beginPath(); ctx.ellipse(x, y, 14, 5, -Math.cos(k * 2 * Math.PI) * .6, 0, 7); ctx.fill(); } }
-    if (rc >= 15) { const tx = ax + 200 + Math.sin(t * .15 + a.i) * 150, ty = Math.max(wl + 30, L.trashMax - 20), dir = Math.cos(t * .15 + a.i) > 0 ? 1 : -1; ctx.save(); ctx.translate(tx, ty); shade(2, 5, 12, 6, .18); ctx.rotate(dir * .2); ctx.fillStyle = '#5E9E6E'; [[-8,-6],[8,-6],[-8,6],[8,6]].forEach(([p1, p2]) => { ctx.beginPath(); ctx.ellipse(p1, p2, 4, 2.5, 0, 0, 7); ctx.fill(); }); ctx.beginPath(); ctx.arc(dir * 12, 0, 3.5, 0, 7); ctx.fill(); ctx.fillStyle = '#3F7B4F'; ctx.beginPath(); ctx.ellipse(0, 0, 10, 8, 0, 0, 7); ctx.fill(); ctx.strokeStyle = '#8CC99A'; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(0, 0, 4.5, 0, 7); ctx.stroke(); ctx.restore(); }
+    if (rc >= 100) { const k = ((t + a.i * 2) % 6) / 6; if (k < .5) { const x = ax + 60 + k * 2 * 280, y = wl * .45 - Math.sin(k * 2 * Math.PI) * 26; const bg = COAST.big, rot = -Math.cos(k * 2 * Math.PI) * .6; ctx.fillStyle = bg.col; ctx.beginPath(); ctx.ellipse(x, y, bg.w, bg.h, rot, 0, 7); ctx.fill(); if (bg.orca) { ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.ellipse(x + 5 * Math.cos(rot), y + 5 * Math.sin(rot), 3, 1.8, rot, 0, 7); ctx.fill(); } } }
+    if (rc >= 15) { const tx = ax + 200 + Math.sin(t * .15 + a.i) * 150, ty = Math.max(wl + 30, L.trashMax - 20), dir = Math.cos(t * .15 + a.i) > 0 ? 1 : -1; ctx.save(); ctx.translate(tx, ty); shade(2, 5, 12, 6, .18); ctx.rotate(dir * .2); ctx.fillStyle = COAST.turtle; [[-8,-6],[8,-6],[-8,6],[8,6]].forEach(([p1, p2]) => { ctx.beginPath(); ctx.ellipse(p1, p2, 4, 2.5, 0, 0, 7); ctx.fill(); }); ctx.beginPath(); ctx.arc(dir * 12, 0, 3.5, 0, 7); ctx.fill(); ctx.fillStyle = '#3F7B4F'; ctx.beginPath(); ctx.ellipse(0, 0, 10, 8, 0, 0, 7); ctx.fill(); ctx.strokeStyle = '#8CC99A'; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(0, 0, 4.5, 0, 7); ctx.stroke(); ctx.restore(); }
   }
-  if (vis(AREAS[1])) drawPierDeck(AREAS[1].x, wl);
-  if (vis(AREAS[2])) drawLighthouse(AREAS[2].x);
+  AREAS.forEach(a => { if (vis(a) && COAST.decor[a.i]) drawLandmark(COAST.decor[a.i], a.x, wl); });
 
   // workshop row
   for (const a of AREAS) if (A(a.id).unlocked && vis(a)) drawBoard(a.x);
   for (const m of MACHINES) if (built(m) && vis(m.area)) drawMachine(m);
   for (const sm of S.smoke) { const k = sm.t / 1.6; ctx.fillStyle = sm.col ? sm.col : `rgba(240,236,230,${.55 * (1 - k)})`; if (sm.col) ctx.globalAlpha = .4 * (1 - k); ctx.beginPath(); ctx.arc(sm.x + Math.sin(sm.t * 3) * 3, sm.y - k * 34, 4 + k * 9, 0, 7); ctx.fill(); ctx.globalAlpha = 1; }
-  for (const g of L.grass) { if (g.x < X0 - 10 || g.x > X1 + 10) continue; ctx.strokeStyle = '#7DB36A'; ctx.lineWidth = 1.6; ctx.lineCap = 'round'; const sway = reduce ? 0 : Math.sin(t * 1.5 + g.x) * 1.5;
+  for (const g of L.grass) { if (g.x < X0 - 10 || g.x > X1 + 10) continue; ctx.strokeStyle = COAST.grass; ctx.lineWidth = 1.6; ctx.lineCap = 'round'; const sway = reduce ? 0 : Math.sin(t * 1.5 + g.x) * 1.5;
     for (const d of [-3, 0, 3]) { ctx.beginPath(); ctx.moveTo(g.x + d, g.y); ctx.quadraticCurveTo(g.x + d + sway, g.y - g.h * .6, g.x + d * 1.6 + sway, g.y - g.h); ctx.stroke(); } }
   drawBoardwalk(viewH, X0, X1);
   // locked areas: dim, littered, fenced
@@ -1072,9 +1339,9 @@ function draw(){
   const actors = [...S.crabs.map(k => ({ y: k.y, d: () => drawCrab(ctx, k) })), { y: S.player.y, d: () => drawOtter(ctx, S.player, save.hat) }];
   actors.sort((p1, p2) => p1.y - p2.y).forEach(o => o.d());
   for (const k of S.pelicans) drawPelican(ctx, k);
-  [[-12, L.machY + 20, 1], [412, L.machY - 10, -1], [788, L.machY + 16, 1], [1212, L.machY - 6, -1]].forEach(([x, y, d]) => { if (x > X0 - 60 && x < X1 + 60) drawPalm(x, y, d); });
-  if (X0 < -30) { drawPalm(-70, L.trashMax + 40, 1); drawUmbrella(-60, L.row1 - 10, '#FF7A6B'); }
-  if (X1 > AW * 3 + 30) { drawPalm(AW * 3 + 70, L.row0, -1); drawUmbrella(AW * 3 + 60, L.machY - 20, '#35C6D8'); }
+  [[-12, L.machY + 20, 1], [412, L.machY - 10, -1], [788, L.machY + 16, 1], [1212, L.machY - 6, -1]].forEach(([x, y, d]) => { if (x > X0 - 60 && x < X1 + 60) drawTree(x, y, d); });
+  if (X0 < -30) { drawTree(-70, L.trashMax + 40, 1); drawUmbrella(-60, L.row1 - 10, '#FF7A6B'); }
+  if (X1 > AW * 3 + 30) { drawTree(AW * 3 + 70, L.row0, -1); drawUmbrella(AW * 3 + 60, L.machY - 20, '#35C6D8'); }
   for (const f of S.flies) { const k = Math.min(1, f.t / f.dur), e = 1 - (1 - k) * (1 - k); drawItem(ctx, f.type, f.x0 + (f.x1 - f.x0) * e, f.y0 + (f.y1 - f.y0) * e - Math.sin(k * Math.PI) * 26, 14); }
   for (let i = 0; i < 4; i++) { const cx = (t * 7 + i * 330) % (AW * 3 + 260) - 130, cy = L.trashMax + (i % 2) * 220; if (cx < X0 - 150 || cx > X1 + 150) continue; ctx.fillStyle = 'rgba(30,60,80,.06)'; ctx.beginPath(); ctx.ellipse(cx, cy, 90, 38, 0, 0, 7); ctx.ellipse(cx + 60, cy + 12, 60, 28, 0, 0, 7); ctx.fill(); }
   for (const a of AREAS) if (vis(a) && A(a.id).recycled >= 5) for (let i = 0; i < 3; i++) { const gx = a.x + (t * (22 + i * 6) + i * 150) % (AW + 60) - 30, gy = 30 + i * 24 + Math.sin(t * 2 + i) * 6, fl = Math.sin(t * 8 + i) * 4;
@@ -1178,16 +1445,19 @@ function hud(){
     const nx = MILESTONES.find(m => m.at > A(a.id).recycled);
     $('next').textContent = nx ? `Next: ${nx.short} · ${nx.at - A(a.id).recycled} more` : `${a.name} is fully healed!`; }
   const gift = save.giftDay !== today(); if (hudC.gift !== gift) { hudC.gift = gift; $('giftDot').hidden = !gift; }
+  const showStars = save.stars > 0 || save.sails > 0 || !nextLocked(), sk = showStars + ':' + save.stars;
+  if (hudC.stars !== sk) { hudC.stars = sk; $('starBtn').hidden = !showStars; $('starCnt').textContent = save.stars; }
   renderGoal();
 }
 function renderGoal(force){
   const show = save.tutDone || tutStep >= 6;
   $('goal').hidden = !show; if (!show) return;
-  const g = goalAt(save.goal), [c, n] = goalProgress(g), key = save.goal + ':' + c;
+  const g = goalAt(save.goal), [c, n] = goalProgress(g), key = save.goal + ':' + c + (g.t === 'sail' ? ':' + starsNow() : '');
   if (!force && key === hudC.goal) return; hudC.goal = key;
   const done = c >= n;
   $('goal').innerHTML = done
     ? `<button type="button" id="claim">Claim reward <span class="coin sm"></span>${fmt(g.r)}</button>`
+    : g.t === 'sail' ? `<small>Next</small><b>${goalText(g)}</b><span class="rw"><span class="star sm"></span>+${starsNow()}</span>`
     : `<small>Goal ${save.goal + 1}</small><b>${goalText(g)}</b><span class="rw"><span class="coin sm"></span>${fmt(g.r)}</span><div class="gbar"><i style="width:${Math.min(100, c / n * 100)}%"></i></div>`;
   if (done) $('claim').onclick = claimGoal;
 }
@@ -1201,6 +1471,11 @@ function iconCanvas(kind, size){
   if (kind === 'pelicans') { g.scale(1.1, 1.1); drawPelican(g, { x: 0, y: 22, carry: [], seed: 1 }); }
   if (kind === 'display') { g.fillStyle = '#C98D52'; g.fillRect(-18, 2, 36, 10); g.fillStyle = '#FFF4DE'; g.fillRect(-20, -2, 40, 5); drawItem(g, 'beads', -9, -6, 11); drawItem(g, 'boat', 3, -6, 11); drawItem(g, 'bracelet', 13, -5, 10); }
   if (kind === 'umbrella') { for (let i = 0; i < 8; i++) { g.fillStyle = i % 2 ? '#fff' : '#35C6D8'; g.beginPath(); g.moveTo(0, -4); g.arc(0, -4, 17, Math.PI + i * Math.PI / 8, Math.PI + (i + 1) * Math.PI / 8); g.closePath(); g.fill(); } g.strokeStyle = '#6B4A2E'; g.lineWidth = 2.5; g.beginPath(); g.moveTo(0, -4); g.lineTo(0, 16); g.stroke(); }
+  if (kind === 'income') { for (let i = 0; i < 3; i++) { g.fillStyle = '#FFC83D'; g.strokeStyle = '#D99A12'; g.lineWidth = 1.5; g.beginPath(); g.ellipse(0, 10 - i * 7, 13, 5, 0, 0, 7); g.fill(); g.stroke(); } g.fillStyle = '#4CC38A'; g.beginPath(); g.moveTo(10, -18); g.lineTo(18, -8); g.lineTo(2, -8); g.fill(); }
+  if (kind === 'machines') { g.fillStyle = '#7C8A95'; g.beginPath(); for (let i = 0; i < 16; i++) { const a = i / 16 * Math.PI * 2, r = i % 2 ? 12 : 16; g.lineTo(Math.cos(a) * r, Math.sin(a) * r); } g.closePath(); g.fill(); g.fillStyle = '#FFF8EC'; g.beginPath(); g.arc(0, 0, 6, 0, 7); g.fill(); }
+  if (kind === 'start') { g.fillStyle = '#F2A65A'; g.beginPath(); g.roundRect(-13, -4, 26, 18, 6); g.fill(); g.fillStyle = '#FFC83D'; [[-6, -6], [4, -8], [-1, -13]].forEach(([a, b]) => { g.beginPath(); g.arc(a, b, 6, 0, 7); g.fill(); }); }
+  if (kind === 'night') { g.fillStyle = '#8E7CF0'; g.beginPath(); g.arc(0, 0, 15, 0, 7); g.fill(); g.fillStyle = '#FFF8EC'; g.beginPath(); g.arc(4, -2, 9, 0, 7); g.fill(); g.fillStyle = '#FFE58A'; g.beginPath(); g.arc(-6, 2, 8, 0, 7); g.fill(); g.fillStyle = '#8E7CF0'; g.beginPath(); g.arc(-2, -1, 7, 0, 7); g.fill(); }
+  if (kind === 'crew') { g.scale(1.6, 1.6); drawCrab(g, { x: 0, y: 2, carry: [], seed: 0, moving: false }); }
   if (kind === 'bag') { g.fillStyle = '#F2A65A'; g.beginPath(); g.roundRect(-13, -8, 26, 22, 5); g.fill(); g.strokeStyle = '#A8793F'; g.lineWidth = 3; g.beginPath(); g.arc(0, -8, 7, Math.PI, 0); g.stroke(); }
   if (kind === 'shoes') { g.fillStyle = '#FF7A6B'; g.beginPath(); g.ellipse(-7, 0, 6, 13, -.2, 0, 7); g.ellipse(7, 2, 6, 13, .2, 0, 7); g.fill(); g.strokeStyle = '#fff'; g.lineWidth = 2.4; g.beginPath(); g.moveTo(-11, -4); g.lineTo(-7, -8); g.lineTo(-3, -4); g.moveTo(3, -2); g.lineTo(7, -6); g.lineTo(11, -2); g.stroke(); }
   return c;
@@ -1242,11 +1517,11 @@ function modal(html, onClose){
 }
 function offlineCheck(){
   if (!save.lastSeen) return;
-  const secs = Math.min(3 * 3600, (Date.now() - save.lastSeen) / 1000); if (secs < 120) return;
+  const capS = (3 + perk('night')) * 3600, secs = Math.min(capS, (Date.now() - save.lastSeen) / 1000); if (secs < 120) return;
   let rate = 0; for (const a of AREAS) { const st = A(a.id); if (!st.unlocked) continue; rate += a.mult * (st.pelicans ? st.crabs * .03 + st.pelicans * .05 : st.crabs * .01); }
-  const amt = Math.floor(rate * secs); if (amt < 5) return;
+  const amt = Math.floor(rate * secs * (1 + .1 * perk('income'))); if (amt < 5) return;
   const h = Math.floor(secs / 3600), mn = Math.floor(secs % 3600 / 60);
-  const m = modal(`<h2>Welcome back!</h2><p>Your crew kept working for ${h ? h + ' hr ' : ''}${mn} min${secs >= 3 * 3600 - 1 ? ' (the most they can do alone)' : ''}.</p><div class="amt"><span class="coin"></span>${fmt(amt)}</div><button class="btn green" type="button" data-close>Collect</button>`, () => { save.coins += amt; save.stats.earned += amt; SFX.claim(); persist(); });
+  const m = modal(`<h2>Welcome back!</h2><p>Your crew kept working for ${h ? h + ' hr ' : ''}${mn} min${secs >= capS - 1 ? ' (the most they can do alone)' : ''}.</p><div class="amt"><span class="coin"></span>${fmt(amt)}</div><button class="btn green" type="button" data-close>Collect</button>`, () => { save.coins += amt; save.stats.earned += amt; SFX.claim(); persist(); });
 }
 function openGift(){
   SFX.tap();
@@ -1274,6 +1549,52 @@ function openWardrobe(){
       box.appendChild(b); }); };
   render();
 }
+// ---- Sea Stars: perks that last forever ----
+function openStars(){
+  SFX.tap();
+  const m = modal(`<button class="closeX" type="button" data-close aria-label="Close">✕</button><h2>Sea Stars</h2>
+    <p>Earn stars each time you set sail. Perks you buy here last forever, on every coast.</p>
+    <div class="amt"><span class="star"></span><span id="starsLeft">${save.stars}</span></div><div class="list" id="perkList"></div>`);
+  const list = m.el.querySelector('#perkList');
+  const render = () => { list.innerHTML = ''; m.el.querySelector('#starsLeft').textContent = save.stars;
+    PERKS.forEach(p => { const lv = perk(p.k), maxed = lv >= p.max, cost = maxed ? null : p.cost(lv);
+      const row = document.createElement('div'); row.className = 'up'; row.appendChild(iconCanvas(p.k === 'bag' || p.k === 'shoes' ? p.k : p.k, 44));
+      row.insertAdjacentHTML('beforeend', `<b>${p.name}</b><button class="buy stars ${maxed ? 'max' : ''}" type="button" ${maxed || cost > save.stars ? 'disabled' : ''}>${maxed ? 'Max' : `<span class="star sm"></span>${cost}`}</button><span>${p.desc}<span class="lv">${p.max <= 10 ? Array.from({ length: p.max }, (_, i) => `<i class="${i < lv ? 'on' : ''}"></i>`).join('') : `Level ${lv} of ${p.max}`}</span></span>`);
+      row.querySelector('.buy').onclick = () => { if (maxed || cost > save.stars) return; save.stars -= cost; save.perks[p.k] = lv + 1; SFX.claim(); persist(); render(); };
+      list.appendChild(row); }); };
+  render();
+}
+// ---- Setting sail: the soft reset ----
+function openSail(){
+  SFX.tap();
+  const now = starsNow(), max = starsMax(), nx = NEXT_COAST;
+  const m = modal(`<h2>Set sail?</h2>
+    <p>Next stop: <b>${nx.name}</b>. ${nx.blurb}${nx.tour === 1 ? ` New helpers: <b>${nx.collector.plural}</b> and <b>${nx.carrier.plural}</b>, and 9 new machines to build.` : ''}</p>
+    ${nx.twist ? `<p class="twist">Twist: <b>${nx.twist.name}.</b> ${nx.twist.desc}</p>` : ''}
+    <div class="amt"><span class="star"></span>+${now}</div>
+    <p>${now < max ? `Heal every area to 100% before you go to earn up to <b>${max}</b>.` : 'You healed the whole coast: full stars!'}</p>
+    <div class="keep"><div><b>You keep</b>Sea Stars and perks, hats, your daily streak</div><div><b>Starts fresh</b>Coins, machines, helpers and areas</div></div>
+    <button class="btn green" type="button" id="sailGo">Set sail!</button><button class="btn ghost" type="button" data-close>Not yet</button>`);
+  m.el.querySelector('#sailGo').onclick = () => { m.close(); doSail(now); };
+}
+function doSail(earned){
+  earned = earned == null ? starsNow() : earned;
+  save.stars += earned; save.starsEarned = (save.starsEarned || 0) + earned; save.sails = (save.sails || 0) + 1; save.coast = COAST_N + 1;
+  Object.assign(save, { coins:0, bag:0, shoes:0, areas:{}, pads:{}, stats:{ rec:{}, sold:{}, earned:0 }, goal:0, goalBase:null, freshCoast:true });
+  S.sailing = true; running = false; persist(); SFX.milestone();
+  const o = document.createElement('div'); o.className = 'overlay'; o.innerHTML = `<div class="logo" style="font-size:44px">Sailing<span>to ${NEXT_COAST.name}</span></div>`; document.body.appendChild(o);
+  setTimeout(() => location.reload(), reduce ? 200 : 1400);
+}
+function welcomeCoast(){
+  // perks kick in on each new coast
+  save.coins += 150 * perk('start'); save.bag = perk('bag'); save.shoes = perk('shoes'); A(AREAS[0].id).crabs = perk('crew'); delete save.freshCoast; ensureHelpers(); persist();
+  const m = modal(`<h2>Welcome to ${COAST.name}!</h2><p>${COAST.blurb}${COAST.tour === 1 ? ` Your new helpers here are <b>${COAST.collector.plural}</b> and <b>${COAST.carrier.plural}</b>.` : ''}</p>
+    ${COAST.twist ? `<p class="twist">Twist: <b>${COAST.twist.name}.</b> ${COAST.twist.desc}</p>` : ''}
+    <div class="amt"><span class="star"></span>${save.stars}</div><p>You have ${save.stars} Sea Stars. Spend them on perks that last forever.</p>
+    <button class="btn green" type="button" id="goStars">Spend Sea Stars</button><button class="btn ghost" type="button" data-close>Start cleaning</button>`, () => onBuilt(AREAS[0].machines[0], 'coast'));
+  m.el.querySelector('#goStars').onclick = () => { m.close(); openStars(); };
+}
+$('starBtn').onclick = openStars;
 $('giftBtn').onclick = openGift;
 $('wardBtn').onclick = openWardrobe;
 $('mute').onclick = () => {
@@ -1285,10 +1606,10 @@ $('waves').style.opacity = save.muted ? .2 : 1;
 
 // ================= UI: first-time tutorial (spotlight + tips) =================
 let tutStep = -1, tipEl = null, tipStepShown = -1;
-const beach = AREAS[0], kiln = MBY.kiln;
+const beach = AREAS[0], kiln = beach.machines[0];
 const TUT = [
   { center: true, text: '<b>Welcome to Tidy Tides!</b> The coast is covered in trash. Clean it up, turn it into things tourists love, and bring the beach back to life.', btn: "Let's go" },
-  { target: () => { const w = waterline(), tr = S.trash.beach.filter(t => t.y > w + 4).sort((p1, p2) => dist(S.player.x, S.player.y, p1.x, p1.y) - dist(S.player.x, S.player.y, p2.x, p2.y))[0]; return tr ? { x: tr.x, y: tr.y, r: 26 } : { x: 200, y: w + 40, r: 40 }; },
+  { target: () => { const w = waterline(), tr = S.trash[beach.id].filter(t => t.y > w + 4).sort((p1, p2) => dist(S.player.x, S.player.y, p1.x, p1.y) - dist(S.player.x, S.player.y, p2.x, p2.y))[0]; return tr ? { x: tr.x, y: tr.y, r: 26 } : { x: 200, y: w + 40, r: 40 }; },
     text: '<b>Drag anywhere</b> to walk. Walk over trash to pick it up.', done: () => S.player.stack.filter(i => i === 'bottle').length >= 2 },
   { target: () => ({ x: kiln.x, y: L.inY, r: 32 }), text: 'Drop the bottles into the <b>Sea-Glass Kiln</b> basket.', done: () => { const st = mst(kiln); return st.in + st.out > 0 && !S.player.stack.includes('bottle'); } },
   { target: () => ({ x: kiln.x, y: L.outY, r: 32 }), text: 'The kiln turns bottles into <b>sea-glass beads</b>. Grab them!', done: () => S.player.stack.includes('beads') || dispCount(beach) > 0 },
@@ -1309,7 +1630,7 @@ function tutTarget(step){
 function tutorialTick(){
   if (tutStep < 0) return;
   const step = TUT[tutStep];
-  if (tutStep >= 1 && tutStep <= 2 && S.trash.beach.filter(t => t.type === 'bottle').length < 3) spawnOne(beach, true);
+  if (tutStep >= 1 && tutStep <= 2 && S.trash[beach.id].filter(t => t.type === 'bottle').length < 3) spawnOne(beach, true);
   if (step.done && step.done()) { SFX.claim(); tutStep++; if (tutStep >= TUT.length) return endTutorial(); }
   const cur = TUT[tutStep];
   if (tipStepShown !== tutStep) {
@@ -1341,7 +1662,7 @@ function onBuilt(m, fresh){
   const inp = LABEL[m.input], out = LABEL[m.output].toLowerCase();
   coach('m:' + m.id, [
     { target: () => { const t = nearestTrash(a, m.input); return t ? { x: t.x, y: t.y, r: 26 } : { x: m.x, y: L.trashMax - 30, r: 40 }; },
-      text: `${fresh ? `<b>Welcome to ${a.name}!</b> ` : `<b>${m.name} built!</b> `}From now on, <b>${inp}</b> will wash up on the beach here. Pick some up.`, btn: 'Next', done: () => S.player.stack.includes(m.input) },
+      text: `${fresh === 'coast' ? `<b>${m.name}</b> is ready. ` : fresh ? `<b>Welcome to ${a.name}!</b> ` : `<b>${m.name} built!</b> `}From now on, <b>${inp}</b> will wash up on the beach here. Pick some up.`, btn: 'Next', done: () => S.player.stack.includes(m.input) },
     { target: () => ({ x: m.x, y: L.inY, r: 32 }), text: `Drop the ${inp} into the <b>${m.name}</b> basket. It turns them into <b>${out}</b> to sell.`, btn: 'Got it', done: () => mst(m).in + mst(m).out > 0 && !S.player.stack.includes(m.input) },
   ]);
 }
@@ -1385,11 +1706,13 @@ function start(){
   AREAS.forEach(a => { if (A(a.id).unlocked && a.i) for (let i = 0; i < 4; i++) spawnOne(a, true); });
   running = true; last = performance.now();
   if (!save.tutDone) startTutorial();
+  else if (save.freshCoast) welcomeCoast();
   else { offlineCheck(); if (S.storm) setTimeout(() => toast('Storm weekend! Extra trash is washing up.'), 800); }
   persist();
 }
 function loop(now){
   const dt = Math.min(.05, (now - last) / 1000); last = now;
+  if (S.sailing) return;
   if (running) { update(dt); tutorialTick(); coachTick(dt); saveT += dt; if (saveT > 3) { saveT = 0; persist(); } }
   else S.t += dt;
   draw(); if (running) hud();
@@ -1398,8 +1721,9 @@ function loop(now){
 document.addEventListener('visibilitychange', () => { if (document.hidden && running) persist(); last = performance.now(); });
 $('play').onclick = start;
 layout(); S.player.y = L.row0 - 10;
+if (COAST_N > 0) { $('coastTag').hidden = false; $('coastTag').textContent = 'Coast ' + (COAST_N + 1) + ' · ' + COAST.name; }
 if (document.fonts) document.fonts.ready.then(() => { layout(); if (!running) S.player.y = L.row0 - 10; });
-if (location.hash === '#test') window.__tt = { S, save, AREAS, MACHINES, MBY, get L(){ return L; }, get camX(){ return camX; }, pads, waterline, mst, built, dispCount, dispCap, goalAt, goalProgress, claimGoal, areaUpCost, machUpCost, globalCost, AREA_UPS, GLOBAL_UPS, ensureHelpers, cap, coachQ, edgeTabs, get tut(){ return tutStep; }, endTutorial, start, openBoard, closeBoard };
+if (location.hash === '#test') window.__tt = { S, save, AREAS, MACHINES, MBY, get L(){ return L; }, get camX(){ return camX; }, pads, waterline, mst, built, dispCount, dispCap, goalAt, goalProgress, claimGoal, areaUpCost, machUpCost, globalCost, AREA_UPS, GLOBAL_UPS, ensureHelpers, cap, coachQ, edgeTabs, drawItem, COAST, COAST_N, NEXT_COAST, doSail, openSail, openStars, starsNow, PERKS, salePrice, get tut(){ return tutStep; }, endTutorial, start, openBoard, closeBoard };
 requestAnimationFrame(loop);
 })();
 </script>

@@ -77,7 +77,7 @@
     {
       "id": "tidy-tides",
       "name": "Tidy Tides",
-      "tagline": "Idle beach-cleanup tycoon · 3 areas",
+      "tagline": "Idle beach-cleanup tycoon · 3 coasts, endless",
       "repo": "AidenStreck/crumbstack",
       "path": "prototypes/tidy-tides",
       "tag": "Tidy Tides",
@@ -96,6 +96,10 @@
         },
         {
           "label": "Three areas, helpers and goals",
+          "done": true
+        },
+        {
+          "label": "Endless play: new coasts, Sea Stars and perks",
           "done": true
         },
         {
