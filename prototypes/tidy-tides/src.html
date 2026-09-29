@@ -16,29 +16,29 @@ body{background:#1C7F9A;font-family:var(--display);overflow:hidden;-webkit-user-
 button{font-family:inherit;color:inherit;cursor:pointer}
 button:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
 #game{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
-.hud{position:fixed;left:0;right:0;top:0;padding:calc(10px + env(safe-area-inset-top,0px)) 60px 0 12px;display:flex;gap:10px;align-items:flex-start;pointer-events:none;z-index:2}
-.pill{pointer-events:auto;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.94);border-radius:999px;padding:5px 12px 5px 6px;font-weight:700;font-size:20px;box-shadow:0 3px 0 rgba(22,50,74,.18);font-variant-numeric:tabular-nums;flex:none}
+.hud{position:fixed;left:0;right:0;top:0;padding:calc(8px + env(safe-area-inset-top,0px)) 10px 0;display:flex;gap:7px;align-items:center;pointer-events:none;z-index:2;max-width:560px;margin:0 auto}
+.pill{pointer-events:auto;display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.94);border-radius:999px;padding:5px 10px 5px 5px;font-weight:700;font-size:18px;box-shadow:0 3px 0 rgba(22,50,74,.18);font-variant-numeric:tabular-nums;flex:none}
 .coin{width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FFE58A,var(--gold) 55%,var(--gold-d));box-shadow:inset 0 0 0 2px rgba(150,95,0,.35);flex:none;display:inline-block}
 .coin.sm{width:16px;height:16px;vertical-align:-3px}
-.health{background:rgba(255,255,255,.94);border-radius:16px;padding:6px 10px 7px;box-shadow:0 3px 0 rgba(22,50,74,.18);min-width:0;flex:1;max-width:320px}
-.health .row{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;font-weight:600;color:var(--ink-2);white-space:nowrap}
+.health{background:rgba(255,255,255,.94);border-radius:14px;padding:4px 9px 5px;box-shadow:0 3px 0 rgba(22,50,74,.18);min-width:0;flex:1}
+.health .row{display:flex;justify-content:space-between;gap:6px;font-size:12px;font-weight:600;color:var(--ink-2);white-space:nowrap}
 .health .row b{color:var(--ink)}
-.health .bar{height:9px;background:#E2EEF2;border-radius:999px;margin-top:4px;overflow:hidden}
+.health .bar{height:7px;background:#E2EEF2;border-radius:999px;margin-top:3px;overflow:hidden}
 .health .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#8BD3A5,var(--leaf));border-radius:999px;transition:width .4s}
-.health .next{font-size:11.5px;color:var(--ink-2);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.side{position:fixed;right:12px;top:calc(10px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:8px;z-index:2}
-.iconBtn{position:relative;width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,255,255,.94);box-shadow:0 3px 0 rgba(22,50,74,.18);display:grid;place-items:center;padding:0}
-.iconBtn svg{width:22px;height:22px}
+.health .next{font-size:10.5px;color:var(--ink-2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.side{display:flex;gap:6px;flex:none;pointer-events:auto}
+.iconBtn{position:relative;width:36px;height:36px;border-radius:50%;border:0;background:rgba(255,255,255,.94);box-shadow:0 3px 0 rgba(22,50,74,.18);display:grid;place-items:center;padding:0}
+.iconBtn svg{width:20px;height:20px}
 .iconBtn .dot{position:absolute;top:1px;right:1px;width:11px;height:11px;border-radius:50%;background:var(--coral);box-shadow:0 0 0 2px #fff}
-.goal{position:fixed;left:12px;top:calc(66px + env(safe-area-inset-top,0px));z-index:2;width:min(270px,calc(100vw - 80px));box-sizing:border-box;background:rgba(255,255,255,.95);border-radius:16px;padding:9px 11px 10px;box-shadow:0 4px 0 rgba(22,50,74,.2);display:grid;grid-template-columns:1fr auto;gap:4px 10px;align-items:center}
-.goal small{grid-column:1/-1;font-size:10.5px;letter-spacing:1px;text-transform:uppercase;color:var(--ink-2);font-weight:600}
-.goal b{font-size:15px;line-height:1.15;font-weight:600}
-.goal .rw{display:flex;align-items:center;gap:4px;font-weight:700;font-size:14px;color:#8A5A00;white-space:nowrap}
-.goal .gbar{grid-column:1/-1;height:7px;background:#EDE5D3;border-radius:999px;overflow:hidden}
+.goal{position:fixed;left:10px;right:10px;top:calc(var(--hudb,60px) + 6px);z-index:2;max-width:540px;margin:0 auto;box-sizing:border-box;background:rgba(255,255,255,.93);border-radius:13px;padding:6px 10px 7px;box-shadow:0 3px 0 rgba(22,50,74,.18);display:grid;grid-template-columns:auto 1fr auto;gap:3px 7px;align-items:center;min-height:40px}
+.goal small{font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:#fff;background:var(--ink-2);border-radius:6px;padding:1px 5px;font-weight:600}
+.goal b{font-size:14px;line-height:1.15;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.goal .rw{display:flex;align-items:center;gap:3px;font-weight:700;font-size:13.5px;color:#8A5A00;white-space:nowrap}
+.goal .gbar{grid-column:1/-1;height:6px;background:#EDE5D3;border-radius:999px;overflow:hidden}
 .goal .gbar i{display:block;height:100%;background:var(--gold);border-radius:999px;transition:width .3s}
-.goal button{grid-column:1/-1;border:0;border-radius:12px;padding:7px;font-weight:700;font-size:16px;color:#fff;background:linear-gradient(#7BE8A8,#2BAE66);box-shadow:0 3px 0 #1F8A50;animation:pulse 1s ease-in-out infinite}
+.goal button{grid-column:1/-1;border:0;border-radius:10px;padding:5px;font-weight:700;font-size:15px;color:#fff;background:linear-gradient(#7BE8A8,#2BAE66);box-shadow:0 3px 0 #1F8A50;animation:pulse 1s ease-in-out infinite;display:flex;align-items:center;justify-content:center;gap:5px}
 @keyframes pulse{50%{transform:scale(1.04)}}
-.toast{position:fixed;left:50%;top:calc(150px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:6;background:var(--ink);color:#fff;font-weight:600;font-size:17px;padding:9px 18px;border-radius:999px;box-shadow:0 8px 20px rgba(0,0,0,.25);white-space:nowrap;pointer-events:none;animation:pop .35s cubic-bezier(.2,1.6,.4,1);max-width:calc(100vw - 32px);overflow:hidden;text-overflow:ellipsis}
+.toast{position:fixed;left:50%;top:calc(var(--hudb,60px) + 58px);transform:translateX(-50%);z-index:6;background:var(--ink);color:#fff;font-weight:600;font-size:17px;padding:9px 18px;border-radius:999px;box-shadow:0 8px 20px rgba(0,0,0,.25);white-space:nowrap;pointer-events:none;animation:pop .35s cubic-bezier(.2,1.6,.4,1);max-width:calc(100vw - 32px);overflow:hidden;text-overflow:ellipsis}
 @keyframes pop{from{transform:translateX(-50%) scale(.6);opacity:0}to{transform:translateX(-50%) scale(1);opacity:1}}
 .overlay{position:fixed;inset:0;z-index:8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:24px;background:linear-gradient(rgba(28,127,154,.55),rgba(22,50,74,.78))}
 .logo{font-weight:700;font-size:clamp(52px,16vw,76px);line-height:.9;color:#fff;text-shadow:0 5px 0 var(--sea-deep),0 12px 30px rgba(0,0,0,.3);transform:rotate(-3deg)}
@@ -79,6 +79,9 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
 .up .lv i{width:9px;height:9px;border-radius:3px;background:#E6DCC8}
 .up .lv i.on{background:var(--leaf)}
 .buy{grid-row:span 2;border:0;border-radius:12px;padding:8px 10px;min-width:74px;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;gap:4px;background:linear-gradient(#FFE48E,#F7BC34);box-shadow:0 3px 0 var(--gold-d);font-variant-numeric:tabular-nums}
+.up.hl{box-shadow:0 0 0 3px var(--coral),0 3px 0 var(--line);background:#FFF1EE;position:relative}
+.up.hl::before{content:'GOAL';position:absolute;top:-8px;left:10px;background:var(--coral);color:#fff;font-size:10px;font-weight:700;letter-spacing:.8px;padding:1px 7px;border-radius:6px}
+.up.hl .buy:not(:disabled){animation:pulse 1s ease-in-out infinite}
 .buy:disabled{opacity:.45;cursor:not-allowed}
 .buy.max{background:#E6DCC8;box-shadow:none;color:var(--ink-2)}
 .tip{position:fixed;z-index:8;max-width:260px;background:#fff;border-radius:16px;padding:12px 14px;box-shadow:0 10px 30px rgba(0,0,0,.3);font-size:16px;font-weight:500;line-height:1.35;color:var(--ink);pointer-events:auto}
@@ -94,12 +97,13 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
 <div class="hud">
   <div class="pill" id="coinPill" aria-label="Coins"><span class="coin"></span><span id="coins">0</span></div>
   <div class="health" id="healthBox"><div class="row"><span id="areaName">Sunny Beach</span><b id="hp">0%</b></div><div class="bar"><i id="hpBar"></i></div><div class="next" id="next"></div></div>
+  <div class="side">
+    <button class="iconBtn" id="mute" aria-label="Sound on"><svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12.5 5v14l-5-4.5H4z" fill="currentColor"/><path id="waves" d="M15.5 9a4 4 0 010 6M18 6.5a7.5 7.5 0 010 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+    <button class="iconBtn" id="giftBtn" aria-label="Daily gift"><svg viewBox="0 0 24 24"><rect x="3.5" y="9" width="17" height="11.5" rx="2" fill="#FF7A6B"/><rect x="2.5" y="6.5" width="19" height="4" rx="1.5" fill="#FF9A8C"/><rect x="10.8" y="6.5" width="2.4" height="14" fill="#FFC83D"/><path d="M12 6.5c-2-4-6-3-4.5-.5M12 6.5c2-4 6-3 4.5-.5" fill="none" stroke="#FFC83D" stroke-width="2" stroke-linecap="round"/></svg><i class="dot" id="giftDot" hidden></i></button>
+    <button class="iconBtn" id="wardBtn" aria-label="Wardrobe"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="15" rx="10" ry="3.2" fill="#FFC83D"/><path d="M6.5 15c0-5 2.5-8 5.5-8s5.5 3 5.5 8z" fill="#FFC83D"/><rect x="6.6" y="12.2" width="10.8" height="2" fill="#FF7A6B"/></svg></button>
+  </div>
 </div>
-<div class="side">
-  <button class="iconBtn" id="mute" aria-label="Sound on"><svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12.5 5v14l-5-4.5H4z" fill="currentColor"/><path id="waves" d="M15.5 9a4 4 0 010 6M18 6.5a7.5 7.5 0 010 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
-  <button class="iconBtn" id="giftBtn" aria-label="Daily gift"><svg viewBox="0 0 24 24"><rect x="3.5" y="9" width="17" height="11.5" rx="2" fill="#FF7A6B"/><rect x="2.5" y="6.5" width="19" height="4" rx="1.5" fill="#FF9A8C"/><rect x="10.8" y="6.5" width="2.4" height="14" fill="#FFC83D"/><path d="M12 6.5c-2-4-6-3-4.5-.5M12 6.5c2-4 6-3 4.5-.5" fill="none" stroke="#FFC83D" stroke-width="2" stroke-linecap="round"/></svg><i class="dot" id="giftDot" hidden></i></button>
-  <button class="iconBtn" id="wardBtn" aria-label="Wardrobe"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="15" rx="10" ry="3.2" fill="#FFC83D"/><path d="M6.5 15c0-5 2.5-8 5.5-8s5.5 3 5.5 8z" fill="#FFC83D"/><rect x="6.6" y="12.2" width="10.8" height="2" fill="#FF7A6B"/></svg></button>
-</div>
+
 <div class="goal" id="goal" hidden></div>
 <div class="proto">PROTOTYPE</div>
 <div class="overlay" id="title">
@@ -255,10 +259,14 @@ let H = 720, scale = 1, dpr = 1, viewW = AW, camX = 0, sandTex = null, L = {};
 function layout(){
   dpr = Math.min(devicePixelRatio || 1, 2);
   const sw = innerWidth, sh = innerHeight;
-  scale = Math.min(sw / AW, sh / 760);
+  // the top bar + goal strip sit over the water; trash only washes up below them
+  const hb = document.querySelector('.hud').getBoundingClientRect().bottom;
+  document.documentElement.style.setProperty('--hudb', hb + 'px');
+  const topPx = hb + 6 + 46;
+  scale = Math.min(sw / AW, sh / 760, (sh - topPx) / 640);
   H = sh / scale; viewW = sw / scale;
   cv.width = sw * dpr; cv.height = sh * dpr;
-  const seaLow = H * .11, seaHigh = H * .25, trashMax = seaHigh + 95;
+  const seaLow = Math.max(H * .11, topPx / scale + 4), seaHigh = seaLow + clamp(H * .14, 80, 106), trashMax = seaHigh + 95;
   const machY = Math.max(trashMax + 110, H * .5);
   const outY = machY + 62, row0 = outY + 74, row1 = row0 + 66;
   const sellY = Math.max(row1 + 10, H * .77);
@@ -378,6 +386,11 @@ function drawOtter(c, p, hat, noStack){
   c.beginPath(); c.ellipse(p.face*1.5, -8.5, 2, 1.4, 0, 0, 7); c.fill();
   drawHat(c, hat || 'sun');
   if (!noStack) p.stack.forEach((it, i) => drawItem(c, it, (reduce ? 0 : Math.sin(S.t*6 + i)*.6) - p.face*2 + (reduce ? 0 : S.lean * i * 1.3), -32 - i*9, 14));
+  if (!noStack && p === S.player && p.stack.length >= cap()) {   // bag is full: say so, so it doesn't look like a bug
+    const y = -32 - p.stack.length * 9 - 8 + (reduce ? 0 : Math.sin(S.t * 5) * 1.5);
+    c.fillStyle = '#D9544A'; c.strokeStyle = '#fff'; c.lineWidth = 2; c.beginPath(); c.roundRect(-19, y - 10, 38, 17, 8); c.fill(); c.stroke();
+    c.fillStyle = '#fff'; c.font = '700 11px Fredoka, sans-serif'; c.textAlign = 'center'; c.fillText('MAX', 0, y + 3);
+  }
   c.restore();
 }
 function drawCrab(c, k){
@@ -739,11 +752,12 @@ function pads(){
   return list;
 }
 function complete(pad){
-  if (pad.kind === 'machine') { A(pad.m.area.id).built[pad.m.id] = true; toast(`${pad.m.name} built!`); }
+  if (pad.kind === 'machine') { A(pad.m.area.id).built[pad.m.id] = true; toast(`${pad.m.name} built!`); onBuilt(pad.m); }
   if (pad.kind === 'area') {
     const st = A(pad.area.id); st.unlocked = true; st.built[pad.area.machines[0].id] = true;
     toast(`Welcome to ${pad.area.name}!`); SFX.milestone();
     for (let i = 0; i < 5; i++) spawnOne(pad.area, true);
+    onBuilt(pad.area.machines[0], true);
   }
   delete save.pads[pad.key];
   SFX.build(); sparkle(pad.x, pad.y, ['#FFC83D','#FF7A6B','#35C6D8','#fff'], 28); persist();
@@ -1078,6 +1092,7 @@ function draw(){
   const vw = innerWidth, vh = innerHeight, vg = ctx.createRadialGradient(vw / 2, vh * .55, Math.min(vw, vh) * .35, vw / 2, vh * .55, Math.max(vw, vh) * .8);
   vg.addColorStop(0, 'rgba(10,40,60,0)'); vg.addColorStop(1, S.storm ? 'rgba(20,30,60,.34)' : 'rgba(10,40,60,.22)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, vw, vh);
   if (S.storm && !reduce) { ctx.strokeStyle = 'rgba(220,235,255,.35)'; ctx.lineWidth = 1; for (let i = 0; i < 40; i++) { const rx = (i * 83 + t * 400) % vw, ry = (i * 131 + t * 900) % vh; ctx.beginPath(); ctx.moveTo(rx, ry); ctx.lineTo(rx - 4, ry + 12); ctx.stroke(); } }
+  if (running && !S.modal) edgeTabs().forEach(drawEdgeTab);
   drawSpotlight();
   if (joy.on && !S.modal) { ctx.fillStyle = 'rgba(255,255,255,.25)'; ctx.beginPath(); ctx.arc(joy.ox, joy.oy, 44, 0, 7); ctx.fill();
     const dx = joy.x - joy.ox, dy = joy.y - joy.oy, m = Math.min(1, 44 / Math.max(1, Math.hypot(dx, dy)));
@@ -1126,6 +1141,30 @@ function drawStall(a){
   ctx.fillStyle = '#FFC83D'; ctx.fillText(a.stall, cx, cy + 11.5);
 }
 
+// Tabs on the screen edges that point to areas you can't see (the phone only shows one area at a time)
+function edgeTabs(){
+  const out = [], sy = (L.row1 + 4) * scale, nl = nextLocked();
+  const right = AREAS.find(a => a.x > camX + viewW - 30 && (A(a.id).unlocked || (a === nl && pads().some(p => p.key === 'a:' + a.id))));
+  if (right) out.push({ side: 1, area: right, locked: !A(right.id).unlocked, sx: innerWidth - 36, sy });
+  const left = [...AREAS].reverse().find(a => a.x + AW < camX + 30 && A(a.id).unlocked);
+  if (left) out.push({ side: -1, area: left, locked: false, sx: 36, sy });
+  return out;
+}
+function drawEdgeTab(tb){
+  const b = reduce ? 0 : Math.sin(S.t * 5) * 4 * tb.side, x = tb.sx + b, y = tb.sy, w = 64, h = 50;
+  ctx.save(); ctx.translate(x, y);
+  ctx.fillStyle = 'rgba(22,50,74,.25)'; ctx.beginPath(); ctx.roundRect(-w / 2, -h / 2 + 3, w, h, 12); ctx.fill();
+  ctx.fillStyle = tb.locked ? '#FF7A6B' : 'rgba(255,255,255,.95)'; ctx.beginPath(); ctx.roundRect(-w / 2, -h / 2, w, h, 12); ctx.fill();
+  const ink = tb.locked ? '#fff' : '#16324A';
+  ctx.fillStyle = ink; ctx.beginPath();   // arrow
+  const d = tb.side; ctx.moveTo(d * 14, -10); ctx.lineTo(d * 2, -19); ctx.lineTo(d * 2, -14); ctx.lineTo(-d * 12, -14); ctx.lineTo(-d * 12, -6); ctx.lineTo(d * 2, -6); ctx.lineTo(d * 2, -1); ctx.closePath(); ctx.fill();
+  ctx.textAlign = 'center'; ctx.font = '700 10px Fredoka, sans-serif';
+  const words = tb.area.name.split(' '), l1 = words.length > 1 ? words.slice(0, -1).join(' ') : words[0], l2 = words.length > 1 ? words[words.length - 1] : '';
+  ctx.fillText(l1, 0, l2 ? 9 : 13); if (l2) ctx.fillText(l2, 0, 20);
+  if (tb.locked) { ctx.fillStyle = '#FFC83D'; ctx.beginPath(); ctx.roundRect(-17, -h / 2 - 9, 34, 14, 6); ctx.fill(); ctx.fillStyle = '#16324A'; ctx.font = '700 9px Fredoka, sans-serif'; ctx.fillText('NEW', 0, -h / 2 + 1.5); }
+  ctx.restore();
+}
+
 // ================= UI: HUD =================
 const hudC = {};
 const today = () => new Date().toISOString().slice(0, 10);
@@ -1135,9 +1174,9 @@ function hud(){
   let a = areaAt(S.player.x); if (!A(a.id).unlocked) a = AREAS[a.i - 1];
   const key = a.id + ':' + A(a.id).recycled;
   if (hudC.area !== key) { hudC.area = key; const hp = health(a);
-    $('areaName').textContent = a.name + ' health'; $('hp').textContent = Math.round(hp * 100) + '%'; $('hpBar').style.width = hp * 100 + '%';
+    $('areaName').textContent = a.name; $('hp').textContent = Math.round(hp * 100) + '%'; $('hpBar').style.width = hp * 100 + '%';
     const nx = MILESTONES.find(m => m.at > A(a.id).recycled);
-    $('next').textContent = nx ? `Next: ${nx.short} (${nx.at - A(a.id).recycled} more to recycle)` : `${a.name} is fully healed!`; }
+    $('next').textContent = nx ? `Next: ${nx.short} · ${nx.at - A(a.id).recycled} more` : `${a.name} is fully healed!`; }
   const gift = save.giftDay !== today(); if (hudC.gift !== gift) { hudC.gift = gift; $('giftDot').hidden = !gift; }
   renderGoal();
 }
@@ -1147,7 +1186,9 @@ function renderGoal(force){
   const g = goalAt(save.goal), [c, n] = goalProgress(g), key = save.goal + ':' + c;
   if (!force && key === hudC.goal) return; hudC.goal = key;
   const done = c >= n;
-  $('goal').innerHTML = `<small>Goal ${save.goal + 1}</small><b>${goalText(g)}</b><span class="rw"><span class="coin sm"></span>${fmt(g.r)}</span><div class="gbar"><i style="width:${Math.min(100, c / n * 100)}%"></i></div>${done ? '<button type="button" id="claim">Claim reward</button>' : ''}`;
+  $('goal').innerHTML = done
+    ? `<button type="button" id="claim">Claim reward <span class="coin sm"></span>${fmt(g.r)}</button>`
+    : `<small>Goal ${save.goal + 1}</small><b>${goalText(g)}</b><span class="rw"><span class="coin sm"></span>${fmt(g.r)}</span><div class="gbar"><i style="width:${Math.min(100, c / n * 100)}%"></i></div>`;
   if (done) $('claim').onclick = claimGoal;
 }
 
@@ -1170,23 +1211,24 @@ function openBoard(a){ S.boardOpen = a.id; renderBoard(); }
 function closeBoard(){ S.boardOpen = null; const el = document.querySelector('.sheet'); if (el) el.remove(); }
 function renderBoard(){
   const a = AREAS.find(x => x.id === S.boardOpen); if (!a) return;
-  const st = A(a.id);
+  const st = A(a.id), g = goalAt(save.goal), [gc, gn] = goalProgress(g), gOn = gc < gn;
   const rows = [
-    ...a.machines.filter(built).map(m => ({ icon: m.output, name: m.name, desc: 'Works faster and holds 10 more.', lv: mlv(m), max: MACH_UP.length, cost: machUpCost(m), buy: () => { st.mlv[m.id] = mlv(m) + 1; toast(`${m.name} upgraded!`); } })),
-    ...AREA_UPS.map(u => ({ icon: u.k, name: u.name, desc: u.desc, lv: st[u.k], max: u.max, cost: areaUpCost(a, u), buy: () => { st[u.k]++; ensureHelpers(); toast(u.k === 'crabs' ? 'A hermit crab joined your crew!' : u.k === 'pelicans' ? 'A pelican courier joined your crew!' : `${u.name} added!`); } })),
-    ...GLOBAL_UPS.map(u => ({ icon: u.k, name: u.name, desc: u.desc, lv: save[u.k], max: u.max, cost: globalCost(u), buy: () => { save[u.k]++; toast(u.k === 'bag' ? `Your bag holds ${cap()} now` : 'You walk faster!'); } })),
+    ...a.machines.filter(built).map(m => ({ goal: gOn && g.t === 'mlv' && g.id === m.id, icon: m.output, name: m.name, desc: 'Works faster and holds 10 more.', lv: mlv(m), max: MACH_UP.length, cost: machUpCost(m), buy: () => { st.mlv[m.id] = mlv(m) + 1; toast(`${m.name} upgraded!`); } })),
+    ...AREA_UPS.map(u => ({ goal: gOn && g.t === 'hire' && g.area === a.id && g.k === u.k, icon: u.k, name: u.name, desc: u.desc, lv: st[u.k], max: u.max, cost: areaUpCost(a, u), buy: () => { st[u.k]++; ensureHelpers(); toast(u.k === 'crabs' ? 'A hermit crab joined your crew!' : u.k === 'pelicans' ? 'A pelican courier joined your crew!' : `${u.name} added!`); } })),
+    ...GLOBAL_UPS.map(u => ({ goal: gOn && g.t === 'global' && g.k === u.k, icon: u.k, name: u.name, desc: u.desc, lv: save[u.k], max: u.max, cost: globalCost(u), buy: () => { save[u.k]++; toast(u.k === 'bag' ? `Your bag holds ${cap()} now` : 'You walk faster!'); } })),
   ];
   let el = document.querySelector('.sheet');
   if (!el) { el = document.createElement('div'); el.className = 'sheet'; document.body.appendChild(el); }
   el.innerHTML = `<header><h3>Crew & Upgrades<small>${a.name}</small></h3><button class="closeX" style="position:static" type="button" aria-label="Close">✕</button></header><div class="list"></div>`;
   const list = el.querySelector('.list');
   rows.forEach(r => {
-    const row = document.createElement('div'); row.className = 'up';
+    const row = document.createElement('div'); row.className = 'up' + (r.goal ? ' hl' : '');
     row.appendChild(iconCanvas(r.icon, 44));
     const maxed = r.cost == null;
     row.insertAdjacentHTML('beforeend', `<b>${r.name}</b><button class="buy ${maxed ? 'max' : ''}" type="button" ${maxed ? '' : `data-cost="${r.cost}"`} ${maxed || r.cost > save.coins ? 'disabled' : ''}>${maxed ? 'Max' : `<span class="coin sm"></span>${fmt(r.cost)}`}</button><span>${r.desc}<span class="lv">${Array.from({ length: r.max }, (_, i) => `<i class="${i < r.lv ? 'on' : ''}"></i>`).join('')}</span></span>`);
     row.querySelector('.buy').onclick = () => { if (maxed || r.cost > save.coins) return; save.coins -= r.cost; r.buy(); SFX.build(); sparkle(S.player.x, S.player.y - 20, ['#FFC83D', '#4CC38A', '#fff'], 18); persist(); renderBoard(); renderGoal(true); };
     list.appendChild(row);
+    if (r.goal) requestAnimationFrame(() => row.scrollIntoView({ block: 'nearest' }));
   });
   el.querySelector('.closeX').onclick = () => { S.boardDismissed = a.id; closeBoard(); };
 }
@@ -1260,6 +1302,7 @@ function startTutorial(){ tutStep = 0; }
 function endTutorial(){ tutStep = -1; save.tutDone = true; if (tipEl) { tipEl.remove(); tipEl = null; } persist(); renderGoal(true); }
 function tutTarget(step){
   if (step.center) return null;
+  if (step.screen) return step.screen();
   if (step.dom) { const r = $(step.dom).getBoundingClientRect(); return { sx: r.left + r.width / 2, sy: r.top + r.height / 2, r: Math.max(r.width, r.height) / 2 + 10 }; }
   const t = step.target(); return { sx: (t.x - camX) * scale, sy: t.y * scale, r: t.r * scale };
 }
@@ -1278,16 +1321,54 @@ function tutorialTick(){
     const nb = tipEl.querySelector('.tnext'); if (nb) nb.onclick = () => { SFX.tap(); tutStep++; if (tutStep >= TUT.length) endTutorial(); };
     if (tutStep === 6) renderGoal(true);
   }
-  // keep the tip next to its target
+  placeTip(cur);
+}
+function placeTip(cur){   // keep the tip next to its target
   const t = tutTarget(cur), vw = innerWidth, vh = innerHeight, tw = tipEl.offsetWidth, th = tipEl.offsetHeight;
   let left, top;
   if (!t) { left = (vw - tw) / 2; top = vh * .42 - th / 2; }
   else { left = clamp(t.sx - tw / 2, 12, vw - tw - 12); top = t.sy > vh * .5 ? t.sy - t.r - th - 14 : t.sy + t.r + 14; top = clamp(top, 12, vh - th - 12); }
   tipEl.style.left = left + 'px'; tipEl.style.top = top + 'px';
 }
+
+// ================= UI: one-off guides (new machine, new area) =================
+const coachQ = []; let coachShown = null;
+save.coached = save.coached || {};
+function coach(key, steps){ if (save.coached[key]) return; save.coached[key] = true; steps.forEach(st => coachQ.push(st)); persist(); }
+function nearestTrash(a, type){ const p = S.player; return S.trash[a.id].filter(t => t.type === type && t.y > waterline() + 4).sort((p1, p2) => dist(p.x, p.y, p1.x, p1.y) - dist(p.x, p.y, p2.x, p2.y))[0]; }
+function onBuilt(m, fresh){
+  const a = m.area; for (let i = 0; i < 3; i++) S.trash[a.id].push({ type: m.input, x: clamp(S.player.x + rnd(-120, 120), a.x + 24, a.x + AW - 24), y: rnd(Math.max(waterline() + 30, L.trashMax - 60), L.trashMax), rot: rnd(-1, 1), claimed: null });
+  const inp = LABEL[m.input], out = LABEL[m.output].toLowerCase();
+  coach('m:' + m.id, [
+    { target: () => { const t = nearestTrash(a, m.input); return t ? { x: t.x, y: t.y, r: 26 } : { x: m.x, y: L.trashMax - 30, r: 40 }; },
+      text: `${fresh ? `<b>Welcome to ${a.name}!</b> ` : `<b>${m.name} built!</b> `}From now on, <b>${inp}</b> will wash up on the beach here. Pick some up.`, btn: 'Next', done: () => S.player.stack.includes(m.input) },
+    { target: () => ({ x: m.x, y: L.inY, r: 32 }), text: `Drop the ${inp} into the <b>${m.name}</b> basket. It turns them into <b>${out}</b> to sell.`, btn: 'Got it', done: () => mst(m).in + mst(m).out > 0 && !S.player.stack.includes(m.input) },
+  ]);
+}
+function coachTick(dt){
+  if (tutStep >= 0 || !save.tutDone) return;
+  // point out the next area the first time it can be opened
+  const nl = nextLocked(), tab = edgeTabs().find(t => t.area === nl);
+  if (nl && tab && !save.coached['see:' + nl.id] && !coachQ.length)
+    coach('see:' + nl.id, [{ screen: () => { const t = edgeTabs().find(x => x.area === nl); return t ? { sx: t.sx, sy: t.sy, r: 40 } : null; }, text: `<b>A new area is over here!</b> Walk this way to see what ${nl.name} needs before you can restore it.`, btn: 'Got it', done: () => areaAt(S.player.x) === nl || S.player.x > unlockedEnd() - 20 }]);
+  const cur = coachQ[0];
+  if (!cur) return;
+  if (S.modal || S.boardOpen) { if (tipEl) { tipEl.remove(); tipEl = null; coachShown = null; } return; }
+  cur.wait = (cur.wait || 0) + dt; if (cur.wait < .7) return;
+  const next = () => { coachQ.shift(); if (tipEl) { tipEl.remove(); tipEl = null; } coachShown = null; };
+  if (cur.done && cur.done()) { SFX.claim(); return next(); }
+  if (coachShown !== cur) {
+    coachShown = cur; if (tipEl) tipEl.remove();
+    tipEl = document.createElement('div'); tipEl.className = 'tip';
+    tipEl.innerHTML = `${cur.text}<div><button class="tnext" type="button">${cur.btn}</button></div>`;
+    document.body.appendChild(tipEl);
+    tipEl.querySelector('.tnext').onclick = () => { SFX.tap(); next(); };
+  }
+  placeTip(cur);
+}
 function drawSpotlight(){
-  if (tutStep < 0) return;
-  const t = tutTarget(TUT[tutStep]), vw = innerWidth, vh = innerHeight;
+  const step = tutStep >= 0 ? TUT[tutStep] : coachShown; if (!step) return;
+  const t = tutTarget(step), vw = innerWidth, vh = innerHeight;
   ctx.fillStyle = 'rgba(8,30,45,.55)'; ctx.beginPath(); ctx.rect(0, 0, vw, vh);
   if (t) { const pulse = reduce ? 0 : Math.sin(S.t * 4) * 3; ctx.arc(t.sx, t.sy, t.r + pulse, 0, Math.PI * 2, true); }
   ctx.fill('evenodd');
@@ -1309,7 +1390,7 @@ function start(){
 }
 function loop(now){
   const dt = Math.min(.05, (now - last) / 1000); last = now;
-  if (running) { update(dt); tutorialTick(); saveT += dt; if (saveT > 3) { saveT = 0; persist(); } }
+  if (running) { update(dt); tutorialTick(); coachTick(dt); saveT += dt; if (saveT > 3) { saveT = 0; persist(); } }
   else S.t += dt;
   draw(); if (running) hud();
   requestAnimationFrame(loop);
@@ -1317,7 +1398,8 @@ function loop(now){
 document.addEventListener('visibilitychange', () => { if (document.hidden && running) persist(); last = performance.now(); });
 $('play').onclick = start;
 layout(); S.player.y = L.row0 - 10;
-if (location.hash === '#test') window.__tt = { S, save, AREAS, MACHINES, MBY, get L(){ return L; }, get camX(){ return camX; }, pads, waterline, mst, built, dispCount, dispCap, goalAt, goalProgress, claimGoal, areaUpCost, machUpCost, globalCost, AREA_UPS, GLOBAL_UPS, ensureHelpers, cap, get tut(){ return tutStep; }, endTutorial, start, openBoard, closeBoard };
+if (document.fonts) document.fonts.ready.then(() => { layout(); if (!running) S.player.y = L.row0 - 10; });
+if (location.hash === '#test') window.__tt = { S, save, AREAS, MACHINES, MBY, get L(){ return L; }, get camX(){ return camX; }, pads, waterline, mst, built, dispCount, dispCap, goalAt, goalProgress, claimGoal, areaUpCost, machUpCost, globalCost, AREA_UPS, GLOBAL_UPS, ensureHelpers, cap, coachQ, edgeTabs, get tut(){ return tutStep; }, endTutorial, start, openBoard, closeBoard };
 requestAnimationFrame(loop);
 })();
 </script>
