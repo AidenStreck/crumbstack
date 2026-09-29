@@ -553,17 +553,17 @@ function cyl(c, gx, gy, r, z0, h, col, o = {}){   // vertical cylinder centred o
   return [cx, cy - hp, rx, ry];
 }
 function groundShadow(c, gx, gy, w, d, s = .22){ const pts = [iso(gx - .1, gy - .1), iso(gx + w + .35, gy - .1), iso(gx + w + .35, gy + d + .35), iso(gx - .1, gy + d + .35)]; poly(c, pts, `rgba(20,35,15,${s})`); }
-function lantern(c, x, y, s, t){ const fl = reduce ? 1 : .85 + .15 * Math.sin(t * 7 + x); const g = c.createRadialGradient(x, y, 0, x, y, s * 3); g.addColorStop(0, `rgba(255,190,80,${.45 * fl})`); g.addColorStop(1, 'rgba(255,190,80,0)'); c.fillStyle = g; c.beginPath(); c.arc(x, y, s * 3, 0, 7); c.fill();
+function lantern(c, x, y, s, t){ const fl = reduce ? 1 : .85 + .15 * Math.sin(t * 7 + (x - IS.ox) * .05); const g = c.createRadialGradient(x, y, 0, x, y, s * 3); g.addColorStop(0, `rgba(255,190,80,${.45 * fl})`); g.addColorStop(1, 'rgba(255,190,80,0)'); c.fillStyle = g; c.beginPath(); c.arc(x, y, s * 3, 0, 7); c.fill();
   c.fillStyle = '#5A3A22'; c.fillRect(x - s * .5, y - s * 1.2, s, s * .3); circ(c, x, y, s * .7, `rgb(255,${200 + 30 * fl | 0},110)`); }
 function banner(c, x, y, h, col, t, emblem){ c.strokeStyle = '#4A2E1A'; c.lineWidth = Math.max(1.5, h * .06); c.beginPath(); c.moveTo(x, y); c.lineTo(x, y - h); c.stroke();
-  const w = reduce ? 0 : Math.sin(t * 3 + x) * h * .05; c.fillStyle = col; c.beginPath(); c.moveTo(x, y - h); c.quadraticCurveTo(x + h * .3, y - h * .95 + w, x + h * .55, y - h * .9 + w); c.lineTo(x + h * .5, y - h * .62 + w); c.quadraticCurveTo(x + h * .25, y - h * .66 - w, x, y - h * .6); c.fill();
+  const w = reduce ? 0 : Math.sin(t * 3 + (x - IS.ox) * .02) * h * .05; c.fillStyle = col; c.beginPath(); c.moveTo(x, y - h); c.quadraticCurveTo(x + h * .3, y - h * .95 + w, x + h * .55, y - h * .9 + w); c.lineTo(x + h * .5, y - h * .62 + w); c.quadraticCurveTo(x + h * .25, y - h * .66 - w, x, y - h * .6); c.fill();
   if (emblem) { c.fillStyle = 'rgba(255,255,255,.85)'; c.beginPath(); c.arc(x + h * .25, y - h * .77 + w * .5, h * .07, 0, 7); c.fill(); } }
-function bush(c, x, y, s, col, t){ const sw = reduce ? 0 : Math.sin(t + x * .1) * s * .03; ell(c, x, y + s * .1, s * .5, s * .18, 'rgba(20,40,10,.25)'); [[-.25, -.1, .32], [.25, -.12, .3], [0, -.3, .36]].forEach(([dx, dy, r], i) => { const g = c.createRadialGradient(x + dx * s - s * .1, y + dy * s - s * .15, 0, x + dx * s, y + dy * s, r * s); g.addColorStop(0, shade(col, .25)); g.addColorStop(1, shade(col, -.2)); c.fillStyle = g; c.beginPath(); c.arc(x + dx * s + sw, y + dy * s, r * s, 0, 7); c.fill(); }); }
+function bush(c, x, y, s, col, t){ const sw = reduce ? 0 : Math.sin(t + (x - IS.ox) * .02) * s * .03; ell(c, x, y + s * .1, s * .5, s * .18, 'rgba(20,40,10,.25)'); [[-.25, -.1, .32], [.25, -.12, .3], [0, -.3, .36]].forEach(([dx, dy, r], i) => { const g = c.createRadialGradient(x + dx * s - s * .1, y + dy * s - s * .15, 0, x + dx * s, y + dy * s, r * s); g.addColorStop(0, shade(col, .25)); g.addColorStop(1, shade(col, -.2)); c.fillStyle = g; c.beginPath(); c.arc(x + dx * s + sw, y + dy * s, r * s, 0, 7); c.fill(); }); }
 function tree(c, x, y, s, t, kind){
   ell(c, x + s * .15, y + s * .05, s * .5, s * .16, 'rgba(15,35,10,.28)');
   if (kind === 'palm') { c.strokeStyle = '#7A5230'; c.lineWidth = s * .09; c.lineCap = 'round'; c.beginPath(); c.moveTo(x, y); c.quadraticCurveTo(x + s * .15, y - s * .5, x + s * .06, y - s * .95); c.stroke();
     c.strokeStyle = 'rgba(60,35,15,.4)'; c.lineWidth = 1; for (let i = 1; i < 6; i++) { const yy = y - s * .16 * i; c.beginPath(); c.moveTo(x - s * .04 + i * .5, yy); c.lineTo(x + s * .06 + i * .5, yy - 2); c.stroke(); }
-    const sw = reduce ? 0 : Math.sin(t * 1.2 + x) * .07; for (let i = 0; i < 6; i++) { const a = -Math.PI / 2 + (i - 2.5) * .62 + sw, tx = x + s * .06, ty = y - s * .95; c.strokeStyle = i % 2 ? '#2F8A3E' : '#46A84F'; c.lineWidth = s * .09; c.beginPath(); c.moveTo(tx, ty); c.quadraticCurveTo(tx + Math.cos(a) * s * .3, ty + Math.sin(a) * s * .25 - s * .1, tx + Math.cos(a) * s * .52, ty + Math.sin(a) * s * .3 + s * .12); c.stroke(); }
+    const sw = reduce ? 0 : Math.sin(t * 1.1 + (x - IS.ox) * .015) * .05; for (let i = 0; i < 6; i++) { const a = -Math.PI / 2 + (i - 2.5) * .62 + sw, tx = x + s * .06, ty = y - s * .95; c.strokeStyle = i % 2 ? '#2F8A3E' : '#46A84F'; c.lineWidth = s * .09; c.beginPath(); c.moveTo(tx, ty); c.quadraticCurveTo(tx + Math.cos(a) * s * .3, ty + Math.sin(a) * s * .25 - s * .1, tx + Math.cos(a) * s * .52, ty + Math.sin(a) * s * .3 + s * .12); c.stroke(); }
     circ(c, x + s * .03, y - s * .9, s * .05, '#6B4424'); circ(c, x + s * .1, y - s * .88, s * .05, '#6B4424'); return; }
   c.fillStyle = '#6B4424'; c.fillRect(x - s * .05, y - s * .45, s * .1, s * .45);
   const cols = kind === 'blossom' ? ['#F2A7C3', '#E57FA6', '#FFD1E1'] : ['#3E9E4A', '#2E7F3A', '#6BC165'];
@@ -572,12 +572,32 @@ function tree(c, x, y, s, t, kind){
 function rock(c, x, y, s, col){ col = col || '#8C8A82'; poly(c, [[x - s * .5, y], [x - s * .35, y - s * .35], [x, y - s * .5], [x + s * .4, y - s * .3], [x + s * .5, y]], shade(col, -.1)); poly(c, [[x - s * .35, y - s * .35], [x, y - s * .5], [x + s * .1, y - s * .15], [x - s * .2, y - s * .05]], shade(col, .2)); ell(c, x - s * .1, y - s * .42, s * .15, s * .06, 'rgba(110,170,70,.8)'); }
 
 // ---------- water ----------
-function drawWater(c, W, H, t, reg){
-  const g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, shade(reg.sea[0], -.05)); g.addColorStop(.5, reg.sea[0]); g.addColorStop(1, reg.sea[1]); c.fillStyle = g; c.fillRect(0, 0, W, H);
-  c.fillStyle = 'rgba(255,255,255,.12)'; const s = IS.tw;
-  for (let i = 0; i < 70; i++) { const px = ((i * 197.3 + t * 6 * (1 + i % 3)) % (W + 80)) - 40, py = ((i * 113.7) % H), f = .5 + .5 * Math.sin(t * 1.5 + i);
-    c.globalAlpha = .25 + .35 * f; c.beginPath(); c.ellipse(px, py, s * .35 * (.6 + f * .4), s * .05, 0, 0, 7); c.fill(); }
-  c.globalAlpha = 1;
+function drawWater(c, W, H, t, reg, islandAt){
+  // deep water, lighter towards the island, with wave crests, glints and a few rocks with surf
+  const g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, shade(reg.sea[1], -.15)); g.addColorStop(1, shade(reg.sea[1], -.3)); c.fillStyle = g; c.fillRect(0, 0, W, H);
+  const [ix, iy] = islandAt || iso(GRID_W / 2, GRID_H / 2, -CLIFF), R0 = IS.tw * 13;
+  const sh = c.createRadialGradient(ix, iy + IS.tw, R0 * .15, ix, iy + IS.tw, R0); sh.addColorStop(0, shade(reg.sea[0], .28)); sh.addColorStop(.35, reg.sea[0]); sh.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = sh; c.fillRect(0, 0, W, H);
+  // soft caustic ripples near the island
+  c.save(); c.globalAlpha = .12; c.strokeStyle = '#fff'; c.lineWidth = 1.5;
+  for (let i = 0; i < 26; i++) { const a = i * 2.4, r = R0 * (.35 + (i % 7) * .08), px = ix + Math.cos(a) * r, py = iy + IS.tw + Math.sin(a) * r * .56, w = IS.tw * (.5 + (i % 3) * .3), ph = t * .8 + i;
+    c.beginPath(); c.ellipse(px + Math.sin(ph) * 4, py, w, w * .3, 0, Math.PI * 1.1, Math.PI * 1.9); c.stroke(); }
+  c.restore();
+  // wave crests drifting along the sea
+  const s = IS.tw;
+  for (let i = 0; i < 46; i++) { const sp = 5 + (i % 4) * 2, px = ((i * 211.7 + t * sp) % (W + 120)) - 60, py = ((i * 97.3) % (H + 40)) - 20, f = .5 + .5 * Math.sin(t * 1.3 + i * 1.7), w = s * (.3 + (i % 3) * .15);
+    c.strokeStyle = `rgba(255,255,255,${.12 + .22 * f})`; c.lineWidth = 2; c.lineCap = 'round'; c.beginPath(); c.moveTo(px - w, py + w * .15); c.quadraticCurveTo(px, py - w * .25 * f, px + w, py + w * .15); c.stroke(); }
+  // sun glints
+  for (let i = 0; i < 18; i++) { const px = (i * 173.1 + t * 3) % W, py = (i * 131.9) % H, f = Math.max(0, Math.sin(t * 2.3 + i * 3.1)); if (f < .7) continue; const r = 2 + (f - .7) * 10;
+    c.fillStyle = `rgba(255,255,240,${(f - .7) * 2.5})`; c.beginPath(); c.moveTo(px - r, py); c.lineTo(px, py - r * .35); c.lineTo(px + r, py); c.lineTo(px, py + r * .35); c.fill(); }
+}
+// animated surf around the island's sand, drawn between the water and the island itself
+function drawShoreFoam(c, t){
+  const [x0, y0, x1, y1] = islandShape(RING); const k = reduce ? 0 : Math.sin(t * 1.2) * .18;
+  for (const [pad, a, w] of [[1.75 + k, .22, .5], [1.45 - k * .6, .4, .3]]) { const q = [iso(x0 - pad, y0 - pad, -CLIFF - .1), iso(x1 + pad, y0 - pad, -CLIFF - .1), iso(x1 + pad, y1 + pad, -CLIFF - .1), iso(x0 - pad, y1 + pad, -CLIFF - .1)];
+    c.save(); c.lineJoin = 'round'; poly(c, q, `rgba(255,255,255,${a * .5})`, `rgba(255,255,255,${a})`, IS.tw * w); c.restore(); }
+  // a few sea rocks with surf
+  for (const [gx, gy, r] of [[-5.5, 3, .9], [GRID_W + 5, 1.5, 1.2], [3, GRID_H + 5.2, .8], [GRID_W + 3.5, GRID_H + 4, 1]]) { const [px, py] = iso(gx, gy, -CLIFF), rr2 = IS.tw * r;
+    c.strokeStyle = `rgba(255,255,255,${.5 + .3 * Math.sin(t * 2 + gx)})`; c.lineWidth = 2; c.beginPath(); c.ellipse(px, py, rr2 * 1.1 + Math.sin(t * 2 + gy) * 2, rr2 * .45, 0, 0, 7); c.stroke(); rock(c, px, py + rr2 * .15, rr2 * 1.2, '#7A7E82'); }
 }
 // ---------- the island (cached) ----------
 // the buildable plateau is the GRID; around it a ring of wild ground, then cliffs, then a sand shore
@@ -588,7 +608,7 @@ function drawTerrain(c, reg, seed, o = {}){
   // shore sand and foam below the cliffs
   const sand = [iso(x0 - 1.1, y0 - 1.1, -CLIFF), iso(x1 + 1.1, y0 - 1.1, -CLIFF), iso(x1 + 1.1, y1 + 1.1, -CLIFF), iso(x0 - 1.1, y1 + 1.1, -CLIFF)];
   const foam = [iso(x0 - 1.5, y0 - 1.5, -CLIFF - .05), iso(x1 + 1.5, y0 - 1.5, -CLIFF - .05), iso(x1 + 1.5, y1 + 1.5, -CLIFF - .05), iso(x0 - 1.5, y1 + 1.5, -CLIFF - .05)];
-  c.save(); c.lineJoin = 'round'; poly(c, foam, 'rgba(255,255,255,.35)', 'rgba(255,255,255,.35)', IS.tw * .9); poly(c, sand, reg.sand, reg.sand, IS.tw * .6); c.restore();
+  c.save(); c.lineJoin = 'round'; poly(c, sand, reg.sand, reg.sand, IS.tw * .6); const wet = [iso(x0 - 1.3, y0 - 1.3, -CLIFF), iso(x1 + 1.3, y0 - 1.3, -CLIFF), iso(x1 + 1.3, y1 + 1.3, -CLIFF), iso(x0 - 1.3, y1 + 1.3, -CLIFF)]; c.strokeStyle = shade(reg.sand, -.18); c.lineWidth = IS.tw * .12; c.beginPath(); wet.forEach((p, i) => i ? c.lineTo(...p) : c.moveTo(...p)); c.closePath(); c.stroke(); c.restore();
   // wet sand edge and shells
   for (let i = 0; i < 40; i++) { const edge = i % 4, f = R(); let gx, gy; if (edge === 0) { gx = x0 - 1 + f * (x1 - x0 + 2); gy = y1 + .9; } else if (edge === 1) { gx = x1 + .9; gy = y0 - 1 + f * (y1 - y0 + 2); } else if (edge === 2) { gx = x0 - .9; gy = y0 - 1 + f * (y1 - y0 + 2); } else { gx = x0 - 1 + f * (x1 - x0 + 2); gy = y0 - .9; }
     const [px, py] = iso(gx, gy, -CLIFF); circ(c, px, py, IS.tw * .03, i % 3 ? '#FFF6E0' : '#F2B8C6'); }
@@ -684,11 +704,30 @@ function drawBld(c, k, gx, gy, lv, o = {}){
     for (let i = 0; i < 4; i++) { const f = (t * .6 + i / 4) % 1; circ(c, px + Math.cos(i * 2.1) * rx * .5, py - f * IS.tw * .9, IS.tw * .03 * (1 - f), 'rgba(220,255,255,.9)'); }
   } else if (k === 'dock') {
     isoBox(c, gx + .05, gy + .3, s - .1, s - .4, .3, 0, wood, { tex: 'plank' }); [[gx + .15, gy + s - .15], [gx + s - .15, gy + s - .15]].forEach(([px, py]) => isoBox(c, px - .08, py - .08, .16, .16, 1.4, -1, '#6E421F'));
-    const hov = reduce ? 0 : Math.sin(t * 1.4) * .15, [bx, by] = iso(cx, cy, 2.4 + hov), [kx, ky] = iso(cx, cy, 1.2 + hov);
-    c.strokeStyle = 'rgba(70,45,25,.8)'; c.lineWidth = 1; [[-.45, 0], [.45, 0]].forEach(([ox2]) => { c.beginPath(); c.moveTo(bx + ox2 * IS.tw * .8, by + IS.tw * .15); c.lineTo(kx + ox2 * IS.tw * .5, ky); c.stroke(); });
-    const eg = c.createLinearGradient(bx - IS.tw, by, bx + IS.tw, by); eg.addColorStop(0, '#FF9A6B'); eg.addColorStop(.4, '#FF7A5C'); eg.addColorStop(1, '#C24A30'); c.fillStyle = eg; c.beginPath(); c.ellipse(bx, by, IS.tw * .75, IS.tw * .45, 0, 0, 7); c.fill();
-    c.strokeStyle = 'rgba(255,230,160,.8)'; c.lineWidth = 2; for (let i = -1; i <= 1; i++) { c.beginPath(); c.ellipse(bx + i * IS.tw * .28, by, IS.tw * .1, IS.tw * .42, 0, -Math.PI / 2, Math.PI / 2, i < 0); c.stroke(); }
-    const hull = [[kx - IS.tw * .55, ky - IS.tw * .1], [kx + IS.tw * .55, ky - IS.tw * .1], [kx + IS.tw * .4, ky + IS.tw * .18], [kx - IS.tw * .4, ky + IS.tw * .18]]; poly(c, hull, '#8A5A34', '#4A2E1A'); banner(c, kx + IS.tw * .4, ky - IS.tw * .1, IS.tw * .45, flag, t);
+    // mooring mast with rope
+    isoBox(c, gx + .2, gy + .45, .18, .18, 2.2, .3, '#7A4A24', { tex: 'plank' }); const [mx, my] = iso(gx + .29, gy + .54, 2.5);
+    const hov = reduce ? 0 : Math.sin(t * 1.4) * .12, [bx, by] = iso(cx + .15, cy, 3.05 + hov), T = IS.tw, tilt = reduce ? 0 : Math.sin(t * .9) * .04;
+    c.strokeStyle = 'rgba(90,60,30,.8)'; c.lineWidth = 1.2; c.beginPath(); c.moveTo(mx, my); c.quadraticCurveTo((mx + bx) / 2, my + T * .3, bx - T * .7, by); c.stroke();
+    c.save(); c.translate(bx, by); c.rotate(tilt);
+    // gondola: a little wooden boat with rails
+    const gy0 = T * .95; ell(c, 0, gy0 + T * .5, T * .5, T * .1, 'rgba(0,0,0,.12)');
+    c.strokeStyle = 'rgba(70,45,25,.85)'; c.lineWidth = 1.2; for (const ox2 of [-.45, -.15, .15, .45]) { c.beginPath(); c.moveTo(ox2 * T * 1.5, T * .28); c.lineTo(ox2 * T * .9, gy0); c.stroke(); }
+    const hull = c.createLinearGradient(0, gy0 - T * .1, 0, gy0 + T * .3); hull.addColorStop(0, '#B07A45'); hull.addColorStop(1, '#6E421F');
+    c.fillStyle = hull; c.beginPath(); c.moveTo(-T * .62, gy0 - T * .06); c.quadraticCurveTo(-T * .6, gy0 + T * .26, -T * .2, gy0 + T * .3); c.lineTo(T * .3, gy0 + T * .3); c.quadraticCurveTo(T * .72, gy0 + T * .22, T * .74, gy0 - T * .1); c.closePath(); c.fill();
+    c.strokeStyle = '#4A2E14'; c.lineWidth = 1.5; c.stroke(); c.strokeStyle = 'rgba(40,20,5,.35)'; c.beginPath(); c.moveTo(-T * .58, gy0 + T * .1); c.lineTo(T * .68, gy0 + T * .08); c.stroke();
+    c.fillStyle = '#E8C070'; rr(c, -T * .62, gy0 - T * .1, T * 1.36, T * .07, 2); c.fill();
+    const pr = reduce ? 0 : t * 14; c.save(); c.translate(-T * .7, gy0 + T * .08); c.scale(.35, 1); c.fillStyle = 'rgba(200,190,170,.8)'; c.beginPath(); c.ellipse(0, 0, T * .1, T * .22 * Math.abs(Math.cos(pr)) + 2, 0, 0, 7); c.fill(); c.restore();
+    // balloon: striped envelope with gores, light from the upper left
+    const RX = T * 1.05, RY = T * .6, env = c.createRadialGradient(-RX * .35, -RY * .45, RY * .1, 0, 0, RX * 1.1); env.addColorStop(0, '#FFD2B8'); env.addColorStop(.35, '#FF8A5C'); env.addColorStop(.8, '#C2482C'); env.addColorStop(1, '#8A2A18');
+    c.fillStyle = env; c.beginPath(); c.ellipse(0, 0, RX, RY, 0, 0, 7); c.fill();
+    c.save(); c.beginPath(); c.ellipse(0, 0, RX, RY, 0, 0, 7); c.clip();
+    for (let i = -2; i <= 2; i++) { const w = RX * .22; c.fillStyle = i % 2 ? 'rgba(255,232,150,.55)' : 'rgba(255,255,255,0)'; c.beginPath(); c.ellipse(i * RX * .36, 0, w * (1 - Math.abs(i) * .25), RY * 1.05, 0, 0, 7); c.fill(); }
+    c.fillStyle = 'rgba(80,20,10,.25)'; c.beginPath(); c.ellipse(RX * .25, RY * .35, RX * .9, RY * .55, 0, 0, 7); c.fill(); c.restore();
+    c.strokeStyle = '#7A2A14'; c.lineWidth = 1.5; c.beginPath(); c.ellipse(0, 0, RX, RY, 0, 0, 7); c.stroke();
+    c.fillStyle = 'rgba(255,255,255,.55)'; c.beginPath(); c.ellipse(-RX * .45, -RY * .5, RX * .22, RY * .12, -.3, 0, 7); c.fill();
+    c.fillStyle = '#E8C070'; c.beginPath(); c.moveTo(RX * .82, -RY * .1); c.lineTo(RX * 1.25, -RY * .55); c.lineTo(RX * 1.2, RY * .1); c.closePath(); c.fill(); c.strokeStyle = '#8A5A20'; c.lineWidth = 1.2; c.stroke();
+    c.fillStyle = '#6E421F'; rr(c, -RX * .5, RY * .72, RX, T * .08, 3); c.fill();
+    c.restore(); banner(c, bx - T * .1, by - RY + 2, T * .5, flag, t);
   } else if (k === 'tower') {
     plinth(); const legs = [[gx + .2, gy + .2], [gx + .8, gy + .2], [gx + .8, gy + .8], [gx + .2, gy + .8]], top = stone ? 2.8 : 2.4;
     if (stone) isoBox(c, gx + .2, gy + .2, .6, .6, top - .35, .35, '#A8A092', { tex: 'stone' });
@@ -710,7 +749,7 @@ function drawBld(c, k, gx, gy, lv, o = {}){
     c.fillStyle = '#fff'; c.font = `700 ${r * 1.2}px Fredoka, sans-serif`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(lv, bx, by + 1); }
 }
 // the tallest point of a building, for tap targets and floating text
-const bldTop = k => ({ hq: 5.5, farm: 1, mill: 3.4, nest: 2, den: 2.4, pond: 2, dock: 3.4, tower: 3.4, cannon: 1.2, hut: 2 })[k] || 2;
+const bldTop = k => ({ hq: 5.5, farm: 1, mill: 3.4, nest: 2, den: 2.4, pond: 2, dock: 4.4, tower: 3.4, cannon: 1.2, hut: 2 })[k] || 2;
 function drawScaffoldIso(c, gx, gy, s, frac, t){
   const H1 = HU(), top = 2.2; groundShadow(c, gx, gy, s, s, .15);
   c.strokeStyle = '#B98A55'; c.lineWidth = Math.max(1.5, IS.tw * .05);
@@ -738,6 +777,212 @@ function drawAmbient(c, W, H, t){
   // soft vignette
   const v = c.createRadialGradient(W / 2, H / 2, Math.min(W, H) * .35, W / 2, H / 2, Math.max(W, H) * .75); v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(10,25,40,.35)'); c.fillStyle = v; c.fillRect(0, 0, W, H);
 }
+
+// ================= CRITTER ILLUSTRATIONS (SVG) =================
+// Each critter is a small SVG illustration (viewBox 200x200, feet at y=185) with soft light from the upper
+// left, cool rim light, big expressive eyes and its own personality. They're turned into images once and
+// stamped onto the canvas, so they stay crisp at any size.
+const CAST = {
+  pebblet:    { nick: 'Pebble',  mood: 'Sleepy and stubborn. Naps through anything, moves for nothing.' },
+  zippy:      { nick: 'Zippy',   mood: 'Talks fast, flies faster. Has never finished a sentence.' },
+  coconeer:   { nick: 'Coco',    mood: 'Cheeky troublemaker. Wears a coconut as a helmet and throws the spares.' },
+  puffling:   { nick: 'Puff',    mood: 'Shy and gentle. Blushes when anyone looks at her.' },
+  gustling:   { nick: 'Gus',     mood: 'Ace pilot, big ego. Never takes the goggles off.' },
+  sparkfinch: { nick: 'Sparky',  mood: 'Way too excited about everything. Crackles when happy.' },
+  bubbleclam: { nick: 'Clamford',mood: 'Grumpy but loyal. Guards his pearl with his life.' },
+  squidlet:   { nick: 'Inkwell', mood: 'Sneaky prankster in a bandana. Ink first, questions later.' },
+  eelectra:   { nick: 'Electra', mood: 'A glowing diva. Expects a round of applause.' },
+  cogbot:     { nick: 'Cogsworth',mood: 'Loyal wind-up guardian. Needs a twist of the key each morning.' },
+  steamcrab:  { nick: 'Boilers', mood: 'Crusty old engineer with a steam cannon and a mustache.' },
+  sprocket:   { nick: 'Sprocket',mood: 'Clever tinkerer fox. Always fixing something that wasn\'t broken.' },
+  shellnut:   { nick: 'Shellnut',mood: 'Pebble\'s calm, crossed with Coco\'s aim.' },
+  flingo:     { nick: 'Flingo',  mood: 'Part monkey, part parrot, all chaos.' },
+  boulderpuff:{ nick: 'Boulderpuff', mood: 'A cloud that weighs a ton. Floats anyway.' },
+  zipzap:     { nick: 'Zipzap',  mood: 'Faster than lightning, twice as loud.' },
+  stormnut:   { nick: 'Stormnut',mood: 'Throws coconuts full of thunder.' },
+  tidecog:    { nick: 'Tidecog', mood: 'A clockwork clam fortress. Unbudgeable.' },
+};
+function svgArt(sp, opts = {}){
+  const S = SPECIES[sp], id = sp + (opts.blink ? 'b' : '') + (opts.hy || ''), a = S.col, b = S.col2;
+  const L = (c, k) => shadeHex(c, k);
+  // shared defs: body shading gradient per colour, soft shadow
+  const G = (n, c, lx = .35, ly = .3) => `<radialGradient id="${id}${n}" cx="${lx}" cy="${ly}" r=".85"><stop offset="0" stop-color="${L(c, .38)}"/><stop offset=".45" stop-color="${c}"/><stop offset="1" stop-color="${L(c, -.38)}"/></radialGradient>`;
+  const rim = (d) => `<path d="${d}" fill="none" stroke="rgba(190,230,255,.55)" stroke-width="3" stroke-linecap="round"/>`;
+  const OUT = (c) => `stroke="${L(c, -.55)}" stroke-width="3.5" stroke-linejoin="round"`;
+  // eyes: x, y, r, look direction, lid (0 open .. 1 closed), brow tilt
+  const eye = (x, y, r, o = {}) => { const lid = opts.blink ? 1 : (o.lid || 0), lx = o.lx || 1.5, ly = o.ly || 1;
+    if (lid >= 1) return `<path d="M${x - r} ${y + r * .1} Q${x} ${y + r * .7} ${x + r} ${y + r * .1}" fill="none" stroke="#2A1A10" stroke-width="3.5" stroke-linecap="round"/>`;
+    return `<g><ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r * 1.12}" fill="#fff" stroke="#2A1A10" stroke-width="2.5"/>
+      <ellipse cx="${x + lx}" cy="${y + ly + r * .1}" rx="${r * .62}" ry="${r * .72}" fill="url(#${id}iris)"/><ellipse cx="${x + lx}" cy="${y + ly + r * .15}" rx="${r * .34}" ry="${r * .42}" fill="#120A06"/>
+      <circle cx="${x + lx - r * .25}" cy="${y + ly - r * .22}" r="${r * .24}" fill="#fff"/><circle cx="${x + lx + r * .22}" cy="${y + ly + r * .3}" r="${r * .1}" fill="#fff" opacity=".9"/>
+      ${lid ? `<path d="M${x - r * 1.1} ${y - r * 1.2} L${x + r * 1.1} ${y - r * 1.2} L${x + r * 1.1} ${y - r * 1.2 + r * 2.3 * lid} Q${x} ${y - r * 1.2 + r * 2.6 * lid} ${x - r * 1.1} ${y - r * 1.2 + r * 2.3 * lid} Z" fill="${o.lidCol || L(a, -.1)}" stroke="#2A1A10" stroke-width="2.5"/>` : ''}
+      ${o.brow != null ? `<path d="M${x - r} ${y - r * 1.45 + o.brow} Q${x} ${y - r * 1.75} ${x + r} ${y - r * 1.45 - o.brow}" fill="none" stroke="#2A1A10" stroke-width="4" stroke-linecap="round"/>` : ''}</g>`; };
+  const iris = (c) => `<radialGradient id="${id}iris" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="${L(c, .45)}"/><stop offset="1" stop-color="${L(c, -.3)}"/></radialGradient>`;
+  const blush = (x, y) => `<ellipse cx="${x}" cy="${y}" rx="9" ry="5" fill="#FF7A9A" opacity=".45"/>`;
+  const shadow = `<ellipse cx="100" cy="186" rx="52" ry="11" fill="rgba(20,20,40,.25)"/>`;
+  let defs = G('a', a) + G('b', b) + iris(opts.irisCol || '#6B4A2E'), body = '';
+  const look = LOOK[sp] || sp;
+  if (look === 'pebblet') { defs += G('m', '#8CCB5E') + iris('#3F8A5A');
+    body = `<path d="M60 150 Q58 180 75 182 L88 182 Q92 168 86 150Z M126 150 Q124 180 140 182 L152 182 Q156 168 146 150Z" fill="url(#${id}m)" ${OUT('#8CCB5E')}/>
+      <path d="M128 112 Q192 96 192 136 Q190 170 150 168 Q126 160 128 112Z" fill="url(#${id}m)" ${OUT('#8CCB5E')}/>
+      <path d="M30 150 Q28 70 100 62 Q168 64 166 150 Q100 168 30 150Z" fill="url(#${id}a)" ${OUT(a)}/>
+      <path d="M58 90 L78 78 L100 84 L100 108 L78 116 L58 106Z M104 84 L126 78 L146 92 L144 112 L124 116 L104 108Z M70 120 L96 116 L118 122 L114 140 L88 146 L68 138Z" fill="${L(a, -.12)}" stroke="${L(a, -.45)}" stroke-width="2.5" opacity=".9"/>
+      <path d="M40 146 Q100 160 158 146" fill="none" stroke="${L(a, -.5)}" stroke-width="3"/>
+      <ellipse cx="96" cy="66" rx="30" ry="9" fill="#6FBF4A"/><circle cx="118" cy="58" r="7" fill="#FF9DB8" stroke="#C4506E" stroke-width="2"/><circle cx="118" cy="58" r="2.5" fill="#FFE066"/>
+      ${eye(152, 128, 12, { lid: .55, lx: 1, lidCol: '#7CBF52' })}${eye(176, 130, 10, { lid: .55, lx: 1, lidCol: '#7CBF52' })}<path d="M150 150 Q164 158 178 150" fill="none" stroke="#2A1A10" stroke-width="3" stroke-linecap="round"/>${blush(146, 146)}
+      ${rim('M48 112 Q56 80 92 70')}`; }
+  else if (look === 'zippy') {
+    body = `<path d="M82 176 L78 186 M92 176 L92 187 M112 176 L112 187 M122 176 L126 186" stroke="#E8A21A" stroke-width="5" stroke-linecap="round"/>
+      <path d="M70 90 Q50 30 86 18 Q84 42 98 50 Q96 20 124 16 Q112 44 118 56Z" fill="url(#${id}b)" ${OUT(b)}/>
+      <ellipse cx="100" cy="116" rx="54" ry="62" fill="url(#${id}a)" ${OUT(a)}/>
+      <ellipse cx="100" cy="138" rx="34" ry="34" fill="${L(b, .35)}" opacity=".9"/>
+      <path d="M48 110 Q16 96 12 62 Q40 72 58 96Z" fill="url(#${id}b)" ${OUT(b)}/>
+      <path d="M150 118 Q182 116 190 150 Q164 146 146 132Z" fill="url(#${id}b)" ${OUT(b)}/>
+      ${eye(80, 96, 15, { brow: -3, lx: 3 })}${eye(122, 96, 15, { brow: 3, lx: 3 })}
+      <path d="M92 110 Q112 108 128 120 Q112 134 94 128 Z" fill="#FFB020" stroke="#8A5A00" stroke-width="3"/><path d="M96 124 Q110 128 124 121" fill="none" stroke="#8A5A00" stroke-width="2"/>
+      ${blush(64, 116)}${blush(140, 116)}${rim('M58 88 Q70 60 100 56')}`; }
+  else if (look === 'coconeer') { defs += G('c', '#8A5A34') + iris('#7A4A20');
+    body = `<path d="M146 150 Q186 150 176 110 Q172 96 162 104 Q172 124 150 134Z" fill="url(#${id}a)" ${OUT(a)}/>
+      <ellipse cx="100" cy="146" rx="40" ry="38" fill="url(#${id}a)" ${OUT(a)}/><ellipse cx="100" cy="152" rx="24" ry="24" fill="${b}" opacity=".85"/>
+      <circle cx="46" cy="92" r="18" fill="url(#${id}a)" ${OUT(a)}/><circle cx="46" cy="92" r="9" fill="${b}"/><circle cx="154" cy="92" r="18" fill="url(#${id}a)" ${OUT(a)}/><circle cx="154" cy="92" r="9" fill="${b}"/>
+      <circle cx="100" cy="92" r="50" fill="url(#${id}a)" ${OUT(a)}/>
+      <path d="M62 104 Q64 82 84 86 Q100 92 116 86 Q136 82 138 104 Q140 132 100 134 Q60 132 62 104Z" fill="${b}" ${OUT(b)}/>
+      <path d="M52 76 Q54 30 100 28 Q146 30 148 76 Q100 62 52 76Z" fill="url(#${id}c)" ${OUT('#8A5A34')}/><path d="M60 70 Q100 58 140 70" fill="none" stroke="#5A3418" stroke-width="3"/><circle cx="84" cy="44" r="3" fill="#3A2210"/><circle cx="100" cy="40" r="3" fill="#3A2210"/><circle cx="116" cy="44" r="3" fill="#3A2210"/>
+      ${eye(84, 98, 11, { brow: 4, lx: 3 })}${eye(116, 98, 11, { brow: -2, lx: 3 })}<path d="M84 118 Q100 128 118 114" fill="none" stroke="#3A2210" stroke-width="4" stroke-linecap="round"/><path d="M110 118 Q114 124 118 116" fill="#FF7A9A"/>
+      <circle cx="58" cy="152" r="16" fill="url(#${id}c)" ${OUT('#8A5A34')}/><circle cx="54" cy="148" r="3" fill="#3A2210"/><circle cx="62" cy="148" r="3" fill="#3A2210"/>
+      ${rim('M60 72 Q64 46 100 42')}`; }
+  else if (look === 'puffling') { defs += G('f', '#3A3A52') + iris('#6B5BD6');
+    const puffs = [[62, 120, 30], [100, 104, 38], [138, 120, 30], [74, 150, 28], [126, 150, 28], [100, 158, 30], [52, 144, 20], [148, 144, 20]];
+    body = `<rect x="74" y="160" width="12" height="24" rx="5" fill="#3A3A52"/><rect x="114" y="160" width="12" height="24" rx="5" fill="#3A3A52"/>
+      ${puffs.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="url(#${id}a)" ${OUT('#B9C4E8')}/>`).join('')}
+      ${puffs.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r - 3}" fill="url(#${id}a)"/>`).join('')}
+      <path d="M72 76 Q58 62 70 54 M128 76 Q142 62 130 54" fill="none" stroke="#E8C88A" stroke-width="7" stroke-linecap="round"/>
+      <ellipse cx="100" cy="112" rx="32" ry="30" fill="url(#${id}f)" ${OUT('#3A3A52')}/>
+      <ellipse cx="72" cy="104" rx="12" ry="7" fill="#3A3A52" transform="rotate(-25 72 104)"/><ellipse cx="128" cy="104" rx="12" ry="7" fill="#3A3A52" transform="rotate(25 128 104)"/>
+      ${eye(88, 110, 10, { lx: -1, ly: 3, lid: .15, lidCol: '#3A3A52' })}${eye(112, 110, 10, { lx: -1, ly: 3, lid: .15, lidCol: '#3A3A52' })}
+      <path d="M94 128 Q100 132 106 128" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>${blush(80, 124)}${blush(120, 124)}
+      <circle cx="100" cy="82" r="16" fill="url(#${id}a)"/><circle cx="88" cy="86" r="11" fill="url(#${id}a)"/><circle cx="112" cy="86" r="11" fill="url(#${id}a)"/>`; }
+  else if (look === 'gustling') { defs += G('g', '#6B4424') + iris('#2A6BC4');
+    body = `<path d="M84 172 L78 186 M116 172 L122 186" stroke="#E8A21A" stroke-width="6" stroke-linecap="round"/>
+      <path d="M58 120 Q8 104 6 70 Q40 78 66 100Z" fill="url(#${id}b)" ${OUT(b)}/><path d="M142 120 Q192 104 194 70 Q160 78 134 100Z" fill="url(#${id}b)" ${OUT(b)}/>
+      <path d="M100 176 Q48 170 52 118 Q56 64 100 60 Q144 64 148 118 Q152 170 100 176Z" fill="url(#${id}a)" ${OUT(a)}/>
+      <path d="M100 172 Q74 166 76 132 Q80 110 100 108 Q120 110 124 132 Q126 166 100 172Z" fill="${L(b, .1)}"/>
+      <path d="M60 90 Q100 70 140 90 L136 104 Q100 92 64 104Z" fill="url(#${id}g)" ${OUT('#6B4424')}/>
+      <circle cx="80" cy="94" r="15" fill="#FFE8A0" stroke="#6B4424" stroke-width="4"/><circle cx="120" cy="94" r="15" fill="#FFE8A0" stroke="#6B4424" stroke-width="4"/>
+      <circle cx="80" cy="94" r="11" fill="rgba(160,210,255,.8)"/><circle cx="120" cy="94" r="11" fill="rgba(160,210,255,.8)"/>
+      ${eye(80, 96, 7, { lx: 2, brow: 4 })}${eye(120, 96, 7, { lx: 2, brow: -4 })}<path d="M74 88 L82 84 M114 88 L122 84" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <path d="M92 110 Q100 108 108 110 L100 126Z" fill="#FFB020" stroke="#8A5A00" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M100 60 Q92 44 104 34 Q104 48 112 52" fill="url(#${id}a)" ${OUT(a)}/>${rim('M60 116 Q64 76 96 66')}`; }
+  else if (look === 'sparkfinch') { defs += iris('#7A4A00');
+    body = `<path d="M86 172 L82 186 M114 172 L118 186" stroke="#E8A21A" stroke-width="5" stroke-linecap="round"/>
+      <path d="M90 58 L78 20 L96 40 L102 8 L110 42 L128 22 L114 60Z" fill="url(#${id}b)" ${OUT(b)}/>
+      <circle cx="100" cy="118" r="58" fill="url(#${id}a)" ${OUT(a)}/><ellipse cx="100" cy="146" rx="36" ry="28" fill="${L(a, .45)}"/>
+      <path d="M44 124 Q20 134 26 160 Q40 146 52 140Z" fill="url(#${id}b)" ${OUT(b)}/><path d="M156 124 Q184 110 184 84 Q166 100 150 106Z" fill="url(#${id}b)" ${OUT(b)}/>
+      ${eye(80, 106, 16, { lx: 2, ly: -2 })}${eye(122, 106, 16, { lx: 2, ly: -2 })}
+      <path d="M92 124 L108 124 L100 138Z" fill="#FF8A3C" stroke="#8A3A00" stroke-width="3" stroke-linejoin="round"/><path d="M88 142 Q100 154 112 142" fill="#8A2A20" stroke="#2A1A10" stroke-width="2.5"/>
+      ${blush(62, 128)}${blush(140, 128)}<path d="M170 60 l-10 14 h8 l-6 14" fill="none" stroke="#FFE066" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M28 80 l8 10 h-6 l6 10" fill="none" stroke="#FFE066" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+      ${rim('M52 100 Q60 70 96 62')}`; }
+  else if (look === 'bubbleclam') { defs += G('p', '#FFF6E8') + iris('#3A6BA8');
+    body = `<circle cx="100" cy="108" r="78" fill="rgba(190,235,255,.28)" stroke="rgba(255,255,255,.8)" stroke-width="3"/><path d="M48 60 Q64 40 92 34" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".8"/>
+      <path d="M40 140 Q40 176 100 180 Q160 176 160 140Z" fill="url(#${id}a)" ${OUT(a)}/>
+      <path d="M40 132 Q36 72 100 64 Q164 72 160 132 Z" fill="url(#${id}a)" ${OUT(a)}/>
+      ${[0, 1, 2, 3, 4].map(i => `<path d="M100 132 L${52 + i * 24} ${78 + Math.abs(i - 2) * 10}" stroke="${L(a, -.25)}" stroke-width="3"/>`).join('')}
+      <path d="M44 134 Q100 118 156 134 Q100 150 44 134Z" fill="#8A2A40"/><circle cx="100" cy="132" r="14" fill="url(#${id}p)" ${OUT('#FFF6E8')}/>
+      ${eye(76, 150, 10, { lid: .35, brow: 6, lx: 2 })}${eye(124, 150, 10, { lid: .35, brow: -6, lx: -2 })}<path d="M90 170 Q100 164 110 170" fill="none" stroke="#2A1A10" stroke-width="3" stroke-linecap="round"/>
+      ${rim('M52 108 Q60 78 96 70')}`; }
+  else if (look === 'squidlet') { defs += G('d', '#E2517A') + iris('#2A2A6B');
+    body = `${[-2, -1, 0, 1, 2].map(i => `<path d="M${100 + i * 16} 140 Q${100 + i * 22} 170 ${100 + i * 26 + (i % 2 ? 8 : -8)} 182" fill="none" stroke="${L(a, -.1)}" stroke-width="15" stroke-linecap="round"/>`).join('')}
+      <path d="M100 18 Q156 30 150 110 Q146 150 100 150 Q54 150 50 110 Q44 30 100 18Z" fill="url(#${id}a)" ${OUT(a)}/>
+      <circle cx="80" cy="54" r="7" fill="${b}" opacity=".7"/><circle cx="118" cy="44" r="5" fill="${b}" opacity=".7"/><circle cx="130" cy="70" r="6" fill="${b}" opacity=".7"/>
+      <path d="M48 90 Q100 70 152 90 L150 108 Q100 92 50 108Z" fill="url(#${id}d)" ${OUT('#E2517A')}/><path d="M150 92 Q170 86 176 100 Q164 100 156 106Z" fill="url(#${id}d)" ${OUT('#E2517A')}/>
+      <circle cx="70" cy="96" r="3" fill="#fff"/><circle cx="100" cy="88" r="3" fill="#fff"/><circle cx="130" cy="96" r="3" fill="#fff"/>
+      ${eye(82, 118, 12, { lid: .4, lx: 4, lidCol: L(a, -.05) })}${eye(118, 118, 12, { lid: .4, lx: 4, lidCol: L(a, -.05) })}<path d="M88 140 Q104 146 116 136" fill="none" stroke="#2A1A10" stroke-width="3.5" stroke-linecap="round"/>
+      ${rim('M58 70 Q66 34 100 26')}`; }
+  else if (look === 'eelectra') { defs += iris('#B87A00');
+    body = `<path d="M40 176 Q20 150 50 140 Q86 132 76 104 Q66 70 104 56 Q144 44 150 80" fill="none" stroke="${L(a, -.55)}" stroke-width="42" stroke-linecap="round"/>
+      <path d="M40 176 Q20 150 50 140 Q86 132 76 104 Q66 70 104 56 Q144 44 150 80" fill="none" stroke="url(#${id}a)" stroke-width="35" stroke-linecap="round"/>
+      <path d="M58 124 Q76 118 82 104 M84 72 Q100 60 120 58" fill="none" stroke="${L(a, .4)}" stroke-width="6" stroke-linecap="round" opacity=".6"/>
+      ${[[52, 150], [72, 132], [78, 100], [92, 70], [120, 58]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="5" fill="${b}"/><circle cx="${x}" cy="${y}" r="10" fill="${b}" opacity=".25"/>`).join('')}
+      <ellipse cx="148" cy="84" rx="36" ry="30" fill="url(#${id}a)" ${OUT(a)}/><path d="M138 56 Q148 36 162 52 Q156 58 150 60Z" fill="${b}" ${OUT(b)}/>
+      ${eye(140, 80, 11, { lid: .45, lx: 2, brow: 2 })}${eye(166, 82, 9, { lid: .45, lx: 2 })}<path d="M146 100 Q158 108 172 98" fill="#8A2A40" stroke="#2A1A10" stroke-width="2.5"/>
+      <path d="M130 76 l-6 -3 M130 72 l-5 -6" stroke="#2A1A10" stroke-width="2" stroke-linecap="round"/>`; }
+  else if (look === 'cogbot') { defs += G('m', '#8C98A4') + iris('#3FD8FF');
+    body = `<rect x="68" y="150" width="22" height="34" rx="6" fill="url(#${id}m)" ${OUT('#8C98A4')}/><rect x="110" y="150" width="22" height="34" rx="6" fill="url(#${id}m)" ${OUT('#8C98A4')}/>
+      <rect x="36" y="100" width="20" height="46" rx="10" fill="url(#${id}m)" ${OUT('#8C98A4')}/><rect x="144" y="100" width="20" height="46" rx="10" fill="url(#${id}m)" ${OUT('#8C98A4')}/>
+      <rect x="50" y="56" width="100" height="100" rx="26" fill="url(#${id}a)" ${OUT(a)}/>
+      <rect x="64" y="72" width="72" height="50" rx="18" fill="#2A3440" stroke="${L(a, -.5)}" stroke-width="3"/>
+      <ellipse cx="84" cy="96" rx="11" ry="13" fill="#3FD8FF"/><ellipse cx="116" cy="96" rx="11" ry="13" fill="#3FD8FF"/><circle cx="81" cy="91" r="4" fill="#fff"/><circle cx="113" cy="91" r="4" fill="#fff"/>
+      ${opts.blink ? '<rect x="72" y="94" width="24" height="5" rx="2" fill="#3FD8FF"/><rect x="104" y="94" width="24" height="5" rx="2" fill="#3FD8FF"/>' : ''}
+      <path d="M88 112 Q100 118 112 112" fill="none" stroke="#3FD8FF" stroke-width="3" stroke-linecap="round"/>
+      ${[0, 1, 2, 3].map(i => `<circle cx="${66 + i * 22}" cy="140" r="4" fill="${L(a, -.35)}"/>`).join('')}
+      <g transform="translate(152 60)"><rect x="-4" y="-2" width="8" height="18" fill="#E8B84A" stroke="#6A4A00" stroke-width="2.5"/><path d="M-16 -18 a8 8 0 1 0 16 0 a8 8 0 1 0 -16 0 M0 -18 a8 8 0 1 0 16 0 a8 8 0 1 0 -16 0" fill="#FFD86A" stroke="#6A4A00" stroke-width="2.5"/></g>
+      <circle cx="100" cy="50" r="8" fill="#FF7A5C" stroke="#8A2A10" stroke-width="3"/><rect x="98" y="50" width="4" height="8" fill="#8C98A4"/>${rim('M56 116 Q56 68 100 62')}`; }
+  else if (look === 'steamcrab') { defs += G('h', '#4A4A52') + iris('#2A2A2A');
+    body = `${[-1, 1].map(s => `<path d="M${100 + s * 40} 150 L${100 + s * 62} 184 M${100 + s * 30} 156 L${100 + s * 44} 186" stroke="${L(a, -.2)}" stroke-width="8" stroke-linecap="round"/>`).join('')}
+      <path d="M44 120 Q20 100 26 78 M156 120 Q180 100 174 78" fill="none" stroke="${L(a, -.2)}" stroke-width="10" stroke-linecap="round"/>
+      <path d="M8 66 Q20 46 42 58 L32 72 L44 82 Q22 96 8 66Z" fill="url(#${id}a)" ${OUT(a)}/><path d="M192 66 Q180 46 158 58 L168 72 L156 82 Q178 96 192 66Z" fill="url(#${id}a)" ${OUT(a)}/>
+      <ellipse cx="100" cy="132" rx="66" ry="44" fill="url(#${id}a)" ${OUT(a)}/>
+      <rect x="82" y="46" width="36" height="44" rx="4" fill="url(#${id}h)" ${OUT('#4A4A52')}/><rect x="76" y="40" width="48" height="10" rx="4" fill="#E8B84A" stroke="#6A4A00" stroke-width="3"/>
+      ${opts.puff !== false ? '<circle cx="104" cy="28" r="10" fill="#fff" opacity=".85"/><circle cx="116" cy="16" r="8" fill="#fff" opacity=".6"/>' : ''}
+      <path d="M78 102 L78 90 M122 102 L122 90" stroke="${L(a, -.4)}" stroke-width="5"/>${eye(78, 88, 10, { lid: .45, brow: 5 })}${eye(122, 88, 10, { lid: .45, brow: -5 })}
+      <path d="M70 130 Q86 118 100 128 Q114 118 130 130 Q116 140 100 134 Q84 140 70 130Z" fill="#F4EAD8" stroke="#6A4A2A" stroke-width="3"/>
+      ${rim('M42 124 Q48 96 90 88')}`; }
+  else if (look === 'sprocket') { defs += G('g', '#E8B84A') + iris('#2FA89A');
+    body = `<path d="M130 150 Q190 150 180 96 Q176 80 164 90 Q170 124 132 132Z" fill="url(#${id}a)" ${OUT(a)}/><path d="M168 98 Q178 88 174 80 Q166 90 160 94Z" fill="#F4EAD8"/>
+      <g transform="translate(176 118)"><circle r="14" fill="url(#${id}g)" stroke="#6A4A00" stroke-width="3"/><circle r="5" fill="#6A4A00"/>${[0, 1, 2, 3, 4, 5].map(i => `<rect x="-3" y="-20" width="6" height="8" fill="#E8B84A" stroke="#6A4A00" stroke-width="2" transform="rotate(${i * 60})"/>`).join('')}</g>
+      <ellipse cx="96" cy="146" rx="38" ry="36" fill="url(#${id}a)" ${OUT(a)}/><ellipse cx="96" cy="154" rx="20" ry="24" fill="#F4EAD8"/>
+      <path d="M50 70 L58 18 L86 54Z M150 70 L142 18 L114 54Z" fill="url(#${id}a)" ${OUT(a)}/><path d="M60 58 L62 32 L78 52Z M140 58 L138 32 L122 52Z" fill="#FFD1B0"/>
+      <path d="M46 88 Q46 46 100 46 Q154 46 154 88 Q154 118 124 128 L100 146 L76 128 Q46 118 46 88Z" fill="url(#${id}a)" ${OUT(a)}/>
+      <path d="M72 112 Q100 104 128 112 L100 144Z" fill="#F4EAD8"/><ellipse cx="100" cy="126" rx="8" ry="6" fill="#2A1A10"/>
+      <path d="M50 76 Q100 64 150 76" fill="none" stroke="#5A4636" stroke-width="7"/><circle cx="78" cy="78" r="14" fill="#E8B84A" stroke="#6A4A00" stroke-width="3"/><circle cx="78" cy="78" r="10" fill="rgba(120,220,210,.8)"/>
+      ${eye(122, 90, 10, { lx: -2, brow: -3 })}<path d="M92 136 Q104 142 114 132" fill="none" stroke="#2A1A10" stroke-width="3" stroke-linecap="round"/>${rim('M52 90 Q56 58 96 52')}`; }
+  // hybrids get a little golden sparkle crest so they read as special
+  const crest = S.hybrid ? `<path d="M100 6 l5 12 13 1 -10 8 4 13 -12 -7 -12 7 4 -13 -10 -8 13 -1Z" fill="#FFD84A" stroke="#8A5A00" stroke-width="2.5" transform="translate(40 4) scale(.6)"/>` : '';
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><defs>${defs}</defs>${opts.noShadow ? '' : shadow}${body}${crest}</svg>`;
+}
+function shadeHex(hex, k){ const n = parseInt(hex.slice(1), 16); let r = n >> 16, g = n >> 8 & 255, b = n & 255;
+  if (k < 0) { r *= 1 + k; g *= 1 + k; b *= 1 + k; } else { r += (255 - r) * k; g += (255 - g) * k; b += (255 - b) * k; }
+  return '#' + [r, g, b].map(v => Math.round(v).toString(16).padStart(2, '0')).join(''); }
+
+// ================= UI ICONS (SVG) =================
+const ICONS = {
+  coin: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><radialGradient id="cg" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#FFF4B0"/><stop offset=".45" stop-color="#FFC83D"/><stop offset="1" stop-color="#C47A0A"/></radialGradient><linearGradient id="ce" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E0960E"/><stop offset="1" stop-color="#8A4E00"/></linearGradient></defs>
+    <ellipse cx="32" cy="36" rx="27" ry="25" fill="url(#ce)"/><circle cx="32" cy="31" r="27" fill="url(#cg)" stroke="#8A4E00" stroke-width="2.5"/><circle cx="32" cy="31" r="20" fill="none" stroke="#D99A12" stroke-width="3"/>
+    <path d="M32 18 C24 18 21 30 22 36 C23 42 28 45 32 45 C36 45 41 42 42 36 C43 30 40 18 32 18Z" fill="#E8A21A" stroke="#9A5A00" stroke-width="2"/><path d="M27 26 Q29 22 32 21" fill="none" stroke="#FFF4B0" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M12 20 Q18 10 30 8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"/></svg>`,
+  food: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><radialGradient id="bg1" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#FFB0C8"/><stop offset=".5" stop-color="#E2517A"/><stop offset="1" stop-color="#8A1A3E"/></radialGradient><radialGradient id="bg2" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#D8C8FF"/><stop offset=".5" stop-color="#8E6CF0"/><stop offset="1" stop-color="#4A2A9A"/></radialGradient></defs>
+    <path d="M30 14 Q34 4 46 6 Q44 16 32 16Z" fill="#4CAF6A" stroke="#1F6E3A" stroke-width="2"/><path d="M31 16 Q30 22 24 26 M32 16 Q36 22 42 24" stroke="#2F7A3A" stroke-width="2.5" fill="none"/>
+    <circle cx="42" cy="38" r="15" fill="url(#bg2)" stroke="#3A1A7A" stroke-width="2.5"/><circle cx="22" cy="40" r="17" fill="url(#bg1)" stroke="#6E0A2A" stroke-width="2.5"/>
+    <circle cx="16" cy="34" r="4.5" fill="#fff" opacity=".85"/><circle cx="37" cy="33" r="3.5" fill="#fff" opacity=".8"/></svg>`,
+  gem: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M16 22 L26 10 L38 10 L48 22 L32 56Z" fill="#3FB8E0"/><path d="M26 10 L32 22 L38 10Z" fill="#B8F0FF"/><path d="M16 22 L26 10 L32 22Z" fill="#7FD8F2"/><path d="M38 10 L48 22 L32 22Z" fill="#5FC8EA"/><path d="M16 22 L32 56 L26 22Z" fill="#8FE0F8"/><path d="M48 22 L32 56 L38 22Z" fill="#2A8AB0"/>
+    <path d="M16 22 L26 10 L38 10 L48 22 L32 56Z M16 22 H48" fill="none" stroke="#0E4A6A" stroke-width="2.5" stroke-linejoin="round"/><path d="M22 20 L27 13" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M47 6 V18 M41 12 H53" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+  hammer: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><g transform="rotate(40 32 32)"><rect x="28" y="22" width="9" height="38" rx="4" fill="#C58A52" stroke="#5A3418" stroke-width="2.5"/><rect x="12" y="8" width="40" height="17" rx="5" fill="#A8B4BE" stroke="#3E4A54" stroke-width="2.5"/><path d="M16 12 H46" stroke="#E8F0F6" stroke-width="3" stroke-linecap="round"/></g></svg>`,
+  bolt: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M38 4 L14 36 H30 L24 60 L50 26 H34Z" fill="#FFD84A" stroke="#8A5A00" stroke-width="3" stroke-linejoin="round"/><path d="M34 12 L22 30" stroke="#FFF4B0" stroke-width="3" stroke-linecap="round"/></svg>`,
+};
+const iconUrl = k => 'data:image/svg+xml;utf8,' + encodeURIComponent(ICONS[k]);
+// critter images, made once per species/tier/blink
+const CRIT_IMG = {};
+function critImg(sp, blink){ const k = sp + (blink ? 'b' : ''); if (!CRIT_IMG[k]) { const im = new Image(); im.src = 'data:image/svg+xml;utf8,' + encodeURIComponent(svgArt(sp, { blink, noShadow: true })); CRIT_IMG[k] = im; } return CRIT_IMG[k]; }
+Object.keys(SPECIES).forEach(k => { critImg(k); critImg(k, true); });
+// draw a critter at (x, y) = feet, size = height in px. Hops, squashes, blinks and faces left/right.
+function drawCritterArt(c, sp, tier, x, y, size, t, o = {}){
+  const s = size * (1 + .1 * (tier - 1)), seed = (o.seed || 0) + sp.length * 7;
+  const blink = !o.still && ((t * .9 + seed * .37) % 3.2) < .12, im = critImg(sp, blink);
+  if (!im.complete || !im.naturalWidth) return drawCritter(c, sp, tier, x, y, size, t, o);
+  const hopP = o.still || reduce ? 0 : o.moving ? Math.abs(Math.sin(t * 9 + seed)) : (Math.sin(t * 2.2 + seed) * .5 + .5) * .25;
+  const sq = o.still || reduce ? 0 : o.moving ? (hopP < .25 ? .1 * (1 - hopP * 4) : -.04) : Math.sin(t * 2.2 + seed) * .025;
+  if (!o.noShadow) ell(c, x, y, s * .28 * (1 - hopP * .25), s * .07, 'rgba(10,20,30,.25)');
+  c.save(); c.translate(x, y - hopP * s * (o.moving ? .12 : .02)); c.scale((o.face || 1) * (1 + sq), 1 - sq);
+  if (o.hurt) c.globalAlpha = .55 + .45 * Math.sin(t * 30);
+  c.drawImage(im, -s / 2, -s * .925, s, s); c.restore();
+  if (tier >= 2 && o.stars !== false) { c.fillStyle = '#FFC83D'; c.strokeStyle = '#6A4200'; c.lineWidth = 2.5; c.font = `700 ${Math.max(11, s * .16)}px Fredoka, sans-serif`; c.textAlign = 'center'; const st = '★'.repeat(tier); c.strokeText(st, x, y - s * .95); c.fillText(st, x, y - s * .95); }
+}
+
+const ICON_IMG = {}; for (const k in ICONS) { const im = new Image(); im.src = iconUrl(k); ICON_IMG[k] = im; }
+{ const st = document.createElement('style'); st.textContent = `.ic{background:url("${iconUrl('coin')}") center/contain no-repeat!important;box-shadow:none!important;border-radius:0!important;transform:none!important}
+  .ic.food{background-image:url("${iconUrl('food')}")!important}.ic.gem{background-image:url("${iconUrl('gem')}")!important}.ic.gem.sm{width:15px;height:15px;margin:0}
+  .res .ic{width:30px;height:30px;margin:-6px -1px -6px -8px;filter:drop-shadow(0 2px 1px rgba(0,0,0,.35))} .res .pill{padding-left:4px}
+  .builders i{display:inline-block;width:24px;height:24px;background:url("${iconUrl('hammer')}") center/contain no-repeat;font-size:0;margin:-4px 0 -4px -4px}`; document.head.appendChild(st); }
 
 // ================= SOUND =================
 let ac = null;
@@ -777,7 +1022,7 @@ function sheet(title, sub, body){ closeSheet(); sheetEl = document.createElement
   document.body.appendChild(sheetEl); sheetEl.querySelector('.closeX').onclick = () => { SFX.tap(); closeSheet(); }; return sheetEl; }
 function closeSheet(){ if (sheetEl) { sheetEl.remove(); sheetEl = null; } }
 const coinH = n => `<span class="ic coin sm"></span>${fmt(n)}`, foodH = n => `<span class="ic food sm"></span>${fmt(n)}`, gemH = n => `<span class="ic gem sm"></span>${fmt(n)}`;
-function critCanvas(sp, tier, size, t0){ const c = document.createElement('canvas'); c.width = c.height = size * 2; const g = c.getContext('2d'); g.scale(2, 2); drawCritterFx(g, sp, tier, size / 2, size * .9, size * .92, t0 || 0, { still: true }); return c; }
+function critCanvas(sp, tier, size, t0){ const c = document.createElement('canvas'); c.width = c.height = size * 2; const g = c.getContext('2d'); g.scale(2, 2); drawCritterArt(g, sp, tier, size / 2, size * .96, size * .9, t0 || 0, { still: true, stars: false }); return c; }
 function bldCanvas(k, lv, size){ const c = document.createElement('canvas'); c.width = c.height = size * 2; const g = c.getContext('2d'); g.scale(2, 2); const s1 = k === 'hut' ? 1 : BLD[k].size, top = bldTop(k), keep = { ...IS };
   let tw = size / (s1 + .45); tw = Math.min(tw, size * .92 / (s1 * .56 + top * .5)); setIso(tw, size / 2, size / 2 + (top * tw * .5 - s1 * tw * .56) / 2); drawBld(g, k, 0, 0, lv, { badge: false }); Object.assign(IS, keep); return c; }
 function eggCanvas(sp, size){ const c = document.createElement('canvas'); c.width = c.height = size * 2; const g = c.getContext('2d'); g.scale(2, 2); drawEgg(g, size / 2, size / 2, size * .8, sp, 0); return c; }
@@ -848,7 +1093,7 @@ let placing = null;   // { k, x, y, id? }
 let decorBase = null;
 const bCenter = b => { const s = BLD[b.k].size; return iso(b.x + s / 2, b.y + s / 2, bldTop(b.k) * .7); };
 function drawBase(){
-  const reg = REGIONS[0]; applyCam(camBase); drawWater(ctx, W, H, t, reg); blitTerrain(ctx, terrainFor('base', reg, 11));
+  const reg = REGIONS[0]; applyCam(camBase); drawWater(ctx, W, H, t, reg); drawShoreFoam(ctx, t); blitTerrain(ctx, terrainFor('base', reg, 11));
   if (!decorBase) decorBase = ringDecor(11, reg);
   if (placing) { ctx.strokeStyle = 'rgba(255,255,255,.3)'; ctx.lineWidth = 1; for (let i = 0; i <= GRID_W; i++) { ctx.beginPath(); ctx.moveTo(...iso(i, 0)); ctx.lineTo(...iso(i, GRID_H)); ctx.stroke(); } for (let j = 0; j <= GRID_H; j++) { ctx.beginPath(); ctx.moveTo(...iso(0, j)); ctx.lineTo(...iso(GRID_W, j)); ctx.stroke(); } }
   const items = [], nestEgg = save.nest ? save.nest.s : save.eggs[0];
@@ -858,7 +1103,7 @@ function drawBase(){
       if (b.lv) drawBld(ctx, b.k, b.x, b.y, b.lv, { t, egg: nestEgg || 'zippy', egg2: save.eggs[1] || 'pebblet' });
       if (b.build) drawScaffoldIso(ctx, b.x, b.y, s, clamp((Date.now() - b.build.start) / (b.build.end - b.build.start), 0, 1), t); } }); }
   const den = B('den')[0]; if (den) save.crit.slice(0, 7).forEach((c, i) => { const a = t * .22 + i * .9, gx = den.x + 1 + Math.cos(a) * 2.2, gy = den.y + 1 + Math.sin(a) * 1.4 + 1.2;
-    items.push({ k: gx + gy, f: () => { const [px, py] = iso(gx, gy); drawCritterFx(ctx, c.s, c.t, px, py, IS.tw * .85, t + i, { moving: true, face: -Math.sin(a) > 0 ? 1 : -1, stars: false }); } }); });
+    items.push({ k: gx + gy, f: () => { const [px, py] = iso(gx, gy); drawCritterArt(ctx, c.s, c.t, px, py, IS.tw * 1.1, t, { seed: i * 3, moving: true, face: -Math.sin(a) > 0 ? 1 : -1, stars: false }); } }); });
   if (placing) { const s = BLD[placing.k].size, ok = placeOk(placing); items.push({ k: 999, f: () => { poly(ctx, [iso(placing.x, placing.y), iso(placing.x + s, placing.y), iso(placing.x + s, placing.y + s), iso(placing.x, placing.y + s)], ok ? 'rgba(76,195,138,.5)' : 'rgba(255,90,70,.5)', '#fff', 2);
     ctx.globalAlpha = .88; drawBld(ctx, placing.k, placing.x, placing.y, placing.lv || 1, { t, badge: false }); ctx.globalAlpha = 1; } }); }
   items.sort((a, b) => a.k - b.k).forEach(i => i.f());
@@ -866,7 +1111,7 @@ function drawBase(){
   for (const b of save.bld) { const s = BLD[b.k].size, n = stored(b);
     if (n >= Math.max(5, storeCap(b.k, b.lv) * .08) && !b.build) { const [x, y0] = iso(b.x + s / 2, b.y + s / 2, bldTop(b.k) + .3), bob = reduce ? 0 : Math.sin(t * 3 + b.id) * 3, y = y0 + bob, full = n >= storeCap(b.k, b.lv) * .98;
       ctx.fillStyle = 'rgba(0,0,0,.2)'; rr(ctx, x - 30, y - 12, 62, 28, 14); ctx.fill(); ctx.fillStyle = full ? '#FFE3D6' : '#FFFBF0'; rr(ctx, x - 31, y - 15, 62, 28, 14); ctx.fill(); ctx.strokeStyle = full ? '#FF7A5C' : 'rgba(150,110,60,.4)'; ctx.lineWidth = 2; ctx.stroke();
-      circ(ctx, x - 17, y - 1, 9, b.k === 'farm' ? '#E2517A' : '#FFC83D'); circ(ctx, x - 19, y - 3, 3, 'rgba(255,255,255,.6)');
+      ctx.drawImage(ICON_IMG[b.k === 'farm' ? 'food' : 'coin'], x - 29, y - 13, 24, 24);
       ctx.fillStyle = '#3A2A1A'; ctx.font = '700 14px Fredoka, sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(fmt(n), x - 5, y); }
     if (b.k === 'nest' && (save.eggs.length || (save.nest && Date.now() >= save.nest.end))) { const [x, y] = iso(b.x + s / 2, b.y + s / 2, bldTop(b.k) + .8), bob = reduce ? 0 : Math.sin(t * 4) * 3; circ(ctx, x, y + bob, 13, '#FF7A5C'); ctx.fillStyle = '#fff'; ctx.font = '700 17px Fredoka, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('!', x, y + bob + 1); } }
   drawAmbient(ctx, W, H, t);
@@ -969,7 +1214,7 @@ function openCritters(){
     d.onclick = () => critDetail(c); list.appendChild(d); }
 }
 function critDetail(c){
-  const S = SPECIES[c.s], m = modal(`<button class="closeX" type="button" data-close aria-label="Close">✕</button><div id="cdArt"></div><h2>${S.name} ${'★'.repeat(c.t)}</h2><p>${S.desc}</p>
+  const S = SPECIES[c.s], m = modal(`<button class="closeX" type="button" data-close aria-label="Close">✕</button><div id="cdArt"></div><h2>${CAST[c.s].nick} ${'★'.repeat(c.t)}</h2><p style="margin-top:-4px;font-size:13px">${S.name} · ${REGIONS[S.region].name}</p><p><i>“${CAST[c.s].mood}”</i></p><p>${S.desc}</p>
     <p><b>Health</b> ${Math.round(stat(c, 'hp'))} · <b>Attack</b> ${Math.round(stat(c, 'dmg'))} · <b>${S.role === 'tank' ? 'Tank' : S.role === 'fast' ? 'Fast' : S.role === 'splash' ? 'Splash' : 'Ranged'}</b></p>
     <p style="font-size:13px">${c.t < MAX_TIER ? `Merge 3 of these at the Merge Pond for a ${'★'.repeat(c.t + 1)} ${S.name}.` : 'Fully grown!'}</p>
     <button class="btn alt" type="button" id="cdFree">Let it go (+${fmt(20 * c.t * (S.region + 1))} berries)</button>`);
@@ -1016,10 +1261,10 @@ function hatchEgg(){
   if (!save.eggs.length) return openNest(); if (roomLeft() < 0) return toast('Your den is full! Build or upgrade a Critter Den.');
   const sp = save.eggs.shift(), S = SPECIES[sp], c = { id: save.nextId++, s: sp, t: 1, rest: 0 }; save.crit.push(c); save.stats.hatch++; addXp(6 + 6 * S.region + (S.hybrid ? 15 : 0));
   const first = S.hybrid && !save.tips['found-' + sp]; if (S.hybrid) save.tips['found-' + sp] = 1; persist(); SFX.hatch(); closeSheet();
-  const m = modal(`<div id="hArt" style="height:150px"></div><h2>${first ? 'New hybrid!' : 'Hatched!'}</h2><p>Meet your <b>${S.name}</b>. ${S.desc}</p><button class="btn" type="button" data-close>Welcome!</button>`);
+  const m = modal(`<div id="hArt" style="height:150px"></div><h2>${first ? 'New hybrid!' : 'Hatched!'}</h2><p>Meet <b>${CAST[sp].nick}</b> the ${S.name}. <i>${CAST[sp].mood}</i></p><button class="btn" type="button" data-close>Welcome!</button>`);
   const cvh = document.createElement('canvas'); cvh.width = 300; cvh.height = 300; cvh.style.width = cvh.style.height = '150px'; m.el.querySelector('#hArt').appendChild(cvh); const g = cvh.getContext('2d'), t0 = performance.now();
   (function anim(now){ if (!m.el.isConnected) return; const tt = (now - t0) / 1000; g.setTransform(2, 0, 0, 2, 0, 0); g.clearRect(0, 0, 150, 150); circ(g, 75, 75, 70, '#FFF1C7');
-    if (tt < .9) drawEgg(g, 75 + (reduce ? 0 : Math.sin(tt * 40) * 3 * tt), 80, 70, sp, tt > .5); else { const k = Math.min(1, (tt - .9) * 3); drawCritterFx(g, sp, 1, 75, 125, 80 * k, tt); for (let i = 0; i < 8; i++) { const a = i * .785, r = 40 + (tt - .9) * 60; if (tt < 2) circ(g, 75 + Math.cos(a) * r, 75 + Math.sin(a) * r, 3, ['#FFC83D', '#FF9DB8', '#6FD3F2'][i % 3]); } }
+    if (tt < .9) drawEgg(g, 75 + (reduce ? 0 : Math.sin(tt * 40) * 3 * tt), 80, 70, sp, tt > .5); else { const k = Math.min(1, (tt - .9) * 3); drawCritterArt(g, sp, 1, 75, 135, 110 * k, tt, { stars: false }); for (let i = 0; i < 8; i++) { const a = i * .785, r = 40 + (tt - .9) * 60; if (tt < 2) circ(g, 75 + Math.cos(a) * r, 75 + Math.sin(a) * r, 3, ['#FFC83D', '#FF9DB8', '#6FD3F2'][i % 3]); } }
     requestAnimationFrame(anim); })(t0);
 }
 
@@ -1110,7 +1355,7 @@ function miniIsland(key, reg, seed, x, y, tw, blds, o = {}){
   Object.assign(IS, keep);
 }
 function drawMap(){
-  const R = REGIONS[mapR]; drawWater(ctx, W, H, t, R);
+  const R = REGIONS[mapR]; drawWater(ctx, W, H, t, R, [W / 2, -1e5]);
   // dotted sailing route
   ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.lineWidth = 4; ctx.setLineDash([2, 12]); ctx.lineCap = 'round'; ctx.beginPath();
   for (let i = -1; i < ISLANDS_PER_REGION; i++) { const [x, y] = i < 0 ? [W / 2, H - 125 + mapScroll] : mapPos(i); i < 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); } ctx.stroke(); ctx.setLineDash([]);
@@ -1254,7 +1499,7 @@ function stepBattle(dt){
 const lootShare = () => (BT.again ? .3 : 1) * .6 * BT.destroyed / BT.blds.length;
 function drawBattle(){
   const R = REGIONS[BT.r], seed = 100 + BT.r * 20 + BT.i; battleCam(); ctx.save(); if (BT.shake) ctx.translate(rnd(-BT.shake, BT.shake), rnd(-BT.shake, BT.shake));
-  drawWater(ctx, W, H, t, R); blitTerrain(ctx, terrainFor('battle-' + seed, R, seed, { path: false }));
+  drawWater(ctx, W, H, t, R); drawShoreFoam(ctx, t); blitTerrain(ctx, terrainFor('battle-' + seed, R, seed, { path: false }));
   if (!BT.decor) BT.decor = ringDecor(seed, R);
   const T = IS.tw, items = [];
   for (const d of BT.decor) items.push({ k: d.gx + d.gy, f: () => drawDecor(ctx, d, t, R) });
@@ -1271,9 +1516,9 @@ function drawBattle(){
     ctx.globalAlpha = 1;
     if (b.hp < b.max) { const [cx, cy] = iso(b.x + b.size / 2, b.y + b.size / 2, bldTop(b.k) + .2), w = T * b.size * .7; ctx.fillStyle = 'rgba(0,0,0,.5)'; rr(ctx, cx - w / 2, cy, w, 6, 3); ctx.fill(); ctx.fillStyle = '#FF5C3C'; rr(ctx, cx - w / 2 + 1, cy + 1, (w - 2) * b.hp / b.max, 4, 2); ctx.fill(); } } });
   for (const u of BT.units) items.push({ k: u.x + u.y, f: () => { const [px, py] = iso(u.x, u.y);
-    if (u.dead) { if (u.ko < 1.5) { ctx.globalAlpha = 1 - u.ko / 1.5; const up = u.ko * T * 1.5; circ(ctx, px, py - up - T * .9, T * .25, '#FF9DB8'); ctx.strokeStyle = '#fff'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(px, py - up - T * .65); ctx.lineTo(px, py - up - T * .3); ctx.stroke(); drawCritter(ctx, u.s, u.t, px, py - up, T * .7, t, { still: true, stars: false }); ctx.globalAlpha = 1; } return; }
+    if (u.dead) { if (u.ko < 1.5) { ctx.globalAlpha = 1 - u.ko / 1.5; const up = u.ko * T * 1.5; circ(ctx, px, py - up - T * .9, T * .25, '#FF9DB8'); ctx.strokeStyle = '#fff'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(px, py - up - T * .65); ctx.lineTo(px, py - up - T * .3); ctx.stroke(); drawCritterArt(ctx, u.s, u.t, px, py - up, T * .9, t, { still: true, stars: false, noShadow: true }); ctx.globalAlpha = 1; } return; }
     if (u.wait > 0) return;
-    const lunge = u.bump ? u.face * T * .12 : 0; drawCritterFx(ctx, u.s, u.t, px + lunge, py, T * 1.05, t + u.x, { moving: u.moving, face: u.face, hurt: u.hurt > 0, stars: false });
+    const lunge = u.bump ? u.face * T * .12 : 0; drawCritterArt(ctx, u.s, u.t, px + lunge, py, T * 1.25, t + u.x, { moving: u.moving, face: u.face, hurt: u.hurt > 0, stars: false });
     if (u.hp < u.max) { const w = T * .6; ctx.fillStyle = 'rgba(0,0,0,.45)'; rr(ctx, px - w / 2, py - T * 1.05, w, 5, 2.5); ctx.fill(); ctx.fillStyle = '#4CC38A'; rr(ctx, px - w / 2 + 1, py - T * 1.05 + 1, (w - 2) * u.hp / u.max, 3, 1.5); ctx.fill(); } } });
   items.sort((a, b) => a.k - b.k).forEach(i => i.f());
   if (BT.flare) { const [px, py] = iso(BT.flare.x, BT.flare.y); ctx.strokeStyle = 'rgba(255,92,60,.7)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(px, py, T * .6, T * .33, 0, 0, 7); ctx.stroke(); ctx.strokeStyle = '#8A5A34'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px, py - T * .8); ctx.stroke(); circ(ctx, px, py - T * .85, T * .15, '#FF5C3C');
