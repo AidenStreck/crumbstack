@@ -9,6 +9,7 @@
     "ios:sync": "npm run build && npx cap sync ios"
   },
   "dependencies": {
+    "@capacitor-community/admob": "^7.0.0",
     "@capacitor/core": "^7.0.0",
     "@capacitor/haptics": "^7.0.0",
     "@capacitor/ios": "^7.0.0"

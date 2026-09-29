@@ -7,7 +7,8 @@ const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..')
 const app = path.join(root, 'ios/App/App');
 if (!fs.existsSync(app)) { console.error('ios/App/App not found. Run `npx cap add ios` first.'); process.exit(1); }
 // which game (set by scripts/ios-app.mjs); icons and splash come from its resources folder
-const res = path.join(root, fs.existsSync(path.join(root, '.ios-app.json')) ? JSON.parse(fs.readFileSync(path.join(root, '.ios-app.json'), 'utf8')).res : 'resources');
+const cfg = fs.existsSync(path.join(root, '.ios-app.json')) ? JSON.parse(fs.readFileSync(path.join(root, '.ios-app.json'), 'utf8')) : {};
+const res = path.join(root, cfg.res || 'resources');
 
 // 1) App icon: replace every 1024px image in the AppIcon set with ours.
 const iconSet = path.join(app, 'Assets.xcassets/AppIcon.appiconset');
@@ -36,6 +37,11 @@ const set = {
   UISupportedInterfaceOrientations: '<array>\n\t\t<string>UIInterfaceOrientationPortrait</string>\n\t</array>',
   'UISupportedInterfaceOrientations~ipad': '<array>\n\t\t<string>UIInterfaceOrientationPortrait</string>\n\t</array>',
 };
+// Google AdMob (rewarded videos): the app ID, plus Google's ad network ID for Apple's SKAdNetwork
+if (cfg.ads) {
+  set.GADApplicationIdentifier = `<string>${cfg.ads.appId}</string>`;
+  set.SKAdNetworkItems = '<array>\n\t\t<dict>\n\t\t\t<key>SKAdNetworkIdentifier</key>\n\t\t\t<string>cstr6suwn9.skadnetwork</string>\n\t\t</dict>\n\t</array>';
+}
 for (const [key, val] of Object.entries(set)) {
   const esc = key.replace(/[~]/g, '\\$&');
   plist = plist.replace(new RegExp(`\\s*<key>${esc}</key>\\s*(<array>[\\s\\S]*?</array>|<true/>|<false/>|<string>[^<]*</string>)`), '');

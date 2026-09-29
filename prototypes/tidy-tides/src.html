@@ -87,6 +87,12 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
 .up{display:grid;grid-template-columns:44px 1fr auto;gap:2px 10px;align-items:center;background:#fff;border-radius:14px;padding:8px 10px;box-shadow:0 3px 0 var(--line)}
 .up canvas{grid-row:span 2;width:44px;height:44px}
 .up b{font-size:15px;font-weight:600;line-height:1.1}
+.up.rush{background:linear-gradient(#FFF6D6,#FFE9A8);box-shadow:0 3px 0 #E8C66A}
+.btn.ad{background:linear-gradient(#FFD86A,#F5B72E 60%,#D99A12);box-shadow:0 5px 0 #A8740A,0 10px 20px rgba(0,0,0,.2);color:#4A3200;margin-top:8px}
+.btn.ad:before,.buy.ad:before{content:'▶';display:inline-block;margin-right:6px;font-size:.8em;transform:translateY(-1px)}
+.buy.ad{background:#F5B72E;color:#4A3200}
+.adNote{font-size:12px;opacity:.7;margin-top:6px}
+.adShade{position:fixed;inset:0;z-index:50;background:rgba(10,20,30,.92);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600}
 .up span{font-size:12px;color:var(--ink-2);font-weight:500;line-height:1.25}
 .up .lv{display:flex;gap:3px;margin-top:2px}
 .up .lv i{width:9px;height:9px;border-radius:3px;background:#E6DCC8}
@@ -471,7 +477,7 @@ const PERKS = [
 // ================= SAVE =================
 function freshArea(a){ return { unlocked: a.i === 0, built: a.i === 0 ? { [a.machines[0].id]: true } : {}, mlv: {}, st: {}, crabs:0, pelicans:0, display:0, umbrella:0, disp:{}, recycled:0 }; }
 let save = { v:2, coins:0, bag:0, shoes:0, areas:{}, pads:{}, stats:{ rec:{}, sold:{}, earned:0 }, goal:0, goalBase:0, tutDone:false, lastSeen:0, giftDay:'', streak:0, hats:{ sun:true }, hat:'sun', muted:false,
-  coast:0, stars:0, starsEarned:0, perks:{}, sails:0, coached:{} };
+  coast:0, stars:0, starsEarned:0, perks:{}, sails:0, coached:{}, ads:{ day:'', n:0 }, boostUntil:0 };
 AREAS.forEach(a => save.areas[a.id] = freshArea(a));
 try {
   const s = stored;
@@ -1692,8 +1698,9 @@ function update(dt){
   S.tourists = S.tourists.filter(t => !t.gone);
 
   // crabs: fetch trash in their area for built machines
+  const rush = save.boostUntil > Date.now() ? 2 : 1;   // Crew Rush bonus (from a rewarded video) doubles helper speed
   for (const k of S.crabs) {
-    const a = k.area, list = S.trash[a.id], sp = 58 * dt;
+    const a = k.area, list = S.trash[a.id], sp = 58 * dt * rush;
     let goal = null;
     const more = k.carry.length && list.some(tr => tr.type === k.carry[0] && tr.y > wl + 4 && (!tr.claimed || tr.claimed === k));
     if (k.carry.length >= 2 || (k.carry.length && !more)) {
@@ -1717,7 +1724,7 @@ function update(dt){
   }
   // pelicans: carry finished goods from trays to the counter
   for (const k of S.pelicans) {
-    const a = k.area, sp = 95 * dt, d = A(a.id).disp;
+    const a = k.area, sp = 95 * dt * rush, d = A(a.id).disp;
     if (!k.goal) {
       if (k.carry.length >= 4 || (k.carry.length && !a.machines.some(m => built(m) && mst(m).out > 0))) k.goal = { x: a.x + 170 + Math.random() * 60, y: L.counterY - 10, kind: 'drop' };
       else { const src = a.machines.filter(m => built(m) && mst(m).out > 0).sort((m1, m2) => mst(m2).out - mst(m1).out)[0];
@@ -2044,10 +2051,52 @@ function renderBoard(){
     list.appendChild(row);
     if (r.goal) requestAnimationFrame(() => row.scrollIntoView({ block: 'nearest' }));
   });
+  if (ADS.on || save.boostUntil > Date.now()) {   // Crew Rush: a rewarded video makes every helper twice as fast for 5 minutes
+    const row = document.createElement('div'), active = save.boostUntil > Date.now(); row.className = 'up rush';
+    row.appendChild(iconCanvas('crabs', 44));
+    const minsLeft = Math.ceil((save.boostUntil - Date.now()) / 60000);
+    row.insertAdjacentHTML('beforeend', `<b>Crew Rush</b><button class="buy ad" type="button" ${active ? 'disabled' : ''}>${active ? minsLeft + ' min' : 'Video'}</button><span>${active ? 'Your crew is working twice as fast!' : 'Watch a video: every helper works twice as fast for 5 minutes.'}</span>`);
+    row.querySelector('.buy').onclick = () => { if (save.boostUntil > Date.now()) return; ADS.show(() => { save.boostUntil = Date.now() + 5 * 60000; persist(); SFX.claim(); toast('Crew Rush! Twice as fast for 5 minutes'); if (S.boardOpen) renderBoard(); }); };
+    list.prepend(row);
+  }
   el.querySelector('.closeX').onclick = () => { S.boardDismissed = a.id; closeBoard(); };
 }
 
 // ================= UI: modals =================
+// ================= REWARDED VIDEOS (iPhone app only) =================
+// Players choose to watch a short video for a bonus; nothing ever plays on its own. Only the App Store build
+// has the ad plugin and window.__ADS (set by scripts/ios-app.mjs); the website never shows ads.
+// Add #fakeads to the web link to try the flow with a pretend 2-second video.
+const ADS = (() => {
+  const cfg = window.__ADS, P = window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.AdMob, fake = location.hash.includes('fakeads');
+  const CAP = 8, TEST_UNIT = 'ca-app-pub-3940256099942544/1712485313';   // Google's sample rewarded video
+  const on = fake || !!(cfg && P && cfg.unit);
+  let ready = fake, loading = false, pending = null, started = false;
+  const left = () => { const d = today(); if (save.ads.day !== d) save.ads = { day: d, n: 0 }; return Math.max(0, CAP - save.ads.n); };
+  async function load(){ if (fake || loading || ready) return; loading = true;
+    try { await P.prepareRewardVideoAd({ adId: cfg.test ? TEST_UNIT : cfg.unit, isTesting: !!cfg.test, npa: true }); ready = true; } catch (e) { setTimeout(load, 60000); }
+    loading = false; }
+  function finish(){ const p = pending; pending = null; ready = fake; if (ac && !save.muted) ac.resume && ac.resume(); if (p) p.done(p.earned); load(); }
+  async function init(){ if (!on || fake || started) return; started = true;
+    try {
+      await P.initialize({ requestTrackingAuthorization: false, initializeForTesting: !!cfg.test });
+      try { const ci = await P.requestConsentInfo(); if (ci && ci.isConsentFormAvailable && ci.status === 'REQUIRED') await P.showConsentForm(); } catch (e) {}
+      P.addListener('onRewardedVideoAdReward', () => { if (pending) pending.earned = true; });
+      P.addListener('onRewardedVideoAdDismissed', finish);
+      P.addListener('onRewardedVideoAdFailedToShow', finish);
+      load();
+    } catch (e) {} }
+  function show(onReward){
+    if (!on) return;
+    if (!left()) return toast("That's all the bonus videos for today. More tomorrow!");
+    if (!ready) { toast('The video is still loading. Try again in a moment.'); load(); return; }
+    pending = { earned: false, done: ok => { if (ok) { save.ads.n++; persist(); onReward(); } else toast('Watch to the end to get the bonus.'); } };
+    if (ac && ac.suspend) ac.suspend();
+    if (fake) { const sh = document.createElement('div'); sh.className = 'adShade'; sh.textContent = 'Pretend video…'; document.body.appendChild(sh); setTimeout(() => { sh.remove(); pending.earned = true; finish(); }, 2000); return; }
+    P.showRewardVideoAd().then(() => { if (pending) pending.earned = true; }).catch(finish);
+  }
+  return { get on(){ return on && left() > 0; }, show, init, left };
+})();
 function modal(html, onClose){
   S.modal = true; const w = document.createElement('div'); w.className = 'modalWrap'; w.innerHTML = `<div class="modal">${html}</div>`; document.body.appendChild(w);
   const close = () => { w.remove(); S.modal = document.querySelector('.modalWrap') != null; onClose && onClose(); };
@@ -2060,7 +2109,8 @@ function offlineCheck(){
   let rate = 0; for (const a of AREAS) { const st = A(a.id); if (!st.unlocked) continue; rate += a.mult * (st.pelicans ? st.crabs * .012 + st.pelicans * .02 : st.crabs * .004); }
   const amt = Math.floor(rate * secs * (1 + .1 * perk('income'))); if (amt < 5) return;
   const h = Math.floor(secs / 3600), mn = Math.floor(secs % 3600 / 60);
-  const m = modal(`<h2>Welcome back!</h2><p>Your crew kept working for ${h ? h + ' hr ' : ''}${mn} min${secs >= capS - 1 ? ' (the most they can do alone)' : ''}.</p><div class="amt"><span class="coin"></span>${fmt(amt)}</div><button class="btn green" type="button" data-close>Collect</button>`, () => { save.coins += amt; save.stats.earned += amt; SFX.claim(); persist(); });
+  const m = modal(`<h2>Welcome back!</h2><p>Your crew kept working for ${h ? h + ' hr ' : ''}${mn} min${secs >= capS - 1 ? ' (the most they can do alone)' : ''}.</p><div class="amt"><span class="coin"></span>${fmt(amt)}</div><button class="btn green" type="button" data-close>Collect</button>${ADS.on ? '<button class="btn ad" type="button" id="adDouble">Watch a video: double it</button>' : ''}`, () => { save.coins += amt; save.stats.earned += amt; SFX.claim(); persist(); });
+  const ad = m.el.querySelector('#adDouble'); if (ad) ad.onclick = () => ADS.show(() => { save.coins += amt; save.stats.earned += amt; m.close(); toast(`Doubled! +${fmt(amt * 2)} coins`); });
 }
 function openGift(){
   SFX.tap();
@@ -2073,8 +2123,10 @@ function openGift(){
   modal(`<button class="closeX" type="button" data-close aria-label="Close">✕</button><h2>Daily gift</h2>
     <p>${ready ? 'Come back every day. Your gift grows the longer your streak.' : 'You already opened today\'s gift. Come back tomorrow!'}</p>
     <div class="streak">${days}</div><div class="amt"><span class="coin"></span>${fmt(amt)}</div>
-    ${ready ? `<button class="btn green" type="button" id="claimGift">Open gift</button>` : ''}`);
-  const b = $('claimGift'); if (b) b.onclick = () => { save.giftDay = today(); save.streak = streak; save.coins += amt; save.stats.earned += amt; SFX.claim(); persist(); document.querySelector('.modalWrap').remove(); S.modal = false; toast(`+${fmt(amt)} coins. Day ${streak} streak!`); };
+    ${ready ? `<button class="btn green" type="button" id="claimGift">Open gift</button>${ADS.on ? '<button class="btn ad" type="button" id="adGift">Watch a video: double gift</button>' : ''}` : ''}`);
+  const claim = k => { if (save.giftDay === today()) return; save.giftDay = today(); save.streak = streak; save.coins += amt * k; save.stats.earned += amt * k; SFX.claim(); persist(); const w = document.querySelector('.modalWrap'); if (w) w.remove(); S.modal = document.querySelector('.modalWrap') != null; toast(`+${fmt(amt * k)} coins${k > 1 ? ' (doubled!)' : ''}. Day ${streak} streak!`); };
+  const b = $('claimGift'); if (b) b.onclick = () => claim(1);
+  const ag = $('adGift'); if (ag) ag.onclick = () => ADS.show(() => claim(2));
 }
 function openWardrobe(){
   SFX.tap();
@@ -2584,6 +2636,7 @@ function start(){
   for (let i = 0; i < 6; i++) spawnOne(beach, true);
   AREAS.forEach(a => { if (A(a.id).unlocked && a.i) for (let i = 0; i < 4; i++) spawnOne(a, true); });
   running = true; last = performance.now();
+  ADS.init();   // starts loading a bonus video in the iPhone app (does nothing on the website)
   if (!save.tutDone) startTutorial();
   else if (save.freshCoast) welcomeCoast();
   else { offlineCheck(); if (S.storm) setTimeout(() => toast('Storm weekend! Extra trash is washing up.'), 800); }
@@ -2609,7 +2662,7 @@ if (COAST_N > 0) { $('coastTag').hidden = false; $('coastTag').textContent = 'Co
   if (window.ResizeObserver) new ResizeObserver(check).observe(hud, { box: 'border-box' });
   [100, 400, 1000, 2500].forEach(ms => setTimeout(check, ms)); addEventListener('orientationchange', () => setTimeout(check, 300)); document.addEventListener('visibilitychange', () => setTimeout(check, 200)); }
 if (document.fonts) document.fonts.ready.then(() => { layout(); if (!running) S.player.y = L.row0 - 10; });
-if (location.hash.includes('test')) window.__tt = { S, save, AREAS, MACHINES, MBY, get L(){ return L; }, get camX(){ return camX; }, pads, waterline, mst, built, dispCount, dispCap, goalAt, goalProgress, claimGoal, areaUpCost, machUpCost, globalCost, AREA_UPS, GLOBAL_UPS, ensureHelpers, cap, coachQ, edgeTabs, drawItem, spawnSpecial, openJournal, postcard, dailyTasks, albumAdd, EVENT, startPlacing, DECOR, CREATURES, drawCreature, COAST, COAST_N, NEXT_COAST, doSail, openSail, openStars, starsNow, PERKS, salePrice, get tut(){ return tutStep; }, endTutorial, start, openBoard, closeBoard };
+if (location.hash.includes('test')) window.__tt = { ADS, renderBoard, openGift, offlineCheck, S, save, AREAS, MACHINES, MBY, get L(){ return L; }, get camX(){ return camX; }, pads, waterline, mst, built, dispCount, dispCap, goalAt, goalProgress, claimGoal, areaUpCost, machUpCost, globalCost, AREA_UPS, GLOBAL_UPS, ensureHelpers, cap, coachQ, edgeTabs, drawItem, spawnSpecial, openJournal, postcard, dailyTasks, albumAdd, EVENT, startPlacing, DECOR, CREATURES, drawCreature, COAST, COAST_N, NEXT_COAST, doSail, openSail, openStars, starsNow, PERKS, salePrice, get tut(){ return tutStep; }, endTutorial, start, openBoard, closeBoard };
 requestAnimationFrame(loop);
 })();
 </script>

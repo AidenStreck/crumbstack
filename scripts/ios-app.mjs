@@ -9,7 +9,10 @@ import path from 'node:path';
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 export const APPS = {
   crumbstack: { appId: 'com.crumbstack.game', appName: 'Crumbstack', bg: '#22174A', res: 'resources' },
-  'tidy-tides': { appId: 'Com.aidenstreck.tidytides', appName: 'Tidy Tides', bg: '#1C7F9A', res: 'resources/tidy-tides', proto: 'tidy-tides',
+  'tidy-tides': { appId: 'Com.aidenstreck.tidytides', appName: 'Tidy Tides', bg: '#1C7F9A', res: 'resources/tidy-tides', proto: 'tidy-tides', version: '1.1',
+    // Rewarded videos (Google AdMob). test: true shows Google's sample videos; set it to false only when this
+    // version is sent to Apple for the App Store, so nobody earns (or gets flagged for) test views of real ads.
+    ads: { appId: 'ca-app-pub-3761245517174322~2575152825', unit: 'ca-app-pub-3761245517174322/9039740397', test: true },
     fonts: [{ family: 'Fredoka', weight: '300 700', file: 'Fredoka.ttf', url: 'https://github.com/google/fonts/raw/main/ofl/fredoka/Fredoka%5Bwdth%2Cwght%5D.ttf' }] },
 };
 const id = process.argv[2] || 'crumbstack', app = APPS[id];
@@ -29,9 +32,17 @@ if (app.proto) {
     css += `@font-face{font-family:"${f.family}";font-weight:${f.weight};font-style:normal;font-display:swap;src:url(fonts/${f.file}) format("truetype")}`;
   }
   html = html.replace(/<link rel="preconnect" href="https:\/\/fonts\.googleapis\.com">\s*/g, '').replace(/<link rel="stylesheet" href="https:\/\/fonts\.googleapis\.com[^>]*>\s*/g, '');
+  if (app.ads) html = html.replace('<style>', `<script>window.__ADS=${JSON.stringify({ unit: app.ads.unit, test: !!app.ads.test })}</script>\n<style>`);
   html = html.replace('<style>', `<style>${css}html,body{background:${app.bg};overscroll-behavior:none;-webkit-touch-callout:none}.proto{display:none!important}`);
   fs.writeFileSync(path.join(out, 'index.html'), html);
   if (/fonts\.googleapis/.test(html)) throw new Error('A Google Fonts link is still in the app page');
+}
+// games without ads leave Google's ad kit out of their app entirely (only on the build server, so local files stay as they are)
+if (!app.ads && process.env.CI) {
+  const pj = path.join(root, 'package.json'), pkg = JSON.parse(fs.readFileSync(pj, 'utf8'));
+  delete pkg.dependencies['@capacitor-community/admob']; fs.writeFileSync(pj, JSON.stringify(pkg, null, 2) + '\n');
+  fs.rmSync(path.join(root, 'node_modules/@capacitor-community/admob'), { recursive: true, force: true });
+  console.log('No ads in this game: ad plugin removed from the build.');
 }
 fs.writeFileSync(path.join(root, 'capacitor.config.json'), JSON.stringify({
   appId: app.appId, appName: app.appName, webDir, backgroundColor: app.bg,
