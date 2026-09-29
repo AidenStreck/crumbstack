@@ -31,7 +31,7 @@
       "pitch": "Calm light puzzle: turn and place mirrors, split beams with crystals and tint them with coloured glass so every seed pot gets exactly the sunlight it needs. A daily puzzle and a garden that grows as you solve.",
       "stage": "Prototype",
       "by": "You",
-      "notes": "Play it: aidenstreck.github.io/crumbstack/prototypes/sunsprout/ · 4 puzzle gardens × 50 levels (Turn, Place, Split, Color; all solver-checked), leaf ratings, undo, daily puzzle that only uses modes you've learned, garden. More modes planned."
+      "notes": "Play it: aidenstreck.github.io/crumbstack/prototypes/sunsprout/ · 5 puzzle gardens × 250 levels (Turn, Place, Split, Color, Warp; all solver-checked), optional challenge level every 10th, leaf ratings, undo, daily puzzle that only uses modes you've learned, garden."
     },
     {
       "id": "moon-mail",
