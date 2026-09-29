@@ -1,0 +1,26 @@
+# Builds the iPhone app on GitHub's free Mac servers to prove it compiles.
+# No Apple account is needed for this check. Signing and TestFlight get added
+# once the Apple Developer account exists (see README).
+name: iPhone app
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+      - run: npm run build
+      - name: Create the iPhone project
+        run: npx cap add ios && node scripts/patch-ios.mjs && npx cap sync ios
+      - name: Build for the iPhone Simulator
+        run: |
+          set -o pipefail
+          xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Debug \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO build | tail -40

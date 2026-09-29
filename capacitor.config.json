@@ -1,0 +1,11 @@
+{
+  "appId": "com.crumbstack.game",
+  "appName": "Crumbstack",
+  "webDir": "www",
+  "backgroundColor": "#22174A",
+  "ios": {
+    "contentInset": "never",
+    "scrollEnabled": false,
+    "backgroundColor": "#22174A"
+  }
+}
