@@ -20,10 +20,10 @@
     {
       "id": "tidy-tides",
       "name": "Tidy Tides",
-      "pitch": "Idle-arcade beach cleanup: collect washed-up trash at low tide, recycle it into beads, bracelets and toy boats, sell them to tourists, and hire hermit-crab helpers. The beach visibly comes back to life as you clean.",
+      "pitch": "Idle-arcade coast cleanup: collect washed-up trash, recycle it into goods, stock your counter, and hire crabs and pelicans to automate it. Restore three areas (Sunny Beach, Old Pier, Lighthouse Cove) as the coast comes back to life.",
       "stage": "Prototype",
       "by": "You",
-      "notes": "Play it: aidenstreck.github.io/crumbstack/prototypes/tidy-tides/ · Stands out in a genre full of restaurants and farms, and has no ads (the genre's #1 complaint)."
+      "notes": "Play it: aidenstreck.github.io/crumbstack/prototypes/tidy-tides/ · v2: tutorial, 3 areas, 9 machines, 30 goals, daily gift, hats. About 30 minutes to restore the whole coast in testing."
     },
     {
       "id": "sunsprout",
