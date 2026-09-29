@@ -137,7 +137,7 @@
     {
       "id": "sunsprout",
       "name": "Sunsprout",
-      "tagline": "Light-bending garden puzzle · 60 levels + daily",
+      "tagline": "Light-bending garden puzzle · 4 modes × 50 levels + daily",
       "repo": "AidenStreck/crumbstack",
       "path": "prototypes/sunsprout",
       "tag": "Sunsprout",
@@ -151,7 +151,7 @@
           "done": true
         },
         {
-          "label": "60 levels + daily puzzle",
+          "label": "200 levels in 4 modes + daily puzzle",
           "done": true
         },
         {
