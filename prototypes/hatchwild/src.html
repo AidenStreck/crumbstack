@@ -583,64 +583,87 @@ function drawWater(c, W, H, t, reg, islandAt){
     c.beginPath(); c.ellipse(px + Math.sin(ph) * 4, py, w, w * .3, 0, Math.PI * 1.1, Math.PI * 1.9); c.stroke(); }
   c.restore();
   // wave crests drifting along the sea
-  const s = IS.tw;
-  for (let i = 0; i < 46; i++) { const sp = 5 + (i % 4) * 2, px = ((i * 211.7 + t * sp) % (W + 120)) - 60, py = ((i * 97.3) % (H + 40)) - 20, f = .5 + .5 * Math.sin(t * 1.3 + i * 1.7), w = s * (.3 + (i % 3) * .15);
-    c.strokeStyle = `rgba(255,255,255,${.12 + .22 * f})`; c.lineWidth = 2; c.lineCap = 'round'; c.beginPath(); c.moveTo(px - w, py + w * .15); c.quadraticCurveTo(px, py - w * .25 * f, px + w, py + w * .15); c.stroke(); }
+  // gentle swells, fixed to the sea itself so they move with the view
+  const s = IS.tw, span = 70;
+  for (let i = 0; i < 60; i++) { const gx = ((i * 37.3) % span) - span / 2 + GRID_W / 2 + Math.sin(t * .15 + i) * 1.2, gy = ((i * 53.9) % span) - span / 2 + GRID_H / 2 + t * .05 % 1, [px, py] = iso(gx, gy, -CLIFF - .2);
+    if (px < -40 || px > W + 40 || py < -20 || py > H + 20) continue; const f = .5 + .5 * Math.sin(t * .9 + i * 1.7), w = s * (.35 + (i % 3) * .12);
+    c.strokeStyle = `rgba(255,255,255,${.05 + .1 * f})`; c.lineWidth = 1.5; c.lineCap = 'round'; c.beginPath(); c.moveTo(px - w, py + w * .1); c.quadraticCurveTo(px, py - w * .2 * f, px + w, py + w * .1); c.stroke(); }
   // sun glints
-  for (let i = 0; i < 18; i++) { const px = (i * 173.1 + t * 3) % W, py = (i * 131.9) % H, f = Math.max(0, Math.sin(t * 2.3 + i * 3.1)); if (f < .7) continue; const r = 2 + (f - .7) * 10;
+  for (let i = 0; i < 24; i++) { const [px, py] = iso(((i * 41.7) % 60) - 30 + GRID_W / 2, ((i * 29.3) % 60) - 30 + GRID_H / 2, -CLIFF - .2), f = Math.max(0, Math.sin(t * 2.3 + i * 3.1)); if (f < .7) continue; const r = 2 + (f - .7) * 10;
     c.fillStyle = `rgba(255,255,240,${(f - .7) * 2.5})`; c.beginPath(); c.moveTo(px - r, py); c.lineTo(px, py - r * .35); c.lineTo(px + r, py); c.lineTo(px, py + r * .35); c.fill(); }
 }
-// animated surf around the island's sand, drawn between the water and the island itself
-function drawShoreFoam(c, t){
-  const [x0, y0, x1, y1] = islandShape(RING); const k = reduce ? 0 : Math.sin(t * 1.2) * .18;
-  for (const [pad, a, w] of [[1.75 + k, .22, .5], [1.45 - k * .6, .4, .3]]) { const q = [iso(x0 - pad, y0 - pad, -CLIFF - .1), iso(x1 + pad, y0 - pad, -CLIFF - .1), iso(x1 + pad, y1 + pad, -CLIFF - .1), iso(x0 - pad, y1 + pad, -CLIFF - .1)];
-    c.save(); c.lineJoin = 'round'; poly(c, q, `rgba(255,255,255,${a * .5})`, `rgba(255,255,255,${a})`, IS.tw * w); c.restore(); }
-  // a few sea rocks with surf
-  for (const [gx, gy, r] of [[-5.5, 3, .9], [GRID_W + 5, 1.5, 1.2], [3, GRID_H + 5.2, .8], [GRID_W + 3.5, GRID_H + 4, 1]]) { const [px, py] = iso(gx, gy, -CLIFF), rr2 = IS.tw * r;
-    c.strokeStyle = `rgba(255,255,255,${.5 + .3 * Math.sin(t * 2 + gx)})`; c.lineWidth = 2; c.beginPath(); c.ellipse(px, py, rr2 * 1.1 + Math.sin(t * 2 + gy) * 2, rr2 * .45, 0, 0, 7); c.stroke(); rock(c, px, py + rr2 * .15, rr2 * 1.2, '#7A7E82'); }
+// ---------- the island shape ----------
+// Every island is its own organic shape: the square build plot sits inside a bigger, wobbly landmass with a
+// peninsula, drawn as a smooth coastline with cliffs on the sides that face you and a sand beach below.
+const CLIFF = 1.2, RING = 2.2;
+const ISLE_C = () => [GRID_W / 2, GRID_H / 2];
+const shapeCache = {};
+function islandParams(seed){ if (shapeCache[seed]) return shapeCache[seed]; const R = rng(seed * 7 + 3);
+  const p = { a: R() * 6.28, b: R() * 6.28, c: R() * 6.28, lobe: R() * 6.28, lobe2: R() * 6.28, big: 3.2 + R() * 1.6 }; shapeCache[seed] = p; return p; }
+function rectR(th){ const hx = GRID_W / 2, hy = GRID_H / 2, cx = Math.abs(Math.cos(th)) || 1e-6, cy = Math.abs(Math.sin(th)) || 1e-6; return Math.min(hx / cx, hy / cy); }
+const angDist = (a, b) => { const d = Math.abs(((a - b) % 6.283) + 6.283) % 6.283; return Math.min(d, 6.283 - d); };
+function islandR(seed, th){ const p = islandParams(seed);
+  let m = 2.4 + .9 * Math.sin(2 * th + p.a) + .7 * Math.sin(3 * th + p.b) + .4 * Math.sin(5 * th + p.c);
+  m += p.big * Math.exp(-Math.pow(angDist(th, p.lobe) / .45, 2)) + 1.8 * Math.exp(-Math.pow(angDist(th, p.lobe2) / .35, 2));
+  return rectR(th) + Math.max(1.5, m); }
+function coastPts(seed, pad = 0, n = 140){ const [cx, cy] = ISLE_C(), out = []; for (let i = 0; i < n; i++) { const th = i / n * Math.PI * 2, r = islandR(seed, th) + pad; out.push([cx + Math.cos(th) * r, cy + Math.sin(th) * r]); } return out; }
+function onIsland(seed, gx, gy, inset = 0){ const [cx, cy] = ISLE_C(), th = Math.atan2(gy - cy, gx - cx); return Math.hypot(gx - cx, gy - cy) < islandR(seed, th) - inset; }
+function coastFrom(seed, gx, gy, dx, dy){ let x = gx, y = gy; for (let k = 0; k < 80 && onIsland(seed, x, y); k++) { x += dx * .25; y += dy * .25; } return [x, y]; }
+const isoPoly = (pts, z) => pts.map(([x, y]) => iso(x, y, z));
+// animated surf, drawn between the water and the island (plus sea rocks that sit behind the island)
+function drawShoreFoam(c, t, seed){
+  const k = reduce ? 0 : Math.sin(t * 1.2) * .2;
+  for (const [pad, a, w] of [[2.1 + k, .2, .55], [1.7 - k * .6, .38, .3]]) { c.save(); c.lineJoin = 'round'; poly(c, isoPoly(coastPts(seed, pad, 90), -CLIFF - .1), `rgba(255,255,255,${a * .45})`, `rgba(255,255,255,${a})`, IS.tw * w); c.restore(); }
+  seaRocks(c, t, seed, false);
 }
-// ---------- the island (cached) ----------
-// the buildable plateau is the GRID; around it a ring of wild ground, then cliffs, then a sand shore
-const RING = 2.2, CLIFF = 1.2;
-function islandShape(pad){ const x0 = -pad, y0 = -pad, x1 = GRID_W + pad, y1 = GRID_H + pad; return [x0, y0, x1, y1]; }
+function seaRocks(c, t, seed, front){ const R = rng(seed * 13 + 5), [cx, cy] = ISLE_C();
+  for (let i = 0; i < 5; i++) { const th = R() * 6.283, r = islandR(seed, th) + 3.2 + R() * 2.5, gx = cx + Math.cos(th) * r, gy = cy + Math.sin(th) * r, sz = .7 + R() * .6;
+    if ((gx + gy > cx + cy) !== front) continue; const [px, py] = iso(gx, gy, -CLIFF), rr2 = IS.tw * sz;
+    c.strokeStyle = `rgba(255,255,255,${.45 + .3 * Math.sin(t * 2 + i)})`; c.lineWidth = 2; c.beginPath(); c.ellipse(px, py, rr2 * 1.15 + Math.sin(t * 2 + i) * 2, rr2 * .45, 0, 0, 7); c.stroke();
+    rock(c, px, py + rr2 * .12, rr2 * 1.25, '#7A7E82'); } }
 function drawTerrain(c, reg, seed, o = {}){
-  const R = rng(seed), [x0, y0, x1, y1] = islandShape(RING), cz = 0;
-  // shore sand and foam below the cliffs
-  const sand = [iso(x0 - 1.1, y0 - 1.1, -CLIFF), iso(x1 + 1.1, y0 - 1.1, -CLIFF), iso(x1 + 1.1, y1 + 1.1, -CLIFF), iso(x0 - 1.1, y1 + 1.1, -CLIFF)];
-  const foam = [iso(x0 - 1.5, y0 - 1.5, -CLIFF - .05), iso(x1 + 1.5, y0 - 1.5, -CLIFF - .05), iso(x1 + 1.5, y1 + 1.5, -CLIFF - .05), iso(x0 - 1.5, y1 + 1.5, -CLIFF - .05)];
-  c.save(); c.lineJoin = 'round'; poly(c, sand, reg.sand, reg.sand, IS.tw * .6); const wet = [iso(x0 - 1.3, y0 - 1.3, -CLIFF), iso(x1 + 1.3, y0 - 1.3, -CLIFF), iso(x1 + 1.3, y1 + 1.3, -CLIFF), iso(x0 - 1.3, y1 + 1.3, -CLIFF)]; c.strokeStyle = shade(reg.sand, -.18); c.lineWidth = IS.tw * .12; c.beginPath(); wet.forEach((p, i) => i ? c.lineTo(...p) : c.moveTo(...p)); c.closePath(); c.stroke(); c.restore();
-  // wet sand edge and shells
-  for (let i = 0; i < 40; i++) { const edge = i % 4, f = R(); let gx, gy; if (edge === 0) { gx = x0 - 1 + f * (x1 - x0 + 2); gy = y1 + .9; } else if (edge === 1) { gx = x1 + .9; gy = y0 - 1 + f * (y1 - y0 + 2); } else if (edge === 2) { gx = x0 - .9; gy = y0 - 1 + f * (y1 - y0 + 2); } else { gx = x0 - 1 + f * (x1 - x0 + 2); gy = y0 - .9; }
-    const [px, py] = iso(gx, gy, -CLIFF); circ(c, px, py, IS.tw * .03, i % 3 ? '#FFF6E0' : '#F2B8C6'); }
-  // cliffs: rocky faces on the two visible sides
-  const cl = (A, B2) => { const hv = [0, CLIFF * HU() + IS.tw * .1]; const Ab = add(A, [0, 0]), U = [B2[0] - A[0], B2[1] - A[1]]; return [Ab, U, hv]; };
-  const Lc = iso(x0, y1, cz), Cc = iso(x1, y1, cz), Rc = iso(x1, y0, cz);
-  { const [O, U, V] = cl(Lc, Cc); face(c, add(O, V), U, [0, -V[1]], '#9A7B5A', 'stone', 'rgba(60,35,15,.25)'); }
-  { const [O, U, V] = cl(Cc, Rc); face(c, add(O, V), U, [0, -V[1]], '#7A5E44', 'stone', 'rgba(40,25,10,.3)'); }
-  // moss hanging over the cliff lip
-  for (let i = 0; i < 26; i++) { const f = R(), side = i % 2; const [px, py] = side ? iso(x0 + f * (x1 - x0), y1, cz) : iso(x1, y0 + f * (y1 - y0), cz); ell(c, px, py + IS.tw * .08, IS.tw * .18, IS.tw * .09, i % 3 ? reg.land2 : shade(reg.land2, -.15)); }
-  // grass top with soft variation
-  const top = [iso(x0, y0, cz), iso(x1, y0, cz), iso(x1, y1, cz), iso(x0, y1, cz)];
-  const tg = c.createLinearGradient(top[0][0], top[0][1], top[2][0], top[2][1]); tg.addColorStop(0, shade(reg.land, .12)); tg.addColorStop(1, shade(reg.land, -.08)); poly(c, top, tg);
-  for (let i = 0; i < 90; i++) { const gx = x0 + R() * (x1 - x0), gy = y0 + R() * (y1 - y0), [px, py] = iso(gx, gy); c.fillStyle = `rgba(${R() < .5 ? '255,255,200' : '20,60,20'},${.05 + R() * .06})`; c.beginPath(); c.ellipse(px, py, IS.tw * (.4 + R() * .8), IS.th * (.3 + R() * .5), 0, 0, 7); c.fill(); }
-  // the build plot: a slightly lighter meadow, edged with a low stone border
-  const plot = [iso(0, 0), iso(GRID_W, 0), iso(GRID_W, GRID_H), iso(0, GRID_H)]; poly(c, plot, 'rgba(255,255,220,.08)');
-  for (let i = 0; i < 140; i++) { const gx = x0 + R() * (x1 - x0), gy = y0 + R() * (y1 - y0), [px, py] = iso(gx, gy); const k = R();
-    if (k < .12) { circ(c, px, py, IS.tw * .035, ['#FFF1A8', '#FF9DB8', '#FFFFFF', '#B9A8FF'][i % 4]); } else { c.strokeStyle = shade(reg.land, -.25); c.lineWidth = 1; c.beginPath(); c.moveTo(px, py); c.lineTo(px - 1, py - IS.tw * .08); c.moveTo(px + 2, py); c.lineTo(px + 3, py - IS.tw * .06); c.stroke(); } }
-  // a worn path from the dock edge towards the middle
-  if (o.path !== false) { c.strokeStyle = 'rgba(210,180,120,.55)'; c.lineWidth = IS.tw * .38; c.lineCap = 'round'; c.beginPath(); const p0 = iso(GRID_W / 2, GRID_H + RING), p1 = iso(GRID_W / 2 + .5, GRID_H * .55), p2 = iso(GRID_W / 2, GRID_H * .3); c.moveTo(...p0); c.quadraticCurveTo(p1[0] + IS.tw, p1[1], ...p2); c.stroke();
+  const R = rng(seed), top = coastPts(seed, 0), topS = isoPoly(top, 0);
+  // beach below the cliffs, with a wet edge
+  c.save(); c.lineJoin = 'round'; const beach = isoPoly(coastPts(seed, 1.35), -CLIFF); poly(c, beach, reg.sand, reg.sand, IS.tw * .4);
+  c.strokeStyle = shade(reg.sand, -.16); c.lineWidth = IS.tw * .1; c.beginPath(); isoPoly(coastPts(seed, 1.25), -CLIFF).forEach((p, i) => i ? c.lineTo(...p) : c.moveTo(...p)); c.closePath(); c.stroke(); c.restore();
+  for (let i = 0; i < 50; i++) { const th = R() * 6.283, [cx, cy] = ISLE_C(), r = islandR(seed, th) + .3 + R() * .9, [px, py] = iso(cx + Math.cos(th) * r, cy + Math.sin(th) * r, -CLIFF); circ(c, px, py, IS.tw * .03, i % 3 ? '#FFF6E0' : '#F2B8C6'); }
+  // cliff faces on the sides that face you, back to front
+  const faces = []; for (let i = 0; i < top.length; i++) { const A = top[i], Bp = top[(i + 1) % top.length], nx = Bp[1] - A[1], ny = -(Bp[0] - A[0]); if (nx + ny <= 0) continue; faces.push({ A, B: Bp, d: A[0] + A[1] + Bp[0] + Bp[1], lit: nx < ny }); }
+  faces.sort((p, q) => p.d - q.d);
+  for (const f of faces) { const a0 = iso(...f.A, 0), b0 = iso(...f.B, 0), a1 = iso(...f.A, -CLIFF - .08), b1 = iso(...f.B, -CLIFF - .08); const col = f.lit ? '#A08262' : '#7A5E44';
+    const g = c.createLinearGradient(0, a0[1], 0, a1[1]); g.addColorStop(0, shade(col, .05)); g.addColorStop(1, shade(col, -.25)); poly(c, [a0, b0, b1, a1], g, g, .8); }
+  // rock strata lines across the cliffs
+  c.strokeStyle = 'rgba(50,30,15,.22)'; c.lineWidth = 1; for (const z of [-.35, -.75]) { c.beginPath(); let on = false; for (const f of faces) { const a = iso(...f.A, z), b = iso(...f.B, z); if (!on) { c.moveTo(...a); on = true; } c.lineTo(...b); } c.stroke(); }
+  for (let i = 0; i < 40; i++) { const f = faces[Math.floor(R() * faces.length)]; if (!f) break; const u = R(), [px, py] = iso(f.A[0] + (f.B[0] - f.A[0]) * u, f.A[1] + (f.B[1] - f.A[1]) * u, -CLIFF * (.2 + R() * .6)); c.fillStyle = 'rgba(60,40,20,.25)'; c.fillRect(px, py, IS.tw * .12, IS.tw * .04); }
+  // grass top with light variation (clipped to the island)
+  const tg = c.createLinearGradient(topS[0][0], Math.min(...topS.map(p => p[1])), topS[0][0], Math.max(...topS.map(p => p[1]))); tg.addColorStop(0, shade(reg.land, .12)); tg.addColorStop(1, shade(reg.land, -.06)); poly(c, topS, tg);
+  c.save(); c.beginPath(); topS.forEach((p, i) => i ? c.lineTo(...p) : c.moveTo(...p)); c.closePath(); c.clip();
+  const [cx0, cy0] = ISLE_C();
+  for (let i = 0; i < 140; i++) { const gx = cx0 + (R() - .5) * 34, gy = cy0 + (R() - .5) * 34, [px, py] = iso(gx, gy); c.fillStyle = `rgba(${R() < .5 ? '255,255,200' : '20,60,20'},${.04 + R() * .06})`; c.beginPath(); c.ellipse(px, py, IS.tw * (.5 + R()), IS.th * (.4 + R() * .7), 0, 0, 7); c.fill(); }
+  // grass edge highlight and moss drips over the cliff lip
+  c.restore(); c.strokeStyle = shade(reg.land, .25); c.lineWidth = 2; c.beginPath(); for (const f of faces) { c.moveTo(...iso(...f.A, 0)); c.lineTo(...iso(...f.B, 0)); } c.stroke();
+  for (const f of faces) if (R() < .45) { const [px, py] = iso(f.A[0], f.A[1], 0); ell(c, px, py + IS.tw * .06, IS.tw * (.12 + R() * .12), IS.tw * (.05 + R() * .06), shade(reg.land2, -.05)); }
+  // the build plot: a slightly lighter meadow
+  poly(c, [iso(0, 0), iso(GRID_W, 0), iso(GRID_W, GRID_H), iso(0, GRID_H)], 'rgba(255,255,220,.07)');
+  for (let i = 0; i < 220; i++) { const gx = cx0 + (R() - .5) * 30, gy = cy0 + (R() - .5) * 30; if (!onIsland(seed, gx, gy, .3)) continue; const [px, py] = iso(gx, gy);
+    if (R() < .12) circ(c, px, py, IS.tw * .035, ['#FFF1A8', '#FF9DB8', '#FFFFFF', '#B9A8FF'][i % 4]); else { c.strokeStyle = shade(reg.land, -.25); c.lineWidth = 1; c.beginPath(); c.moveTo(px, py); c.lineTo(px - 1, py - IS.tw * .08); c.moveTo(px + 2, py); c.lineTo(px + 3, py - IS.tw * .06); c.stroke(); } }
+  // a worn path from the shore to the middle of the plot
+  if (o.path !== false) { const [ex, ey] = coastFrom(seed, GRID_W / 2, GRID_H, 0, 1); c.strokeStyle = 'rgba(210,180,120,.55)'; c.lineWidth = IS.tw * .38; c.lineCap = 'round'; c.beginPath(); const p0 = iso(ex, ey - .3), p1 = iso(GRID_W / 2 + .5, GRID_H * .55), p2 = iso(GRID_W / 2, GRID_H * .3); c.moveTo(...p0); c.quadraticCurveTo(p1[0] + IS.tw, p1[1], ...p2); c.stroke();
     c.strokeStyle = 'rgba(160,125,80,.35)'; c.setLineDash([IS.tw * .12, IS.tw * .2]); c.lineWidth = IS.tw * .3; c.stroke(); c.setLineDash([]); }
   return R;
 }
-// decor on the wild ring around the plot (drawn with depth sorting by the caller)
+// decor on the wild land around the plot (drawn with depth sorting by the caller)
 function ringDecor(seed, reg){
-  const R = rng(seed + 99), [x0, y0, x1, y1] = islandShape(RING), out = [];
-  for (let i = 0; i < 34; i++) { let gx, gy, side = i % 4, f = R(); const d = .3 + R() * (RING - .6);
-    if (side === 0) { gx = x0 + d; gy = y0 + f * (y1 - y0); } else if (side === 1) { gx = x0 + f * (x1 - x0); gy = y0 + d; } else if (side === 2) { gx = x1 - d; gy = y0 + f * (y1 - y0); } else { gx = x0 + f * (x1 - x0); gy = y1 - d; }
-    if (Math.abs(gx - GRID_W / 2) < 1.2 && gy > GRID_H) continue;   // keep the path to the dock clear
-    const k = R(), front = side === 2 || side === 3;   // the near edges only get low things so they never hide buildings
-    out.push(front ? { gx, gy, kind: k < .45 ? 'bush' : k < .75 ? 'rock' : k < .9 ? 'lantern' : 'flowers', s: .6 + R() * .3 } : { gx, gy, kind: k < .4 ? 'palm' : k < .68 ? 'tree' : k < .8 ? 'blossom' : k < .9 ? 'rock' : 'lantern', s: .8 + R() * .5 }); }
-  out.push({ gx: x0 + .6, gy: y1 - 1.4, kind: 'ruin', s: 1 }); out.push({ gx: x1 - .8, gy: y0 + 1.2, kind: 'totem', s: 1 });
+  const R = rng(seed + 99), out = [], [cx, cy] = ISLE_C();
+  for (let i = 0; i < 400 && out.length < 60; i++) { const gx = cx + (R() - .5) * 36, gy = cy + (R() - .5) * 36;
+    if (!onIsland(seed, gx, gy, .7)) continue; if (gx > -.6 && gx < GRID_W + .6 && gy > -.6 && gy < GRID_H + .6) continue;
+    if (Math.abs(gx - GRID_W / 2) < 1.3 && gy > GRID_H) continue;   // keep the path to the shore clear
+    const k = R(), front = gx > GRID_W + .2 || gy > GRID_H + .2;   // the near side only gets low things so they never hide buildings
+    out.push(front ? { gx, gy, kind: k < .4 ? 'bush' : k < .7 ? 'rock' : k < .85 ? 'lantern' : 'flowers', s: .6 + R() * .3 } : { gx, gy, kind: k < .35 ? 'palm' : k < .65 ? 'tree' : k < .78 ? 'blossom' : k < .9 ? 'rock' : 'lantern', s: .8 + R() * .5 }); }
+  // landmarks from the old Roc days, placed on the widest part of the island
+  const p = islandParams(seed), place = (th, inset) => { const r = islandR(seed, th) - inset; return [cx + Math.cos(th) * r, cy + Math.sin(th) * r]; };
+  const [rx, ry] = place(p.lobe, 1.8); if (!(rx > -.6 && rx < GRID_W + .6 && ry > -.6 && ry < GRID_H + .6)) out.push({ gx: rx, gy: ry, kind: 'ruin', s: 1 });
+  const [tx, ty] = place(p.lobe2, 1.2); if (!(tx > -.6 && tx < GRID_W + .6 && ty > -.6 && ty < GRID_H + .6)) out.push({ gx: tx, gy: ty, kind: 'totem', s: 1 });
   return out;
 }
 function drawDecor(c, d, t, reg){ const [x, y] = iso(d.gx, d.gy), s = IS.tw * d.s;
@@ -768,10 +791,8 @@ function dayTint(){ const h = new Date().getHours() + new Date().getMinutes() / 
   if (h >= 7 && h < 17) return null; if (h >= 17 && h < 20) return [255, 140, 60, (h - 17) / 3 * .16]; if (h >= 5 && h < 7) return [255, 170, 110, (7 - h) / 2 * .14]; return [30, 40, 110, .3]; }
 const isNight = () => { const h = new Date().getHours(); return h >= 20 || h < 5; };
 function drawAmbient(c, W, H, t){
-  // drifting cloud shadows
-  for (let i = 0; i < 3; i++) { const x = ((t * 8 + i * 420) % (W + 500)) - 250, y = H * (.25 + i * .25); c.fillStyle = 'rgba(20,40,60,.07)'; c.beginPath(); c.ellipse(x, y, 160, 60, -.3, 0, 7); c.ellipse(x + 90, y + 20, 110, 45, -.3, 0, 7); c.fill(); }
-  // gulls
-  for (let i = 0; i < 3; i++) { const x = ((t * 22 + i * 260) % (W + 120)) - 60, y = 110 + i * 40 + Math.sin(t + i) * 12, f = reduce ? 0 : Math.sin(t * 8 + i) * 4; c.strokeStyle = 'rgba(255,255,255,.9)'; c.lineWidth = 1.8; c.beginPath(); c.moveTo(x - 8, y - f); c.quadraticCurveTo(x - 4, y - 5, x, y); c.quadraticCurveTo(x + 4, y - 5, x + 8, y - f); c.stroke(); }
+  // two gulls circling out over the water (fixed to the world, well away from the buildings)
+  for (let i = 0; i < 2; i++) { const a = t * .25 + i * 3.1, [x, y] = iso(GRID_W / 2 + Math.cos(a) * 17, GRID_H / 2 + Math.sin(a) * 17, 4), f = reduce ? 0 : Math.sin(t * 8 + i) * 4; c.strokeStyle = 'rgba(255,255,255,.9)'; c.lineWidth = 1.8; c.beginPath(); c.moveTo(x - 8, y - f); c.quadraticCurveTo(x - 4, y - 5, x, y); c.quadraticCurveTo(x + 4, y - 5, x + 8, y - f); c.stroke(); }
   const tint = dayTint(); if (tint) { c.fillStyle = `rgba(${tint[0]},${tint[1]},${tint[2]},${tint[3]})`; c.fillRect(0, 0, W, H); }
   if (isNight() || (tint && tint[3] > .1)) for (let i = 0; i < 24; i++) { const x = (i * 97 + Math.sin(t * .5 + i) * 30) % W, y = (i * 211 % (H * .8)) + H * .1 + Math.cos(t * .7 + i) * 20, a = .4 + .4 * Math.sin(t * 3 + i * 1.7); c.fillStyle = `rgba(255,240,150,${a})`; c.beginPath(); c.arc(x, y, 2, 0, 7); c.fill(); }
   // soft vignette
@@ -1068,11 +1089,11 @@ function speedUp(b){ const g = gemsFor(b.build.end - Date.now()); if (save.gems 
 
 // ================= CAMERA =================
 // cam.x/y = grid point at the middle of the screen, cam.z = zoom. Drag to pan, pinch to zoom.
-const camBase = { x: GRID_W / 2, y: GRID_H / 2 + .5, z: 1.05 };
+const camBase = { x: GRID_W / 2, y: GRID_H / 2 + .5, z: .95 };
 let viewTop = 64, viewBot = 96;
 const baseTW = () => Math.min(W, 520) / 9.5;
 function applyCam(cam){ const tw = baseTW() * cam.z, th = tw * .56, cyS = (viewTop + H - viewBot) / 2; setIso(tw, W / 2 - (cam.x - cam.y) * tw / 2, cyS - (cam.x + cam.y) * th / 2); }
-function clampCam(cam){ cam.z = clamp(cam.z, .8, 2.3); cam.x = clamp(cam.x, -1, GRID_W + 1); cam.y = clamp(cam.y, -1, GRID_H + 1); }
+function clampCam(cam){ cam.z = clamp(cam.z, .6, 2.3); cam.x = clamp(cam.x, -6, GRID_W + 6); cam.y = clamp(cam.y, -6, GRID_H + 6); }
 // island terrain is drawn once into a cache canvas per zoom level
 const terrainCache = {};
 function terrainFor(key, reg, seed, opts){
@@ -1080,7 +1101,7 @@ function terrainFor(key, reg, seed, opts){
   if (c0 && Math.abs(c0.tw - tw) < .5) return c0;
   if (c0 && pinch) return c0;   // while pinching, stretch the old one
   const save0 = { ...IS }; setIso(tw, 0, 0);
-  const [x0, y0, x1, y1] = islandShape(RING + 1.6), pts = [iso(x0, y1, -CLIFF - 1), iso(x1, y0, -CLIFF - 1), iso(x0, y0, 2), iso(x1, y1, -CLIFF - 1)];
+  const pts = [...isoPoly(coastPts(seed, 2.2, 60), -CLIFF - 1), ...isoPoly(coastPts(seed, 0, 60), 3)];
   const minX = Math.min(...pts.map(p => p[0])), maxX = Math.max(...pts.map(p => p[0])), minY = Math.min(...pts.map(p => p[1])), maxY = Math.max(...pts.map(p => p[1]));
   const cvT = c0 && c0.cv || document.createElement('canvas'), wpx = maxX - minX, hpx = maxY - minY; cvT.width = Math.ceil(wpx * dpr); cvT.height = Math.ceil(hpx * dpr);
   const g = cvT.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, wpx, hpx); setIso(tw, -minX, -minY); drawTerrain(g, reg, seed, opts);
@@ -1093,7 +1114,7 @@ let placing = null;   // { k, x, y, id? }
 let decorBase = null;
 const bCenter = b => { const s = BLD[b.k].size; return iso(b.x + s / 2, b.y + s / 2, bldTop(b.k) * .7); };
 function drawBase(){
-  const reg = REGIONS[0]; applyCam(camBase); drawWater(ctx, W, H, t, reg); drawShoreFoam(ctx, t); blitTerrain(ctx, terrainFor('base', reg, 11));
+  const reg = REGIONS[0]; applyCam(camBase); drawWater(ctx, W, H, t, reg); drawShoreFoam(ctx, t, 11); blitTerrain(ctx, terrainFor('base', reg, 11)); seaRocks(ctx, t, 11, true);
   if (!decorBase) decorBase = ringDecor(11, reg);
   if (placing) { ctx.strokeStyle = 'rgba(255,255,255,.3)'; ctx.lineWidth = 1; for (let i = 0; i <= GRID_W; i++) { ctx.beginPath(); ctx.moveTo(...iso(i, 0)); ctx.lineTo(...iso(i, GRID_H)); ctx.stroke(); } for (let j = 0; j <= GRID_H; j++) { ctx.beginPath(); ctx.moveTo(...iso(0, j)); ctx.lineTo(...iso(GRID_W, j)); ctx.stroke(); } }
   const items = [], nestEgg = save.nest ? save.nest.s : save.eggs[0];
@@ -1361,7 +1382,7 @@ function drawMap(){
   for (let i = -1; i < ISLANDS_PER_REGION; i++) { const [x, y] = i < 0 ? [W / 2, H - 125 + mapScroll] : mapPos(i); i < 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); } ctx.stroke(); ctx.setLineDash([]);
   const [hx, hy] = [W / 2, H - 125 + mapScroll]; if (hy < H + 80) { miniIsland('mini-home', REGIONS[0], 11, hx, hy, 7, save.bld); label('Home', hx, hy + 48, '#8E7CF0'); }
   const cl = save.cleared[mapR];
-  for (let i = 0; i < ISLANDS_PER_REGION; i++) { const [x, y] = mapPos(i); if (y < -90 || y > H + 90) continue; const boss = i === ISLANDS_PER_REGION - 1, tw = boss ? 8.5 : 6.5, locked = i > cl, sp = islandSpec(mapR, i);
+  for (let i = 0; i < ISLANDS_PER_REGION; i++) { const [x, y] = mapPos(i); if (y < -90 || y > H + 90) continue; const boss = i === ISLANDS_PER_REGION - 1, tw = boss ? 6.5 : 5, locked = i > cl, sp = islandSpec(mapR, i);
     if (i === cl) { const p = 1 + (reduce ? 0 : Math.sin(t * 4) * .06); ctx.fillStyle = 'rgba(255,230,120,.25)'; ctx.beginPath(); ctx.ellipse(x, y + 6, 70 * p * (boss ? 1.3 : 1), 38 * p * (boss ? 1.3 : 1), 0, 0, 7); ctx.fill(); }
     miniIsland('mini-' + mapR + '-' + i, R, 100 + mapR * 20 + i, x, y, tw, sp.blds.map(b => ({ ...b, lv: i < cl ? b.lv : b.lv })), { enemy: i >= cl });
     if (i < cl) { const [fx, fy] = [x + 8, y - 26]; banner(ctx, fx, fy + 14, 26, '#2FA89A', t, 1); }
@@ -1381,7 +1402,7 @@ function mapUp(e, moved){ mapDrag = null; if (moved) return;
 // ================= BATTLE =================
 let BT = null;
 const camBattle = { x: GRID_W / 2, y: GRID_H / 2 + .5, z: .9 };
-function battleLayout(){ Object.assign(camBattle, { x: GRID_W / 2, y: GRID_H / 2 + .8, z: .88 }); }
+function battleLayout(){ Object.assign(camBattle, { x: GRID_W / 2 + .5, y: GRID_H / 2 + 2.2, z: .72 }); }
 function battleCam(){ const vt = viewTop, vb = viewBot; viewTop = hudB - 20; viewBot = BT && BT.state === 'prep' ? H * .44 : 100; applyCam(camBattle); viewTop = vt; viewBot = vb; }
 const LANDS = [1.5, 5, 8.5];
 function startPrep(r, i){
@@ -1415,7 +1436,7 @@ function renderPrep(){
 function endBattleUi(){ document.querySelectorAll('.prep,.bhud,.bbar').forEach(e => e.remove()); }
 function startFight(){
   endBattleUi(); BT.state = 'fight'; battleLayout();
-  BT.squad.forEach((c, k) => { const S = SPECIES[c.s], ang = k * 2.4; BT.units.push({ c, s: c.s, t: c.t, x: LANDS[BT.land] + Math.cos(ang) * .5 * (k > 0), y: GRID_H + 1.4 + Math.sin(ang) * .3 * (k > 0), hp: stat(c, 'hp'), max: stat(c, 'hp'), dmg: stat(c, 'dmg'), rng: S.rng, spd: S.spd, cd: .5 + k * .15, role: S.role, face: 1, target: null, wait: k * .25, hurt: 0, dead: false }); });
+  BT.squad.forEach((c, k) => { const S = SPECIES[c.s], ang = k * 2.4; BT.units.push({ c, s: c.s, t: c.t, x: LANDS[BT.land] + Math.cos(ang) * .5 * (k > 0), y: coastFrom(100 + BT.r * 20 + BT.i, LANDS[BT.land], GRID_H, 0, 1)[1] - .4 + Math.sin(ang) * .3 * (k > 0), hp: stat(c, 'hp'), max: stat(c, 'hp'), dmg: stat(c, 'dmg'), rng: S.rng, spd: S.spd, cd: .5 + k * .15, role: S.role, face: 1, target: null, wait: k * .25, hurt: 0, dead: false }); });
   const hud = document.createElement('div'); hud.className = 'bhud'; hud.innerHTML = `<div class="pill" id="bTime">2:30</div><div class="pill" id="bLoot"><span class="ic coin sm"></span>0</div><button type="button" id="bRetreat">Retreat</button>`; document.body.appendChild(hud);
   $('bRetreat').onclick = () => { SFX.tap(); endBattle(false); };
   const bar = document.createElement('div'); bar.className = 'bbar';
@@ -1499,12 +1520,12 @@ function stepBattle(dt){
 const lootShare = () => (BT.again ? .3 : 1) * .6 * BT.destroyed / BT.blds.length;
 function drawBattle(){
   const R = REGIONS[BT.r], seed = 100 + BT.r * 20 + BT.i; battleCam(); ctx.save(); if (BT.shake) ctx.translate(rnd(-BT.shake, BT.shake), rnd(-BT.shake, BT.shake));
-  drawWater(ctx, W, H, t, R); drawShoreFoam(ctx, t); blitTerrain(ctx, terrainFor('battle-' + seed, R, seed, { path: false }));
+  drawWater(ctx, W, H, t, R); drawShoreFoam(ctx, t, seed); blitTerrain(ctx, terrainFor('battle-' + seed, R, seed, { path: false })); seaRocks(ctx, t, seed, true);
   if (!BT.decor) BT.decor = ringDecor(seed, R);
   const T = IS.tw, items = [];
   for (const d of BT.decor) items.push({ k: d.gx + d.gy, f: () => drawDecor(ctx, d, t, R) });
   // landing boats
-  LANDS.forEach((x, k) => { if (BT.state !== 'prep' && k !== BT.land) return; items.push({ k: x + GRID_H + 1.8, f: () => { const [px, py] = iso(x, GRID_H + 2.3, -CLIFF), on = BT.land === k, bob = reduce ? 0 : Math.sin(t * 2 + k) * 2;
+  LANDS.forEach((x, k) => { if (BT.state !== 'prep' && k !== BT.land) return; items.push({ k: x + GRID_H + 1.8, f: () => { const [cxs, cys] = coastFrom(seed, x, GRID_H, 0, 1), [px, py] = iso(cxs, cys + .9, -CLIFF), on = BT.land === k, bob = reduce ? 0 : Math.sin(t * 2 + k) * 2;
     poly(ctx, [[px - T * .7, py - T * .1 + bob], [px + T * .5, py - T * .45 + bob], [px + T * .75, py - T * .2 + bob], [px - T * .45, py + T * .2 + bob]], on ? '#A8683A' : '#8A5A34', '#4A2E1A', 1.5);
     if (BT.state === 'prep') { const [ax, ay] = iso(x, GRID_H - .4), b = reduce || !on ? 0 : Math.sin(t * 5) * 4; ctx.save(); ctx.translate(ax, ay + b); ctx.rotate(gridAng(0, -1) + Math.PI / 2); ctx.fillStyle = on ? '#FF7A3C' : 'rgba(255,255,255,.8)'; ctx.strokeStyle = 'rgba(0,0,0,.25)'; ctx.lineWidth = 2;
       ctx.beginPath(); ctx.moveTo(0, -T * .7); ctx.lineTo(-T * .45, -T * .1); ctx.lineTo(-T * .18, -T * .1); ctx.lineTo(-T * .18, T * .4); ctx.lineTo(T * .18, T * .4); ctx.lineTo(T * .18, -T * .1); ctx.lineTo(T * .45, -T * .1); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore();
