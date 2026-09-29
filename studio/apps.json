@@ -218,6 +218,62 @@
           "url": "https://aidenstreck.github.io/crumbstack/prototypes/sunsprout/"
         }
       ]
+    },
+    {
+      "id": "hatchwild",
+      "name": "Hatchwild",
+      "tagline": "Island base-builder · hatch, merge & pair critters, take rival islands",
+      "repo": "AidenStreck/crumbstack",
+      "path": "prototypes/hatchwild",
+      "tag": "Hatchwild",
+      "ios": false,
+      "site": "https://aidenstreck.github.io/crumbstack/prototypes/hatchwild/",
+      "icon": "hatchwild-icon.svg",
+      "stage": "Prototype",
+      "checklist": [
+        {
+          "label": "Playable prototype on the website",
+          "done": true
+        },
+        {
+          "label": "Home island: build, collect, upgrade with real-time timers",
+          "done": true
+        },
+        {
+          "label": "Critters: hatch, merge 3→1, pair for hybrids",
+          "done": true
+        },
+        {
+          "label": "4 regions × 12 rival islands, battles with flare and powers",
+          "done": true
+        },
+        {
+          "label": "Friends play-test it and give feedback",
+          "done": false
+        },
+        {
+          "label": "More content per region (buildings, events, bosses)",
+          "done": false
+        },
+        {
+          "label": "Final name, icon and store look",
+          "done": false
+        },
+        {
+          "label": "iPhone app project",
+          "done": false
+        },
+        {
+          "label": "Submitted to Apple for review",
+          "done": false
+        }
+      ],
+      "links": [
+        {
+          "label": "Play link to share",
+          "url": "https://aidenstreck.github.io/crumbstack/prototypes/hatchwild/"
+        }
+      ]
     }
   ]
 }

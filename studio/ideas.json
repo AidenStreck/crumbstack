@@ -43,11 +43,11 @@
     },
     {
       "id": "island-strategy",
-      "name": "Island strategy (working title)",
-      "pitch": "A long-term island base-building and strategy game in the spirit of Boom Beach, but our own world, characters and rules: build up an island base, gather resources, and take on other islands.",
-      "stage": "Idea",
+      "name": "Hatchwild",
+      "pitch": "Grow an island base, hatch and merge critters into an army, pair them for rare hybrids, and take rival islands across four regions that unlock over weeks.",
+      "stage": "Prototype",
       "by": "You",
-      "notes": "UP NEXT after the puzzle game ships. Must be clearly original (no Supercell names, art, units or layouts; Apple rejects lookalikes). Big project: plan it as a single-player first version with a map of islands, then grow."
+      "notes": "Play it: aidenstreck.github.io/crumbstack/prototypes/hatchwild/ · Stands out by mixing base-building battles with merge (3→1) and pairing for hybrids. All original names, art and creatures (no Supercell/Big Blue Bubble/merge-game assets). Real-time build timers grow ~2.3x per level so regions take weeks to open. Add #fast to the link to run timers 60x for testing."
     }
   ]
 }
