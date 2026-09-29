@@ -83,7 +83,7 @@
       "tag": "Tidy Tides",
       "site": "https://aidenstreck.github.io/crumbstack/prototypes/tidy-tides/",
       "icon": "tidytides-icon.svg",
-      "stage": "On TestFlight",
+      "stage": "Waiting for Apple review",
       "checklist": [
         {
           "label": "Playable prototype on the website",
@@ -135,7 +135,7 @@
         },
         {
           "label": "Submitted to Apple for review",
-          "done": false
+          "done": true
         }
       ],
       "links": [
