@@ -38,6 +38,7 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
 .keep div{background:#fff;border-radius:12px;padding:8px 10px;font-size:13px;line-height:1.35;color:var(--ink-2);font-weight:500;box-shadow:0 2px 0 var(--line)}
 .keep b{display:block;color:var(--ink);font-size:13px;margin-bottom:2px}
 .twist{background:#FFF1C2;border-radius:12px;padding:8px 10px;width:100%;box-sizing:border-box}
+.oneway{background:#FFE6E2;border-radius:12px;padding:8px 10px;width:100%;box-sizing:border-box;color:#8A2E26!important}.oneway b{color:#B23A30}
 .btn.ghost{background:none;box-shadow:none;color:var(--ink-2);font-size:17px;padding:6px 20px}
 .buy.stars{background:linear-gradient(#FFF3B8,#FFD65A)}
 .coastTag{color:#FFE58A;font-weight:700;font-size:16px;letter-spacing:.5px}
@@ -213,6 +214,147 @@ const COASTS = [
         ['trapshop','Trap Carpenter','trap','shelf','#4F6B80','bench'], ['skateforge','Skate Forge','boot','skates','#FFC83D','kiln'], ['feederbooth','Feeder Booth','jug','feeder','#4CC38A','booth'] ] },
       { id:'glacier', name:'Glacier Bay', short:'bay', stall:'GLACIER GIFTS', machines:[
         ['drumforge','Drum Forge','drum','stove','#2E6DB4','kiln'], ['tentloom','Tent Loom','tarp','tent','#2FA39A','loom'], ['lampdome','Cone Lamp Dome','cone','lamp','#FF8A3D','dome'] ] } ] },
+  // ---- Coasts 4-13 ----
+  { id:'harbor', name:'Harbor Lights', blurb:'A busy old harbor with cranes, fishing docks and a lantern-lit canal.',
+    sand:['#A39A8E','#DCD3C4'], seaTop:['#34474F','#205E7A'], seaLow:['#5D7479','#4AA3C0'], tree:'bush', grass:'#7FAF7A', decor:['', 'cranes', 'lanterns'],
+    collector:{ kind:'raccoon', name:'Harbor raccoon', plural:'harbor raccoons' }, carrier:{ kind:'gull', name:'Gull courier', short:'gull', plural:'gulls' },
+    big:{ col:'#56708A', w:20, h:7 }, turtle:'#6E8F86', hats:[null, 'sailor'], hatName:'Sailor cap',
+    wild:[['herons return','The herons are back!'], ['a seal visits','A harbor seal came to visit!'], ['the water clears','The harbor water is clear!'], ['crabs return','Crabs are back on the docks!'], ['whales','A whale in the harbor! This spot is healed!']],
+    album:[['heron','Grey heron','bird','#9AA7B1'], ['harborseal','Harbor seal','seal','#8C8C8C'], ['mackerel','Mackerel','fish','#4F8FB8'], ['dockcrab','Dock crab','crab','#D9544A'], ['humpback','Humpback whale','whale','#56708A'], ['goldmackerel','Golden mackerel','fish','#F2C230', true]],
+    labels:{ paper:'old newspapers', notebook:'Notebooks', wrapper:'snack wrappers', pouch:'Wrapper pouches', cdisc:'old CDs', mirrorball:'Mirror balls', pallet:'broken pallets', table:'Pallet tables', chain:'rusty chain', sculpture:'Chain sculptures', fishbox:'foam fish boxes', cooler:'Coolers', brolly:'broken umbrellas', rainhat:'Rain hats', bikepart:'bike parts', clock:'Wheel clocks', bulb:'old light bulbs', bulbvase:'Bulb vases' },
+    areas:[
+      { id:'quay', name:'Stone Quay', short:'quay', stall:'QUAY KIOSK', machines:[
+        ['notepress','Notebook Press','paper','notebook','#8E7CF0','press'], ['pouchloom','Pouch Weaver','wrapper','pouch','#FF7A6B','loom'], ['discodome','Disco Dome','cdisc','mirrorball','#9AA7B1','dome'] ] },
+      { id:'docks', name:'Fishing Docks', short:'docks', stall:'DOCK MARKET', machines:[
+        ['palletbench','Pallet Bench','pallet','table','#C99A5E','bench'], ['chainforge','Chain Forge','chain','sculpture','#7C8A95','kiln'], ['coolerbooth','Cooler Booth','fishbox','cooler','#35C6D8','booth'] ] },
+      { id:'canal', name:'Lantern Canal', short:'canal', stall:'CANAL GIFTS', machines:[
+        ['hatloom','Rain Hat Loom','brolly','rainhat','#2E6DB4','loom'], ['clockbench','Wheel Clock Bench','bikepart','clock','#E4606D','bench'], ['vasedome','Bulb Vase Studio','bulb','bulbvase','#FFC83D','dome'] ] } ] },
+  { id:'volcano', name:'Volcano Isle', blurb:'Black sand, bubbling hot springs and a sleepy volcano.',
+    sand:['#5E5652','#8C827B'], seaTop:['#2E4A4A','#127A8C'], seaLow:['#557A74','#3CC4C8'], tree:'palm', grass:'#6FB36A', decor:['', 'hotspring', 'volcano'],
+    collector:{ kind:'iguana', name:'Marine iguana', plural:'marine iguanas' }, carrier:{ kind:'frigate', name:'Frigatebird courier', short:'frigatebird', plural:'frigatebirds' },
+    big:{ col:'#7C8A95', w:16, h:5 }, turtle:'#556B4A', hats:[null, 'visor'], hatName:'Lava visor',
+    wild:[['boobies return','Blue-footed boobies are back!'], ['a sea lion naps','A sea lion is napping!'], ['the water clears','The water is clear again!'], ['octopuses return','Octopuses in the tide pools!'], ['reef sharks','Reef sharks! This spot is healed!']],
+    album:[['booby','Blue-footed booby','bird','#E8E4DA'], ['sealion','Sea lion','seal','#8B6A4A'], ['triggerfish','Triggerfish','fish','#8E7CF0'], ['octopus','Octopus','octopus','#E4606D'], ['reefshark','Reef shark','shark','#7C8A95'], ['lavaeel','Lava eel','eel','#FF8A3D', true]],
+    labels:{ lighter:'old lighters', candle:'Lava candles', goggles:'lost goggles', sunnies:'Sunglasses', bucket:'beach buckets', bongo:'Bongo drums', towel:'old towels', robe:'Spa robes', shampoo:'shampoo bottles', soap:'Soap bars', flask:'plastic flasks', mug:'Lava mugs', wire:'old wires', wirering:'Wire rings', phone:'old phones', speaker:'Shell speakers', oldpot:'old pots', lavalamp:'Lava lamps' },
+    areas:[
+      { id:'blacksand', name:'Black Sand Beach', short:'beach', stall:'LAVA SHACK', machines:[
+        ['candlekiln','Candle Kiln','lighter','candle','#FF8A3D','kiln'], ['lenspress','Lens Press','goggles','sunnies','#35C6D8','press'], ['bongobench','Bongo Bench','bucket','bongo','#E4606D','bench'] ] },
+      { id:'springs', name:'Hot Springs', short:'springs', stall:'SPRING SPA', machines:[
+        ['robeloom','Robe Loom','towel','robe','#FF9AC4','loom'], ['soappress','Soap Press','shampoo','soap','#4CC38A','press'], ['mugkiln','Mug Kiln','flask','mug','#B97A44','kiln'] ] },
+      { id:'crater', name:'Crater Rim', short:'crater', stall:'CRATER GIFTS', machines:[
+        ['wirebench','Wire Bench','wire','wirering','#FFC83D','bench'], ['speakerbooth','Speaker Booth','phone','speaker','#8E7CF0','booth'], ['lavadome','Lava Lamp Dome','oldpot','lavalamp','#E4606D','dome'] ] } ] },
+  { id:'kelp', name:'Kelp Coast', blurb:'Rocky tide pools, a swaying kelp forest and tall sea stacks.',
+    sand:['#A99C85','#D9CBAE'], seaTop:['#2A4540','#16655E'], seaLow:['#4E6E62','#3FA88E'], tree:'pine', grass:'#7FA66A', decor:['', 'kelp', 'seastacks'],
+    collector:{ kind:'otter', name:'Sea otter pup', plural:'sea otter pups' }, carrier:{ kind:'cormorant', name:'Cormorant courier', short:'cormorant', plural:'cormorants' },
+    big:{ col:'#8C9AA3', w:20, h:7 }, turtle:'#6B7B3A', hats:[null, 'bucket'], hatName:'Bucket hat',
+    wild:[['kelp grows back','The kelp forest is growing back!'], ['sea otters return','Sea otters are floating by!'], ['the water clears','The water is clear!'], ['sea stars return','Bat stars on the rocks!'], ['gray whales','Gray whales! This spot is healed!']],
+    album:[['garibaldi','Garibaldi','fish','#FF8A3D'], ['seaotter','Sea otter','otter','#8B5A34'], ['rockfish','Rockfish','fish','#C0463C'], ['batstar','Bat star','star','#8E7CF0'], ['graywhale','Gray whale','whale','#8C9AA3'], ['goldjelly','Golden jelly','jelly','#F2C230', true]],
+    labels:{ lure:'fishing lures', earring:'Lure earrings', sixpack:'six-pack rings', garland:'Ring garlands', lid:'plastic lids', frisbee:'Frisbees', hose:'garden hoses', hosebasket:'Hose baskets', shovel:'toy shovels', pinwheel:'Pinwheels', milkcrate:'milk crates', bookcase:'Crate bookcases', wetsuit:'torn wetsuits', sleeve:'Phone sleeves', paddle:'broken paddles', sign:'Painted signs', sunscreen:'sunscreen tubes', vase:'Tube vases' },
+    areas:[
+      { id:'tidepools', name:'Tide Pools', short:'pools', stall:'TIDEPOOL HUT', machines:[
+        ['lurebench','Lure Bench','lure','earring','#FF9AC4','bench'], ['ringloom','Ring Loom','sixpack','garland','#4CC38A','loom'], ['lidpress','Lid Press','lid','frisbee','#FFC83D','press'] ] },
+      { id:'kelpforest', name:'Kelp Forest', short:'kelp', stall:'KELP CAFE', machines:[
+        ['hoseloom','Hose Loom','hose','hosebasket','#4CC38A','loom'], ['pinbooth','Pinwheel Booth','shovel','pinwheel','#FF7A6B','booth'], ['cratebench','Crate Bench','milkcrate','bookcase','#2E6DB4','bench'] ] },
+      { id:'seastack', name:'Sea Stack Point', short:'point', stall:'POINT OUTPOST', machines:[
+        ['suitpress','Wetsuit Stitcher','wetsuit','sleeve','#2F3A42','press'], ['signbooth','Sign Painter','paddle','sign','#F2A65A','booth'], ['vasekiln','Vase Kiln','sunscreen','vase','#35C6D8','kiln'] ] } ] },
+  { id:'dunes', name:'Desert Dunes', blurb:'Golden dunes meet the sea, with red cliffs and a palm oasis.',
+    sand:['#C9A874','#F2CF8C'], seaTop:['#3F5F63','#1E8FA8'], seaLow:['#6E8F86','#4ED0D6'], tree:'cactus', grass:'#9DBF6A', decor:['', 'cliffs', 'oasis'],
+    collector:{ kind:'fennec', name:'Fennec fox', plural:'fennec foxes' }, carrier:{ kind:'falcon', name:'Falcon courier', short:'falcon', plural:'falcons' },
+    big:{ col:'#9AA7B1', w:18, h:7 }, turtle:'#9C6A40', hats:[null, 'safari'], hatName:'Safari hat',
+    wild:[['sandpipers return','Sandpipers on the shore!'], ['a turtle nests','A loggerhead came to nest!'], ['the water clears','The water sparkles again!'], ['sand stars return','Sand stars everywhere!'], ['dugongs','Dugongs! This spot is healed!']],
+    album:[['sandpiper','Sandpiper','bird','#C9A874'], ['loggerhead','Loggerhead turtle','turtle','#9C6A40'], ['angelfish','Angelfish','fish','#FFC83D'], ['sandstar','Sand star','star','#F2A65A'], ['dugong','Dugong','seal','#9AA7B1'], ['goldray','Golden ray','ray','#F2C230', true]],
+    labels:{ canteen:'old canteens', birdbath:'Bird baths', rug:'torn rugs', cushion:'Cushions', kettle:'rusty kettles', teapot:'Teapots', mirror:'broken mirrors', suncatcher:'Suncatchers', belt:'old belts', strap:'Guitar straps', barrel:'old barrels', barrelchair:'Barrel chairs', fairystring:'tangled string lights', fairyjar:'Fairy jars', tube:'inner tubes', pouf:'Poufs', fan:'broken fans', spinner:'Wind spinners' },
+    areas:[
+      { id:'goldendunes', name:'Golden Dunes', short:'dunes', stall:'DUNE STAND', machines:[
+        ['bathbooth','Bird Bath Booth','canteen','birdbath','#35C6D8','booth'], ['rugloom','Rug Loom','rug','cushion','#E4606D','loom'], ['teakiln','Teapot Kiln','kettle','teapot','#B97A44','kiln'] ] },
+      { id:'redcliffs', name:'Red Cliffs', short:'cliffs', stall:'CLIFF MARKET', machines:[
+        ['sundome','Suncatcher Dome','mirror','suncatcher','#FFC83D','dome'], ['strappress','Strap Press','belt','strap','#8B5A34','press'], ['barrelbench','Barrel Bench','barrel','barrelchair','#C0463C','bench'] ] },
+      { id:'oasis', name:'Palm Oasis', short:'oasis', stall:'OASIS BAZAAR', machines:[
+        ['fairydome','Fairy Jar Dome','fairystring','fairyjar','#4CC38A','dome'], ['poufpress','Pouf Press','tube','pouf','#8E7CF0','press'], ['spinbooth','Spinner Booth','fan','spinner','#FF8A3D','booth'] ] } ] },
+  { id:'delta', name:'Jungle Delta', blurb:'A wide river mouth, a stilt village and a misty rainforest waterfall.',
+    sand:['#A08A5E','#D8C08A'], seaTop:['#4A5A3E','#3E7F6A'], seaLow:['#6E7A55','#5BB89A'], tree:'jungle', grass:'#4FA85E', decor:['', 'huts', 'waterfall'],
+    collector:{ kind:'frog', name:'Tree frog', plural:'tree frogs' }, carrier:{ kind:'toucan', name:'Toucan courier', short:'toucan', plural:'toucans' },
+    big:{ col:'#FF9AC4', w:15, h:5 }, turtle:'#6B7B3A', hats:[null, 'explorer'], hatName:'Explorer helmet',
+    wild:[['kingfishers return','Kingfishers are diving!'], ['a river turtle basks','A river turtle is sunbathing!'], ['the water clears','The river is running clear!'], ['crayfish return','Crayfish under the rocks!'], ['pink dolphins','Pink river dolphins! This spot is healed!']],
+    album:[['kingfisher','Kingfisher','bird','#2E9FD8'], ['riverturtle','River turtle','turtle','#6B7B3A'], ['arowana','Arowana','fish','#C9D3D8'], ['crayfish','Crayfish','lobster','#D9544A'], ['riverdolphin','Pink river dolphin','dolphin','#FF9AC4'], ['goldmanatee','Golden manatee','seal','#F2C230', true]],
+    labels:{ sack:'rice sacks', backpack:'Sack backpacks', jerrycan:'jerry cans', wateringcan:'Watering cans', doll:'lost dolls', plush:'Plush toys', plank:'broken planks', swing:'Plank swings', pan:'old pans', gong:'Gongs', propeller:'boat propellers', ceilingfan:'Ceiling fans', helmet:'old helmets', hangpot:'Hanging planters', poncho:'torn ponchos', drybag:'Dry bags', radio:'old radios', musicbox:'Music boxes' },
+    areas:[
+      { id:'riverbank', name:'Muddy Riverbank', short:'bank', stall:'BANK STALL', machines:[
+        ['sackloom','Sack Loom','sack','backpack','#C9A06A','loom'], ['canpress','Can Shaper','jerrycan','wateringcan','#4CC38A','press'], ['plushbooth','Plush Booth','doll','plush','#FF9AC4','booth'] ] },
+      { id:'stiltvillage', name:'Stilt Village', short:'village', stall:'VILLAGE MARKET', machines:[
+        ['swingbench','Swing Bench','plank','swing','#B97A44','bench'], ['gongkiln','Gong Kiln','pan','gong','#FFC83D','kiln'], ['fanbooth','Fan Booth','propeller','ceilingfan','#35C6D8','booth'] ] },
+      { id:'falls', name:'Rainforest Falls', short:'falls', stall:'FALLS GIFTS', machines:[
+        ['potdome','Planter Dome','helmet','hangpot','#4CC38A','dome'], ['bagpress','Dry Bag Press','poncho','drybag','#FF8A3D','press'], ['musicbench','Music Box Bench','radio','musicbox','#8E7CF0','bench'] ] } ] },
+  { id:'pirate', name:'Pirate Cove', blurb:'Shipwrecks, sea caves and buried treasure.',
+    sand:['#B8A27C','#EAD5A8'], seaTop:['#2F4556','#1D6A8A'], seaLow:['#5A7584','#3CA6C8'], tree:'palm', grass:'#78B06A', decor:['', 'wreck', 'cave'],
+    collector:{ kind:'monkey', name:'Monkey', plural:'monkeys' }, carrier:{ kind:'macaw', name:'Macaw courier', short:'macaw', plural:'macaws' },
+    big:{ col:'#5A5A64', w:22, h:7 }, turtle:'#8B5A34', hats:[null, 'tricorn'], hatName:'Captain tricorn',
+    wild:[['albatrosses return','Albatrosses overhead!'], ['a turtle nests','A hawksbill came to nest!'], ['the water clears','The water is crystal clear!'], ['octopuses return','An octopus in the wreck!'], ['sperm whales','Sperm whales! This spot is healed!']],
+    album:[['albatross','Albatross','bird','#FFFFFF'], ['hawksbill','Hawksbill turtle','turtle','#8B5A34'], ['barracuda','Barracuda','fish','#9AA7B1'], ['giantocto','Giant octopus','octopus','#C0463C'], ['spermwhale','Sperm whale','whale','#5A5A64'], ['goldocto','Golden octopus','octopus','#F2C230', true]],
+    labels:{ cask:'old casks', tubplanter:'Cask planters', sail:'torn sails', pirateflag:'Pirate flags', spoon:'lost cutlery', spoonchime:'Spoon chimes', anchor:'rusty anchors', coathook:'Anchor hooks', oillamp:'broken oil lamps', candlestick:'Candlesticks', box:'broken boxes', treasurebox:'Treasure boxes', spyglass:'broken spyglasses', kaleidoscope:'Kaleidoscopes', cannonball:'rusty cannonballs', doorstop:'Doorstops', plate:'broken plates', mosaicpot:'Mosaic pots' },
+    areas:[
+      { id:'wreckbeach', name:'Shipwreck Beach', short:'wreck', stall:'WRECK SHOP', machines:[
+        ['caskbench','Cask Bench','cask','tubplanter','#8B5A34','bench'], ['flagloom','Flag Loom','sail','pirateflag','#2F3A42','loom'], ['chimebooth','Chime Booth','spoon','spoonchime','#9AA7B1','booth'] ] },
+      { id:'seacaves', name:'Sea Caves', short:'caves', stall:'CAVE TRADER', machines:[
+        ['anchorforge','Anchor Forge','anchor','coathook','#5F6C76','kiln'], ['lamppress','Lamp Press','oillamp','candlestick','#FFC83D','press'], ['boxbench','Box Bench','box','treasurebox','#C99A5E','bench'] ] },
+      { id:'treasurept', name:'Treasure Point', short:'point', stall:'TREASURE HUT', machines:[
+        ['scopedome','Kaleidoscope Dome','spyglass','kaleidoscope','#8E7CF0','dome'], ['ballpress','Cannonball Press','cannonball','doorstop','#2F3A42','press'], ['platekiln','Plate Kiln','plate','mosaicpot','#35C6D8','kiln'] ] } ] },
+  { id:'aurora', name:'Aurora Bay', blurb:'A frozen night bay under the northern lights.', sky:'aurora',
+    sand:['#7E8A9C','#CCD8E8'], seaTop:['#1E2A44','#1F4F7A'], seaLow:['#3E4E6A','#3E86B8'], tree:'pine', grass:'#8FB7A0', decor:['', 'icebergs', 'igloo'],
+    collector:{ kind:'arcticfox', name:'Arctic fox', plural:'arctic foxes' }, carrier:{ kind:'owl', name:'Snowy owl courier', short:'snowy owl', plural:'snowy owls' },
+    big:{ col:'#F4F7F8', w:18, h:6 }, turtle:'#8C9AA3', hats:[null, 'ushanka'], hatName:'Fur hat',
+    wild:[['terns return','Arctic terns are back!'], ['a walrus rests','A walrus is resting on the ice!'], ['the water clears','The water is clear!'], ['snow crabs return','Snow crabs on the seabed!'], ['belugas','Belugas singing! This spot is healed!']],
+    album:[['tern','Arctic tern','bird','#FFFFFF'], ['walrus','Walrus','seal','#A0785A'], ['cod','Arctic cod','fish','#9AA7B1'], ['snowcrab','Snow crab','crab','#FF8A6B'], ['beluga','Beluga','whale','#F4F7F8'], ['goldwalrus','Golden walrus','seal','#F2C230', true]],
+    labels:{ thermos:'old thermoses', candlejar:'Candle jars', sweater:'old sweaters', scarf:'Scarves', skipole:'broken ski poles', coatrack:'Coat racks', cable:'old cables', coilbowl:'Coil bowls', fleece:'lost fleeces', knitmitt:'Knit mittens', teatin:'tea tins', snowglobe:'Snow globes', kayak:'kayak pieces', kayakshelf:'Kayak shelves', antenna:'old antennas', mobile:'Aurora mobiles', snowboard:'broken snowboards', boardswing:'Board swings' },
+    areas:[
+      { id:'snowbeach', name:'Snowy Beach', short:'beach', stall:'SNOW HUT', machines:[
+        ['jarkiln','Candle Jar Kiln','thermos','candlejar','#FF8A3D','kiln'], ['scarfloom','Scarf Loom','sweater','scarf','#E4606D','loom'], ['rackbench','Rack Bench','skipole','coatrack','#35C6D8','bench'] ] },
+      { id:'icefloes', name:'Ice Floes', short:'floes', stall:'FLOE MARKET', machines:[
+        ['coilpress','Coil Press','cable','coilbowl','#FFC83D','press'], ['mittloom','Mitten Loom','fleece','knitmitt','#8E7CF0','loom'], ['globedome','Snow Globe Dome','teatin','snowglobe','#9BD8F0','dome'] ] },
+      { id:'iglooPt', name:'Igloo Point', short:'point', stall:'IGLOO GIFTS', machines:[
+        ['kayakbench','Kayak Bench','kayak','kayakshelf','#FF7A6B','bench'], ['mobilebooth','Mobile Booth','antenna','mobile','#4CC38A','booth'], ['boardpress','Board Press','snowboard','boardswing','#2E6DB4','press'] ] } ] },
+  { id:'windmill', name:'Windmill Coast', blurb:'Tulip fields, a windmill on the dike and a little drawbridge harbor.',
+    sand:['#B9AE8E','#E8DEB8'], seaTop:['#3A5058','#2A7A96'], seaLow:['#62797E','#58B6CC'], tree:'bush', grass:'#7DBA6A', decor:['tulips', 'windmill', 'drawbridge'],
+    collector:{ kind:'hedgehog', name:'Hedgehog', plural:'hedgehogs' }, carrier:{ kind:'stork', name:'Stork courier', short:'stork', plural:'storks' },
+    big:{ col:'#6E7A86', w:14, h:5 }, turtle:'#6E8F86', hats:[null, 'tulip'], hatName:'Tulip crown',
+    wild:[['oystercatchers return','Oystercatchers on the mudflats!'], ['a seal pup arrives','A grey seal pup is resting!'], ['the water clears','The water is clear!'], ['shrimp return','Shrimp are back!'], ['porpoises','Porpoises! This spot is healed!']],
+    album:[['oystercatcher','Oystercatcher','bird','#2F3A42'], ['greyseal','Grey seal','seal','#9AA7B1'], ['herring','Herring','fish','#B9C3C6'], ['brownshrimp','Brown shrimp','lobster','#B97A44'], ['porpoise','Porpoise','dolphin','#6E7A86'], ['goldporpoise','Golden porpoise','dolphin','#F2C230', true]],
+    labels:{ clog:'broken clogs', clogpot:'Clog planters', wheel:'bike wheels', wreath:'Wheel wreaths', paint:'old paint cans', tulipvase:'Tulip vases', tile:'broken tiles', trivet:'Tile trivets', tray:'plastic trays', seedtray:'Seed trays', ladder:'broken ladders', plantstand:'Plant stands', tape:'cassette tapes', wallet:'Tape wallets', spray:'spray cans', artprint:'Art prints', tv:'old TVs', aquarium:'Aquariums' },
+    areas:[
+      { id:'tulipfield', name:'Tulip Fields', short:'fields', stall:'FIELD STALL', machines:[
+        ['clogbench','Clog Bench','clog','clogpot','#F2A65A','bench'], ['wreathloom','Wreath Loom','wheel','wreath','#4CC38A','loom'], ['vasebooth','Vase Booth','paint','tulipvase','#FF7A6B','booth'] ] },
+      { id:'dike', name:'Windmill Dike', short:'dike', stall:'DIKE MARKET', machines:[
+        ['tilekiln','Tile Kiln','tile','trivet','#2E6DB4','kiln'], ['traypress','Tray Press','tray','seedtray','#4CC38A','press'], ['standbench','Stand Bench','ladder','plantstand','#C99A5E','bench'] ] },
+      { id:'bridgeharbor', name:'Drawbridge Harbor', short:'harbor', stall:'HARBOR SHOP', machines:[
+        ['walletloom','Wallet Loom','tape','wallet','#2F3A42','loom'], ['printbooth','Print Booth','spray','artprint','#8E7CF0','booth'], ['tankdome','Aquarium Dome','tv','aquarium','#35C6D8','dome'] ] } ] },
+  { id:'blossom', name:'Blossom Bay', blurb:'Pink blossom trees, a red bridge and a garden of stone lanterns.',
+    sand:['#C8B4A4','#F4E2DA'], seaTop:['#3F5663','#2B8FB0'], seaLow:['#68808A','#5FC8DE'], tree:'blossom', grass:'#86C27A', decor:['', 'bridge', 'stonelanterns'],
+    collector:{ kind:'redpanda', name:'Red panda', plural:'red pandas' }, carrier:{ kind:'crane', name:'Crane courier', short:'crane', plural:'cranes' },
+    big:{ col:'#9AA7B1', w:14, h:5 }, turtle:'#7C8A5A', hats:[null, 'petals'], hatName:'Petal crown',
+    wild:[['egrets return','Egrets in the shallows!'], ['a turtle surfaces','A softshell turtle came up!'], ['the water clears','The bay is crystal clear!'], ['sea stars return','Blue sea stars!'], ['porpoises','Finless porpoises! This spot is healed!']],
+    album:[['egret','Egret','bird','#FFFFFF'], ['softturtle','Softshell turtle','turtle','#7C8A5A'], ['koi','Koi','fish','#FF7A3D'], ['bluestar','Blue sea star','star','#35C6D8'], ['finless','Finless porpoise','dolphin','#9AA7B1'], ['goldkoi','Golden koi','fish','#F2C230', true]],
+    labels:{ chopstick:'used chopsticks', placemat:'Placemats', cupnoodle:'noodle cups', minipot:'Mini bonsai pots', petbottle:'plastic bottles', broom:'Bottle brooms', paperlamp:'torn paper lanterns', papercrane:'Paper cranes', brokenkite:'broken kites', windsock:'Windsocks', teacan:'tea cans', caddy:'Tea caddies', bowl:'cracked bowls', goldbowl:'Gold-mended bowls', parasol:'torn parasols', parasollamp:'Parasol lamps', glassfloat:'glass fishing floats', orb:'Glass orbs' },
+    areas:[
+      { id:'blossomshore', name:'Blossom Shore', short:'shore', stall:'BLOSSOM STAND', machines:[
+        ['matloom','Placemat Loom','chopstick','placemat','#C9A06A','loom'], ['bonsaipress','Bonsai Pot Press','cupnoodle','minipot','#E4606D','press'], ['broombench','Broom Bench','petbottle','broom','#35C6D8','bench'] ] },
+      { id:'redbridge', name:'Red Bridge', short:'bridge', stall:'BRIDGE MARKET', machines:[
+        ['cranebooth','Crane Booth','paperlamp','papercrane','#FF9AC4','booth'], ['sockloom','Windsock Loom','brokenkite','windsock','#FF7A6B','loom'], ['caddykiln','Caddy Kiln','teacan','caddy','#4CC38A','kiln'] ] },
+      { id:'lanterngarden', name:'Lantern Garden', short:'garden', stall:'GARDEN GIFTS', machines:[
+        ['bowlkiln','Mending Kiln','bowl','goldbowl','#FFC83D','kiln'], ['parasoldome','Parasol Dome','parasol','parasollamp','#FF9AC4','dome'], ['orbbooth','Orb Booth','glassfloat','orb','#35C6D8','booth'] ] } ] },
+  { id:'glow', name:'Glow Lagoon', blurb:'A warm night lagoon where the waves glow blue.', sky:'night',
+    sand:['#566278','#9AAEC6'], seaTop:['#101C33','#0F2F5A'], seaLow:['#2A3A5A','#1E7FB0'], tree:'palm', grass:'#5FAF8A', decor:['', 'glowshrooms', 'moonrock'],
+    collector:{ kind:'axolotl', name:'Axolotl', plural:'axolotls' }, carrier:{ kind:'moth', name:'Glow moth courier', short:'glow moth', plural:'glow moths' },
+    big:{ col:'#2E4A6E', w:24, h:8 }, turtle:'#3E6E8A', hats:[null, 'antennae'], hatName:'Glow antennae',
+    wild:[['night herons return','Night herons are fishing!'], ['firefly squid glow','Firefly squid are glowing!'], ['the waves glow','The waves are glowing blue!'], ['moon jellies drift in','Moon jellies everywhere!'], ['whale sharks','A whale shark! This spot is healed!']],
+    album:[['nightheron','Night heron','bird','#6E7A86'], ['fireflysquid','Firefly squid','squid','#35C6D8'], ['lanternfish','Lanternfish','fish','#9BF6C8'], ['moonjelly','Moon jelly','jelly','#C9D6FF'], ['whaleshark','Whale shark','shark','#2E4A6E'], ['starwhale','Star whale','whale','#F2C230', true]],
+    labels:{ glowstick:'used glow sticks', nightlight:'Night lights', battery:'old batteries', flashlight:'Flashlights', streamer:'party streamers', tassel:'Tassel garlands', solar:'broken solar lights', starlamp:'Star lamps', mask:'snorkel masks', maskplanter:'Mask planters', fin:'lost swim fins', dustpan:'Fin dustpans', tripod:'broken tripods', easel:'Easels', record:'old records', recordbowl:'Record bowls', lens:'old camera lenses', prism:'Prism suncatchers' },
+    areas:[
+      { id:'moonbeach', name:'Moon Beach', short:'beach', stall:'MOON SHACK', machines:[
+        ['nightdome','Night Light Dome','glowstick','nightlight','#9BF6C8','dome'], ['torchpress','Flashlight Press','battery','flashlight','#FFC83D','press'], ['tasselloom','Tassel Loom','streamer','tassel','#FF9AC4','loom'] ] },
+      { id:'glowreef', name:'Glow Reef', short:'reef', stall:'REEF LIGHTS', machines:[
+        ['starbooth','Star Lamp Booth','solar','starlamp','#FFE58A','booth'], ['maskbench','Mask Bench','mask','maskplanter','#35C6D8','bench'], ['finpress','Fin Press','fin','dustpan','#8E7CF0','press'] ] },
+      { id:'stargazer', name:'Stargazer Point', short:'point', stall:'STARGAZER GIFTS', machines:[
+        ['easelbench','Easel Bench','tripod','easel','#C99A5E','bench'], ['recordkiln','Record Kiln','record','recordbowl','#2F3A42','kiln'], ['prismdome','Prism Dome','lens','prism','#C9A6FF','dome'] ] } ] },
 ];
 // Tours: after the hand-made coasts, earlier coasts come back with a twist
 const TWISTS = [
@@ -245,6 +387,7 @@ const LABEL = { beads:'Sea-glass beads', bracelet:'Rope bracelets', boat:'Tin to
   caps:'bottle caps', pbag:'plastic bags', straw:'straws', crate:'crates', cup:'coffee cups', line:'fishing line', sneaker:'sneakers', brush:'toothbrushes', balloon:'balloons',
   puppet:'Finger puppets', sled:'Snow sleds', corkboard:'Corkboards', shelf:'Trap shelves', skates:'Ice skates', feeder:'Bird feeders', stove:'Camp stoves', tent:'Tents', lamp:'Cone lamps',
   glove:'lost gloves', foam:'foam chunks', cork:'corks', trap:'lobster traps', boot:'rubber boots', jug:'plastic jugs', drum:'old drums', tarp:'tarps', cone:'traffic cones' };
+COASTS.forEach(c => Object.assign(LABEL, c.labels || {}));
 const MILESTONES = [5, 15, 35, 60, 100].map((at, i) => ({ at, short: COAST.wild[i][0], text: COAST.wild[i][1] }));
 // Upgrades on each area's Crew & Upgrades board. Costs scale with the area.
 const AREA_UPS = [
@@ -274,6 +417,7 @@ const HATS = [
   { id:'witch',    name:'Witch hat',    how:'event', note:'Spooky Shore event' },
   { id:'pumpkinhat', name:'Pumpkin head', how:'event', note:'Spooky Shore event' },
 ];
+COASTS.forEach(c => { if (c.hatName && !HATS.find(h => h.id === c.hats[1])) HATS.push({ id: c.hats[1], name: c.hatName, how: 'goal' }); });
 // where each goal hat comes from (coast hats: [restore area 2, restore area 3, heal area 1])
 COASTS.forEach(c => c.hats.forEach((h, i) => { const hat = HATS.find(x => x.id === h); if (hat) hat.note = `${c.name}: ${i === 2 ? 'heal ' + c.areas[0].name : 'restore ' + c.areas[i + 1].name}`; }));
 // Goals, written by position (m = machine 0-8, a = area 0-2) so every coast gets the same shape
@@ -561,12 +705,14 @@ function drawItem(c, type, x, y, s){
     case 'lamp':
       c.fillStyle = 'rgba(255,220,120,.35)'; c.beginPath(); c.arc(0, 1, 8, 0, 7); c.fill(); c.fillStyle = '#FF8A3D'; c.beginPath(); c.moveTo(-5, 2); c.lineTo(-2, -6); c.lineTo(2, -6); c.lineTo(5, 2); c.closePath(); c.fill();
       c.fillStyle = '#fff'; c.fillRect(-3, -3, 6, 1.6); c.fillStyle = '#FFE58A'; c.beginPath(); c.arc(0, 3, 2.2, 0, 7); c.fill(); c.fillStyle = '#4F6B80'; c.fillRect(-.8, 3, 1.6, 4); c.fillRect(-4, 7, 8, 1.6); break;
+    default: if (ITEM_ART[type]) ITEM_ART[type](kit(c));
   }
   c.restore();
 }
 
 // ================= ART: characters =================
 function drawHat(c, id){
+  if (HAT_ART[id]) return HAT_ART[id](c);
   if (id === 'witch') { c.fillStyle = '#3B2A55'; c.beginPath(); c.ellipse(0, -17, 13, 3.8, 0, 0, 7); c.fill(); c.beginPath(); c.moveTo(-7, -18); c.quadraticCurveTo(-2, -26, 3, -36); c.quadraticCurveTo(4, -28, 7, -18); c.fill(); c.fillStyle = '#FF8A3D'; c.fillRect(-7, -20.5, 14, 2.4); }
   if (id === 'pumpkinhat') { c.fillStyle = '#FF8A3D'; c.beginPath(); c.ellipse(-4, -20, 6, 6.5, 0, 0, 7); c.ellipse(4, -20, 6, 6.5, 0, 0, 7); c.ellipse(0, -20.5, 5, 7, 0, 0, 7); c.fill(); c.fillStyle = '#4CC38A'; c.fillRect(-1, -29, 2.4, 3.5); c.fillStyle = '#FFE58A'; c.beginPath(); c.moveTo(-4, -22); c.lineTo(-1.5, -22); c.lineTo(-2.7, -19.5); c.moveTo(4, -22); c.lineTo(1.5, -22); c.lineTo(2.7, -19.5); c.fill(); }
   if (id === 'straw') { c.fillStyle = '#E8C77A'; c.beginPath(); c.ellipse(0, -17, 12.5, 3.8, 0, 0, 7); c.fill(); c.fillStyle = '#F2D48E'; c.beginPath(); c.roundRect(-6.5, -25, 13, 8, 3); c.fill(); c.fillStyle = '#16324A'; c.fillRect(-6.5, -20, 13, 2.2); }
@@ -608,6 +754,7 @@ function drawCrab(c, k){
   const kind = COAST.collector.kind;
   if (kind === 'turtle') return drawTurtleHelper(c, k);
   if (kind === 'penguin') return drawPenguin(c, k);
+  if (CRITTERS[kind] || kind === 'iguana' || kind === 'frog' || kind === 'axolotl') return drawCritter(c, k, kind);
   c.save(); c.translate(k.x, k.y);
   c.fillStyle = 'rgba(40,30,20,.2)'; c.beginPath(); c.ellipse(0, 6, 10, 3.5, 0, 0, 7); c.fill();
   const w = reduce ? 0 : Math.sin(S.t*14 + k.seed) * (k.moving ? 1.5 : .3);
@@ -655,11 +802,16 @@ function drawPelican(c, k){
   c.translate(k.x, k.y - alt);
   c.fillStyle = look.wing; c.beginPath(); c.moveTo(-3, 0); c.quadraticCurveTo(-18, -6 - fl, -24, 2 - fl); c.quadraticCurveTo(-14, 2, -3, 4); c.fill();
   c.beginPath(); c.moveTo(3, 0); c.quadraticCurveTo(18, -6 - fl, 24, 2 - fl); c.quadraticCurveTo(14, 2, 3, 4); c.fill();
+  if (look.glow) { const g = c.createRadialGradient(0, 0, 2, 0, 0, 26); g.addColorStop(0, look.glow); g.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = g; c.beginPath(); c.arc(0, 0, 26, 0, 7); c.fill(); }
   if (look.tip) { c.fillStyle = look.tip; c.beginPath(); c.ellipse(-20, 1 - fl, 4, 2, 0, 0, 7); c.ellipse(20, 1 - fl, 4, 2, 0, 0, 7); c.fill(); }
   c.fillStyle = look.body; c.beginPath(); c.ellipse(0, 2, 7, 9, 0, 0, 7); c.fill();
   c.fillStyle = look.head; c.beginPath(); c.arc(0, -8, 5, 0, 7); c.fill();
   if (look.face) { c.fillStyle = look.face; c.beginPath(); c.ellipse(0, -8, 3.4, 3, 0, 0, 7); c.fill(); }
-  c.fillStyle = look.beak; c.beginPath(); if (look.long) { c.moveTo(-2, -6); c.lineTo(2, -6); c.lineTo(0, 6); } else { c.moveTo(-2.4, -6.5); c.lineTo(2.4, -6.5); c.lineTo(0, -1.5); } c.fill();
+  if (look.throat) { c.fillStyle = look.throat; c.beginPath(); c.ellipse(0, -2, 3, 3.5, 0, 0, 7); c.fill(); }
+  if (look.crown) { c.fillStyle = look.crown; c.beginPath(); c.arc(0, -11.5, 2, 0, 7); c.fill(); }
+  if (look.eyes) { c.fillStyle = look.eyes; c.beginPath(); c.arc(-2, -9, 1.8, 0, 7); c.arc(2, -9, 1.8, 0, 7); c.fill(); }
+  if (look.bigBeak) { c.fillStyle = look.beak; c.beginPath(); c.ellipse(0, -2, 3, 6, 0, 0, 7); c.fill(); }
+  c.fillStyle = look.beak || 'rgba(0,0,0,0)'; c.beginPath(); if (look.long) { c.moveTo(-2, -6); c.lineTo(2, -6); c.lineTo(0, 6); } else { c.moveTo(-2.4, -6.5); c.lineTo(2.4, -6.5); c.lineTo(0, -1.5); } c.fill();
   c.fillStyle = '#16324A'; c.beginPath(); c.arc(-2, -9, 1, 0, 7); c.arc(2, -9, 1, 0, 7); c.fill();
   if (k.carry.length) k.carry.forEach((it, i) => drawItem(c, it, 0, 12 + i * 5, 10));
   c.restore();
@@ -745,7 +897,7 @@ function drawLighthouse(ax){
 function drawTidePool(x, y, s){ ctx.fillStyle = '#9AA4A8'; ctx.beginPath(); ctx.ellipse(x, y, 22 * s, 12 * s, 0, 0, 7); ctx.fill(); ctx.fillStyle = '#5FC9D6'; ctx.beginPath(); ctx.ellipse(x, y - 1, 17 * s, 8 * s, 0, 0, 7); ctx.fill();
   ctx.fillStyle = '#FF7A6B'; ctx.beginPath(); ctx.arc(x - 6 * s, y - 1, 2.2 * s, 0, 7); ctx.fill(); ctx.fillStyle = '#FFC83D'; ctx.beginPath(); ctx.arc(x + 5 * s, y + 1, 1.8 * s, 0, 7); ctx.fill(); }
 
-function drawTree(x, y, dir){ if (COAST.tree === 'pine') drawPine(x, y, dir); else drawPalm(x, y, dir); }
+function drawTree(x, y, dir){ const t = COAST.tree; if (t === 'pine') drawPine(x, y, dir); else if (t === 'bush') drawBush(x, y + 6); else if (t === 'cactus') drawCactus(x, y); else if (t === 'jungle') drawJungleTree(x, y, dir); else if (t === 'blossom') drawBlossomTree(x, y, dir); else drawPalm(x, y, dir); }
 function drawPine(x, y, dir){
   ctx.save(); ctx.translate(x, y);
   ctx.fillStyle = 'rgba(30,50,60,.16)'; ctx.beginPath(); ctx.ellipse(dir * 20, 16, 32, 12, 0, 0, 7); ctx.fill();
@@ -756,6 +908,7 @@ function drawPine(x, y, dir){
 }
 // landmarks for each coast's 2nd and 3rd areas
 function drawLandmark(kind, ax, wl){
+  if (LANDMARKS[kind]) return LANDMARKS[kind](ax, wl);
   if (kind === 'pier') return drawPierDeck(ax, wl);
   if (kind === 'lighthouse') { drawTidePool(ax + 70, L.trashMax + 30, 1.1); drawTidePool(ax + 330, L.trashMax + 60, .8); drawTidePool(ax + 190, L.machY - 60, .7); return drawLighthouse(ax); }
   if (kind === 'huts') { // stilt huts over the water
@@ -921,6 +1074,355 @@ function drawPad(pad){
   ctx.font = '700 12px Fredoka, sans-serif'; ctx.fillStyle = pad.locked ? '#8A949A' : '#8A5A00'; ctx.textAlign = 'left'; ctx.fillText(fmt(pad.cost - paid), pad.x - 5, pad.y + h / 2 - 4.5); ctx.textAlign = 'center';
 }
 function starShape(x, y, r, g){ g = g || ctx; g.fillStyle = '#FFC83D'; g.strokeStyle = '#D99A12'; g.lineWidth = 1; g.beginPath(); for (let k = 0; k < 10; k++) { const rr = k % 2 ? r * .45 : r, a = -Math.PI / 2 + k * Math.PI / 5; g.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); } g.closePath(); g.fill(); g.stroke(); }
+
+// ================= ART: items for coasts 4-13 =================
+// Each item is drawn at about ±8 units with a few simple shapes (same look as the first coasts).
+function kit(c){
+  const R = (col, x, y, w, h, r) => { c.fillStyle = col; c.beginPath(); c.roundRect(x, y, w, h, r == null ? 2 : r); c.fill(); };
+  const E = (col, x, y, rx, ry, rot) => { c.fillStyle = col; c.beginPath(); c.ellipse(x, y, rx, ry, rot || 0, 0, 7); c.fill(); };
+  const C = (col, x, y, r) => E(col, x, y, r, r);
+  const P = (col, ...p) => { c.fillStyle = col; c.beginPath(); c.moveTo(p[0], p[1]); for (let i = 2; i < p.length; i += 2) c.lineTo(p[i], p[i + 1]); c.closePath(); c.fill(); };
+  const L = (col, w, ...p) => { c.strokeStyle = col; c.lineWidth = w; c.beginPath(); c.moveTo(p[0], p[1]); for (let i = 2; i < p.length; i += 2) c.lineTo(p[i], p[i + 1]); c.stroke(); };
+  const A = (col, w, x, y, r, a0, a1) => { c.strokeStyle = col; c.lineWidth = w; c.beginPath(); c.arc(x, y, r, a0 == null ? 0 : a0, a1 == null ? 7 : a1); c.stroke(); };
+  const T = r => c.rotate(r);
+  return { c, R, E, C, P, L, A, T };
+}
+const ITEM_ART = {
+  // Harbor Lights
+  paper: ({ R, L, T }) => { T(-.2); R('#E9E4D8', -7, -6, 14, 12, 1); L('#9AA7B1', 1, -5, -3, 5, -3); L('#9AA7B1', 1, -5, 0, 5, 0); L('#9AA7B1', 1, -5, 3, 2, 3); R('#C9C3B5', -7, -6, 14, 3, 1); },
+  notebook: ({ R, L }) => { R('#8E7CF0', -6, -8, 12, 16, 2); R('#fff', -3, -4, 7, 3, 1); L('#fff', 1.4, -6, -6, -6, 6); },
+  wrapper: ({ P, R, T }) => { T(.3); R('#E4606D', -5, -4, 10, 8, 1); P('#E4606D', -5, -4, -9, -6, -8, 0, -9, 6, -5, 4); P('#E4606D', 5, -4, 9, -6, 8, 0, 9, 6, 5, 4); R('#FFC83D', -3, -1.5, 6, 3, 1); },
+  pouch: ({ R, L }) => { R('#FF7A6B', -7, -5, 14, 11, 3); L('#FFC83D', 1.2, -6, -2, 6, -2); L('#35C6D8', 1.2, -6, 2, 6, 2); R('#16324A', -7, -6, 14, 2, 1); },
+  cdisc: ({ C, A }) => { C('#D5DCE3', 0, 0, 7.5); C('rgba(150,120,255,.35)', -2, -2, 5); C('#fff', 0, 0, 2); A('#9AA7B1', .8, 0, 0, 7.5); },
+  mirrorball: ({ C, L, R }) => { L('#9AA7B1', 1, 0, -10, 0, -7); C('#B9C3C6', 0, 0, 7); for (let i = -6; i <= 6; i += 3) L('rgba(255,255,255,.7)', .7, i, -6, i, 6); C('#fff', -2.5, -2.5, 1.6); R('#FF9AC4', 2, 1, 2.5, 2.5, 0); },
+  pallet: ({ R, T }) => { T(.2); R('#C99A5E', -8, -6, 16, 3, 0); R('#C99A5E', -8, -1, 16, 3, 0); R('#C99A5E', -8, 4, 16, 3, 0); R('#8B5A34', -7, -6, 2.5, 13, 0); R('#8B5A34', 4.5, -6, 2.5, 13, 0); },
+  table: ({ R }) => { R('#C99A5E', -8, -5, 16, 4, 1); R('#8B5A34', -7, -1, 2.5, 8, 0); R('#8B5A34', 4.5, -1, 2.5, 8, 0); R('#E0B77E', -8, -5, 16, 1.5, 1); },
+  chain: ({ A }) => { [-5, 0, 5].forEach((x, i) => A(i % 2 ? '#A0522D' : '#8B6A4A', 2, x, (i % 2) * 2 - 1, 3.4)); },
+  sculpture: ({ A, R }) => { R('#5F6C76', -6, 5, 12, 3, 1); A('#7C8A95', 2, 0, -1, 5); A('#9AA7B1', 2, 2, -6, 3); A('#7C8A95', 2, -3, -8, 2.5); },
+  fishbox: ({ R, L }) => { R('#F5F7F8', -8, -5, 16, 11, 1); L('#B9C3C6', 1, -8, -2, 8, -2); R('#35C6D8', -3, -1, 6, 2, 1); },
+  cooler: ({ R }) => { R('#35C6D8', -8, -4, 16, 11, 2); R('#fff', -8, -6, 16, 4, 2); R('#16324A', -3, -7.5, 6, 2, 1); },
+  brolly: ({ P, L, T }) => { T(-.4); P('#2E6DB4', -8, 0, -4, -6, 0, -8, 4, -6, 8, 0, 2, -2, -2, -2); L('#16324A', 1.2, 0, -8, 0, 7, 2, 8); },
+  rainhat: ({ E, P }) => { E('#FFC83D', 0, 3, 9, 3.5); P('#FFC83D', -5, 3, -4, -5, 4, -5, 5, 3); E('#E0A91F', 0, 3, 9, 1.2); },
+  bikepart: ({ A, L, C }) => { A('#2F3A42', 2, -2, 0, 5); L('#9AA7B1', 1.6, -2, 0, 6, -4, 8, 2); C('#9AA7B1', -2, 0, 1.4); },
+  clock: ({ C, A, L }) => { C('#fff', 0, 0, 7); A('#E4606D', 2.2, 0, 0, 7.5); L('#16324A', 1.4, 0, 0, 0, -5); L('#16324A', 1.4, 0, 0, 3, 1); },
+  bulb: ({ C, R, T }) => { T(.5); C('rgba(255,245,200,.9)', 0, -2, 6); R('#9AA7B1', -3, 3, 6, 5, 1); C('#FFE58A', 0, -2, 2); },
+  bulbvase: ({ C, R, L }) => { C('rgba(200,240,250,.8)', 0, 1, 6.5); R('#9AA7B1', -2.5, -7, 5, 3, 1); L('#4CC38A', 1.2, 0, 2, 0, -8); C('#FF7A6B', 0, -9, 2.2); },
+  // Volcano Isle
+  lighter: ({ R, T }) => { T(.4); R('#FF7A6B', -3, -4, 6, 11, 1.5); R('#9AA7B1', -3, -7, 6, 3.5, 1); },
+  candle: ({ R, P, C }) => { R('#E4606D', -4, -3, 8, 10, 2); R('#FF8A3D', -4, -3, 8, 3, 2); P('#FFC83D', -1.5, -4, 0, -10, 1.5, -4); C('#FFE58A', 0, -5, 1); },
+  goggles: ({ E, L }) => { L('#16324A', 1.4, -9, 0, 9, 0); E('#35C6D8', -3.5, 0, 3.5, 3); E('#35C6D8', 3.5, 0, 3.5, 3); E('rgba(255,255,255,.6)', -4.5, -1, 1.2, .8); },
+  sunnies: ({ E, L }) => { L('#16324A', 1.6, -3, -1, 3, -1); E('#16324A', -4.5, 0, 4, 3.2); E('#16324A', 4.5, 0, 4, 3.2); E('#FF7A6B', -5, -1, 1.4, .8); L('#16324A', 1.4, -8, -1, -10, -3); },
+  bucket: ({ P, A }) => { P('#35C6D8', -6, -5, 6, -5, 4, 7, -4, 7); A('#2A9DB0', 1.4, 0, -5, 6, Math.PI, 0); },
+  bongo: ({ R, E }) => { R('#E4606D', -8, -3, 7, 10, 2); R('#FFC83D', 1, -1, 7, 8, 2); E('#F4EBDD', -4.5, -3, 3.5, 1.5); E('#F4EBDD', 4.5, -1, 3.5, 1.5); },
+  towel: ({ R, T }) => { T(-.2); R('#FF9AC4', -8, -5, 16, 10, 1); R('#fff', -8, -2, 16, 2, 0); R('#fff', -8, 2, 16, 1.5, 0); },
+  robe: ({ P, L }) => { P('#FF9AC4', -6, -7, 6, -7, 8, 8, -8, 8); P('#FFD1E3', -2, -7, 2, -7, 0, 0); L('#E4606D', 1.4, -7, 3, 7, 3); },
+  shampoo: ({ R, T }) => { T(.3); R('#4CC38A', -4, -5, 8, 12, 3); R('#2FA39A', -2, -8, 4, 3.5, 1); R('#fff', -2.5, -1, 5, 3, 1); },
+  soap: ({ R, C }) => { R('#4CC38A', -7, -3, 14, 8, 3); R('#8FE0B6', -7, -3, 14, 2.5, 2); C('#fff', 4, -5, 1.6); C('#fff', 6, -7, 1); },
+  flask: ({ R, T }) => { T(-.4); R('#B9C3C6', -4, -5, 8, 12, 2); R('#9AA7B1', -1.5, -8, 3, 3.5, 1); },
+  mug: ({ R, A }) => { R('#B97A44', -6, -5, 11, 11, 2); A('#B97A44', 2, 6, 0, 3, -1.5, 1.5); R('#FF8A3D', -6, -5, 11, 2.5, 1); },
+  wire: ({ L, A }) => { A('#E4606D', 1.4, -2, 0, 5, 0, 5); A('#35C6D8', 1.4, 2, 1, 4, 1, 6); L('#FFC83D', 1.4, -8, 5, 8, -4); },
+  wirering: ({ A, C }) => { A('#FFC83D', 1.8, 0, 1, 6); C('#35C6D8', 0, -5, 2.4); C('#fff', -.7, -5.7, .7); },
+  phone: ({ R }) => { R('#2F3A42', -4.5, -8, 9, 16, 2); R('#35C6D8', -3.5, -6, 7, 11, 1); R('#fff', -1.2, 6, 2.4, 1, .5); },
+  speaker: ({ E, C }) => { E('#F4D0C8', 0, 0, 8, 7); C('#8E7CF0', 0, 1, 4); C('#16324A', 0, 1, 1.8); E('#FFE0D8', -3, -3, 3, 1.5, -.5); },
+  oldpot: ({ R, L }) => { R('#7C8A95', -7, -3, 14, 9, 2); L('#5F6C76', 1.8, -9, -1, -7, -1); L('#5F6C76', 1.8, 7, -1, 9, -1); R('#9AA7B1', -7.5, -4, 15, 2, 1); },
+  lavalamp: ({ P, C, R }) => { R('#9AA7B1', -4, 6, 8, 2, 1); P('#FFB3A3', -3, 6, -5, -4, -2, -8, 2, -8, 5, -4, 3, 6); C('#E4606D', -1, 0, 2.2); C('#E4606D', 1.5, -4, 1.6); C('#E4606D', 0, 3.5, 1.4); },
+  // Kelp Coast
+  lure: ({ E, L, C }) => { E('#FFC83D', 0, 0, 6, 3); E('#E4606D', 3, 0, 3, 2.5); C('#16324A', 4, -.5, .8); L('#9AA7B1', 1, -6, 0, -9, 0); L('#9AA7B1', 1, 0, 3, 0, 6, -1.5, 6); },
+  earring: ({ A, E, C }) => { A('#FFC83D', 1.2, -3, -5, 2.5); A('#FFC83D', 1.2, 4, -5, 2.5); E('#FF9AC4', -3, 1, 2.2, 4); E('#35C6D8', 4, 1, 2.2, 4); C('#fff', -3.5, -.5, .7); },
+  sixpack: ({ A }) => { [-5, 0, 5].forEach(x => { A('#D5DCE3', 1.8, x, -2.5, 2.6); A('#D5DCE3', 1.8, x, 2.5, 2.6); }); },
+  garland: ({ L, C }) => { L('#4F6B80', .8, -9, -4, 0, 1, 9, -4); ['#FF7A6B', '#FFC83D', '#4CC38A', '#35C6D8', '#FF9AC4'].forEach((col, i) => C(col, -7 + i * 3.5, -2.6 + Math.sin(i / 4 * Math.PI) * 3.4, 2)); },
+  lid: ({ E }) => { E('#FF8A3D', 0, 0, 7, 3); E('#E86F24', 0, 1, 7, 2); E('rgba(255,255,255,.4)', -2, -1, 3, 1); },
+  frisbee: ({ E, A }) => { E('#FFC83D', 0, 0, 8.5, 4); A('#E09E1F', 1, 0, 0, 4.5); E('#FF7A6B', 0, -.5, 2.4, 1.2); },
+  hose: ({ A }) => { A('#4CC38A', 2.4, 0, 0, 6); A('#4CC38A', 2.4, 0, 0, 3); A('#2FA39A', 1, 0, 0, 7.2, 1, 2); },
+  hosebasket: ({ R, L }) => { R('#4CC38A', -7, -4, 14, 10, 4); for (let y = -2; y < 6; y += 2.5) L('#2FA39A', .8, -7, y, 7, y); L('#2FA39A', 1.8, -5, -4, -3, -8, 3, -8, 5, -4); },
+  shovel: ({ R, P, T }) => { T(.6); R('#FF7A6B', -1, -8, 2.2, 9, 1); P('#FF7A6B', -4, 1, 4, 1, 3, 7, 0, 8, -3, 7); },
+  pinwheel: ({ P, L, C }) => { L('#8B5A34', 1.4, 0, 0, 0, 9); P('#FF7A6B', 0, 0, 0, -8, 5, -5); P('#FFC83D', 0, 0, 8, 0, 5, 5); P('#35C6D8', 0, 0, 0, 8, -5, 5); P('#4CC38A', 0, 0, -8, 0, -5, -5); C('#fff', 0, 0, 1.2); },
+  milkcrate: ({ R, L }) => { R('#2E6DB4', -7, -6, 14, 12, 1); for (let x = -4; x < 7; x += 4) L('#1D4F8A', 1, x, -5, x, 5); L('#1D4F8A', 1, -6, 0, 6, 0); },
+  bookcase: ({ R }) => { R('#2E6DB4', -7, -8, 14, 16, 1); R('#E8F0F8', -5.5, -6.5, 11, 5.5, 0); R('#E8F0F8', -5.5, 1, 11, 5.5, 0); R('#E4606D', -4.5, -5.5, 2, 4.5, 0); R('#FFC83D', -2, -5, 2, 4, 0); R('#4CC38A', 2, 2, 3, 4.5, 0); },
+  wetsuit: ({ P, R }) => { P('#2F3A42', -5, -7, 5, -7, 7, 8, 2, 8, 0, 0, -2, 8, -7, 8); R('#35C6D8', -5, -7, 10, 2, 1); },
+  sleeve: ({ R }) => { R('#2F3A42', -5, -8, 10, 16, 3); R('#35C6D8', -5, -3, 10, 2, 0); R('#FF9AC4', -5, 1, 10, 1.5, 0); },
+  paddle: ({ E, R, T }) => { T(.5); R('#C99A5E', -1, -9, 2.2, 12, 1); E('#F2A65A', 0, 5, 3.5, 5); },
+  sign: ({ R, L }) => { R('#8B5A34', -1, 0, 2, 9, 0); R('#F2A65A', -8, -8, 16, 9, 2); L('#fff', 1.4, -5, -4, 4, -4); L('#16324A', 1, -5, -1.5, 2, -1.5); },
+  sunscreen: ({ R, P, T }) => { T(-.4); P('#FFC83D', -4, -6, 4, -6, 3, 6, -3, 6); R('#FF7A6B', -2, -9, 4, 3.5, 1); R('#fff', -2.5, -2, 5, 3, 1); },
+  vase: ({ P, E }) => { P('#35C6D8', -3, -8, 3, -8, 2, -5, 6, 1, 4, 7, -4, 7, -6, 1, -2, -5); E('#fff', -2, 0, 1, 3); },
+  // Desert Dunes
+  canteen: ({ C, R, L }) => { C('#6B7B3A', 0, 1, 7); R('#9AA7B1', -1.5, -9, 3, 3.5, 1); L('#8B5A34', 1.4, -6, -3, 0, -7, 6, -3); },
+  birdbath: ({ E, R }) => { R('#B9C3C6', -1.5, -2, 3, 9, 1); E('#B9C3C6', 0, 7, 5, 1.5); E('#D5DCE3', 0, -3, 8, 3); E('#35C6D8', 0, -3.4, 6, 1.8); },
+  rug: ({ R, L }) => { R('#E4606D', -8, -5, 16, 10, 1); R('#FFC83D', -6, -3, 12, 6, 0); R('#E4606D', -3, -1, 6, 2, 0); L('#F4EBDD', 1, -9, -5, -9, 5); L('#F4EBDD', 1, 9, -5, 9, 5); },
+  cushion: ({ R, C }) => { R('#E4606D', -8, -6, 16, 12, 5); R('#FFC83D', -8, -1, 16, 2, 0); C('#FFC83D', -8, -6, 1.6); C('#FFC83D', 8, 6, 1.6); },
+  kettle: ({ E, L, P }) => { E('#8C6A4A', 0, 2, 7, 5.5); L('#5A4636', 1.6, -4, -3, -3, -7, 3, -7, 4, -3); P('#8C6A4A', 6, 1, 10, -3, 9, 2); },
+  teapot: ({ E, L, P, C }) => { E('#B97A44', 0, 2, 7, 5.5); P('#B97A44', 6, 1, 11, -3, 10, 3); L('#8B5A34', 1.6, -7, 0, -9, 2, -7, 5); C('#8B5A34', 0, -4, 1.8); E('#E0A968', -2, 0, 2.5, 1.2); },
+  mirror: ({ P, L }) => { P('#C9E8F2', -7, -6, 5, -8, 7, 5, -5, 7); L('#fff', 1, -3, -4, 2, 4); L('#fff', 1, 0, -6, -4, 2); },
+  suncatcher: ({ L, P, C }) => { L('#C9A06A', 1, 0, -10, 0, -6); P('rgba(255,200,60,.85)', 0, -6, 6, 0, 0, 6, -6, 0); P('rgba(255,122,107,.8)', 0, -6, 3, 0, 0, 6); C('#fff', -1, -1, 1); },
+  belt: ({ A, R }) => { A('#8B5A34', 2.4, 0, 0, 6, .4, 6); R('#FFC83D', 4, -3, 4, 5, 1); },
+  strap: ({ R, L }) => { R('#8B5A34', -9, -2.5, 18, 5, 2.5); for (let x = -6; x < 8; x += 4) L('#FFC83D', 1.2, x, -1.5, x + 2, 1.5); },
+  barrel: ({ E, R, L }) => { R('#A0522D', -6, -7, 12, 14, 4); L('#5F6C76', 1.4, -6, -3, 6, -3); L('#5F6C76', 1.4, -6, 3, 6, 3); E('#C97A4A', 0, -7, 6, 1.6); },
+  barrelchair: ({ R, P }) => { R('#A0522D', -7, -1, 14, 8, 3); P('#C0463C', -7, -1, -7, -9, 7, -9, 7, -1, 5, -1, 5, -6, -5, -6, -5, -1); R('#FFC83D', -6, -2, 12, 2.5, 1); },
+  fairystring: ({ L, C }) => { L('#4F6B80', .8, -8, -3, -3, 3, 2, -2, 8, 4); [[-6, -1, '#FFC83D'], [-2, 2, '#4CC38A'], [2, -1, '#FF7A6B'], [6, 3, '#35C6D8']].forEach(([x, y, col]) => C(col, x, y, 1.7)); },
+  fairyjar: ({ R, C }) => { R('rgba(200,240,250,.7)', -5, -5, 10, 13, 3); R('#9AA7B1', -4.5, -7.5, 9, 3, 1); [[-2, -1, '#FFC83D'], [2, 1, '#4CC38A'], [-1, 4, '#FF7A6B'], [2, -3, '#FFE58A']].forEach(([x, y, col]) => C(col, x, y, 1.5)); },
+  tube: ({ A, C }) => { A('#2F3A42', 4, 0, 0, 6); C('#56626B', -3, -4, .9); },
+  pouf: ({ E, L }) => { E('#8E7CF0', 0, 2, 8, 6); E('#A99BF5', 0, -1.5, 7, 3); L('#6B5BD0', 1, -8, 3, 8, 3); },
+  fan: ({ C, A, L }) => { A('#9AA7B1', 1.2, 0, -2, 7); L('#9AA7B1', 1.4, 0, 5, 0, 8, -4, 8, 4, 8); C('#35C6D8', -3, -4, 2.5); C('#35C6D8', 3, -4, 2.5); C('#35C6D8', 0, 1, 2.5); C('#fff', 0, -2, 1.2); },
+  spinner: ({ L, P }) => { L('#9AA7B1', 1.2, 0, -9, 0, 9); P('#FF8A3D', 0, -6, 7, -3, 0, 0); P('#FFC83D', 0, 0, -7, 3, 0, 6); P('#FF7A6B', 0, -3, -6, -6, 0, -8); },
+  // Jungle Delta
+  sack: ({ P, L }) => { P('#C9A06A', -6, -5, 6, -5, 8, 8, -8, 8); L('#8B5A34', 1.4, -5, -5, 0, -8, 5, -5); L('#A97F48', 1, -4, 2, 4, 2); },
+  backpack: ({ R, L }) => { R('#C9A06A', -6, -6, 12, 14, 4); R('#8B5A34', -6, -1, 12, 2, 0); R('#E4606D', -3, 2, 6, 4, 1); L('#8B5A34', 1.4, -3, -6, -2, -9, 2, -9, 3, -6); },
+  jerrycan: ({ R, L }) => { R('#4CC38A', -6, -6, 12, 14, 2); L('#2FA39A', 1.4, -3, -3, 3, 5); L('#2FA39A', 1.4, 3, -3, -3, 5); R('#2FA39A', 2, -9, 3, 3, 1); },
+  wateringcan: ({ R, L, C }) => { R('#4CC38A', -6, -3, 10, 9, 2); L('#4CC38A', 2, 4, 2, 10, -4); C('#2FA39A', 10, -4, 1.8); L('#2FA39A', 1.6, -4, -3, -2, -7, 2, -7, 3, -3); },
+  doll: ({ C, R, E }) => { R('#FF9AC4', -4, -1, 8, 9, 2); C('#F7D2B0', 0, -5, 4); E('#8B5A34', 0, -8, 4.5, 2); C('#16324A', -1.4, -5, .7); C('#16324A', 1.4, -5, .7); },
+  plush: ({ C, E }) => { C('#FF9AC4', -5, -6, 2.6); C('#FF9AC4', 5, -6, 2.6); C('#FF9AC4', 0, 0, 7); E('#FFD1E3', 0, 2, 3.5, 2.5); C('#16324A', -2.5, -1.5, 1); C('#16324A', 2.5, -1.5, 1); },
+  plank: ({ R, T, C }) => { T(-.3); R('#B97A44', -9, -2.5, 18, 5, 1); C('#5F6C76', -6, 0, .8); C('#5F6C76', 6, 0, .8); },
+  swing: ({ L, R }) => { L('#8B5A34', 1.2, -6, -9, -6, 3); L('#8B5A34', 1.2, 6, -9, 6, 3); R('#B97A44', -8, 3, 16, 3.5, 1); },
+  pan: ({ C, R }) => { C('#5F6C76', -2, 0, 6); C('#7C8A95', -2, 0, 4.5); R('#2F3A42', 3, -1, 7, 2.4, 1); },
+  gong: ({ L, C }) => { L('#8B5A34', 1.6, -8, 8, -8, -9, 8, -9, 8, 8); C('#FFC83D', 0, 0, 6); C('#E0A91F', 0, 0, 2.5); },
+  propeller: ({ E, C }) => { [0, 2.1, 4.2].forEach(a => E('#9AA7B1', Math.cos(a) * 4, Math.sin(a) * 4, 4.5, 2, a)); C('#5F6C76', 0, 0, 2); },
+  ceilingfan: ({ L, E, C }) => { L('#9AA7B1', 1, 0, -9, 0, -3); E('#C99A5E', -6, 0, 5, 1.6); E('#C99A5E', 6, 0, 5, 1.6); C('#35C6D8', 0, -1, 2.6); C('#FFE58A', 0, 3, 2); },
+  helmet: ({ E, R }) => { E('#E4606D', 0, 1, 8, 7); R('#E4606D', -9, 2, 18, 3, 1); E('rgba(255,255,255,.4)', -3, -2, 3, 1.5, -.4); },
+  hangpot: ({ L, E, C }) => { L('#8B5A34', .8, -6, -9, 0, -3, 6, -9); E('#E4606D', 0, 1, 7, 5); E('#3E9E5C', -3, -3, 3, 2); E('#4CC38A', 3, -3.5, 3, 2); C('#FF9AC4', 0, -4, 1.6); },
+  poncho: ({ P, R }) => { P('#FF8A3D', 0, -7, 9, 5, -9, 5); R('#FFC83D', -8, 2, 16, 1.6, 0); R('#16324A', -2, -7, 4, 2, 1); },
+  drybag: ({ R, L }) => { R('#FF8A3D', -5, -4, 10, 12, 3); R('#16324A', -5, -6, 10, 3, 1); L('#16324A', 1.4, -4, -7, 0, -10, 4, -7); },
+  radio: ({ R, C, L }) => { R('#8E7CF0', -8, -4, 16, 10, 2); C('#2F3A42', -3.5, 1, 3); R('#FFE58A', 1.5, -2, 5, 3, 1); L('#9AA7B1', 1, 4, -4, 8, -9); },
+  musicbox: ({ R, C, L }) => { R('#8E7CF0', -7, -2, 14, 9, 2); R('#A99BF5', -7, -5, 14, 4, 1); C('#FFC83D', 0, 2, 1.8); L('#16324A', 1.2, 4, -9, 4, -5); C('#16324A', 3, -5, 1.2); },
+  // Pirate Cove
+  cask: ({ R, L, E }) => { R('#8B5A34', -7, -6, 14, 12, 5); L('#2F3A42', 1.2, -2, -6, -2, 6); L('#2F3A42', 1.2, 2, -6, 2, 6); E('#A0724A', -7, 0, 1.5, 6); },
+  tubplanter: ({ R, E, C }) => { R('#8B5A34', -7, -2, 14, 9, 3); R('#2F3A42', -7, 1, 14, 1.4, 0); E('#4CC38A', -3, -4, 3, 3); E('#3E9E5C', 3, -5, 3, 3.5); C('#FF7A6B', 0, -6, 1.8); },
+  sail: ({ P, L, T }) => { T(-.2); P('#F4EBDD', -7, 6, 6, -8, 7, 6); L('#C9B98A', 1, -2, 6, 4, -3); },
+  pirateflag: ({ R, C, L }) => { L('#8B5A34', 1.6, -8, -9, -8, 9); R('#2F3A42', -7, -8, 15, 10, 1); C('#fff', 0, -4, 2.4); L('#fff', 1.2, -3, 1, 3, -1); L('#fff', 1.2, -3, -1, 3, 1); },
+  spoon: ({ E, L, T }) => { T(.6); E('#B9C3C6', 0, -5, 2.6, 3.6); L('#B9C3C6', 1.6, 0, -2, 0, 8); L('#9AA7B1', 1.3, 4, -7, 4, 7); },
+  spoonchime: ({ L, R, E }) => { R('#8B5A34', -8, -9, 16, 2, 1); [-5, 0, 5].forEach((x, i) => { L('#9AA7B1', .6, x, -7, x, -4); E('#B9C3C6', x, 1 + (i % 2) * 2, 1.8, 4); }); },
+  anchor: ({ L, A, C }) => { L('#5F6C76', 2, 0, -6, 0, 7); L('#5F6C76', 2, -4, -3, 4, -3); A('#5F6C76', 2, 0, 1, 6, .3, Math.PI - .3); C('#5F6C76', 0, -8, 2); },
+  coathook: ({ R, L, C }) => { R('#C99A5E', -8, -4, 16, 5, 1); [-4, 3].forEach(x => { L('#5F6C76', 1.6, x, 1, x, 6, x + 2, 6); C('#9AA7B1', x, -1.5, 1); }); },
+  oillamp: ({ E, P, L }) => { E('#9C6A40', 0, 3, 7, 4); P('#9C6A40', 6, 2, 10, -1, 9, 3); L('#9C6A40', 1.6, -7, 3, -9, 0, -7, -2); E('rgba(200,240,250,.6)', 0, -3, 3, 4); },
+  candlestick: ({ R, E, P }) => { E('#FFC83D', 0, 7, 5, 1.6); R('#FFC83D', -1, -1, 2, 8, 0); R('#fff', -2, -8, 4, 7, 1); P('#FF8A3D', -1.2, -8, 0, -12, 1.2, -8); },
+  box: ({ R, L }) => { R('#C99A5E', -7, -5, 14, 11, 1); L('#8B5A34', 1, -7, -5, 7, 6); L('#8B5A34', 1, -7, 0, 7, 0); },
+  treasurebox: ({ R, E, C }) => { R('#8B5A34', -8, -2, 16, 9, 1); E('#A0724A', 0, -2, 8, 4); R('#FFC83D', -8, -1, 16, 1.6, 0); R('#FFC83D', -1.5, -3, 3, 5, 1); C('#FFE58A', 0, -5, 1.2); },
+  spyglass: ({ R, T, E }) => { T(-.5); R('#C9A06A', -8, -2, 7, 4, 1); R('#FFC83D', -1, -2.5, 5, 5, 1); R('#C9A06A', 4, -3, 5, 6, 1); E('#9BD8F0', 9, 0, 1, 3); },
+  kaleidoscope: ({ R, C, T }) => { T(-.4); R('#8E7CF0', -8, -3, 15, 6, 2); R('#FFC83D', -8, -3, 3, 6, 1); C('#FF9AC4', 8, 0, 3.2); C('#35C6D8', 8, 0, 1.4); },
+  cannonball: ({ C }) => { C('#2F3A42', 0, 0, 7); C('#56626B', -2.5, -2.5, 2.2); C('rgba(160,82,45,.6)', 3, 3, 2); },
+  doorstop: ({ C, E, L }) => { C('#2F3A42', 0, 2, 6.5); E('#E4606D', 0, -3, 4, 1.8); L('#fff', 1, -3, 2, 3, 2); C('#FFC83D', 0, -5, 1.4); },
+  plate: ({ P, E }) => { E('#F4F7F8', 0, 0, 8, 4); P('#DDE4E8', 0, -4, 3, 1, -1, 4); E('#35C6D8', -3, 0, 2, 1); },
+  mosaicpot: ({ P, R }) => { P('#F4F7F8', -6, -5, 6, -5, 4, 7, -4, 7); [[-4, -3, '#35C6D8'], [0, -2, '#E4606D'], [2, 2, '#FFC83D'], [-3, 3, '#2E6DB4']].forEach(([x, y, col]) => R(col, x, y, 2.5, 2.5, 0)); R('#DDE4E8', -7, -6, 14, 2, 1); },
+  // Aurora Bay
+  thermos: ({ R, T }) => { T(.3); R('#E4606D', -3.5, -6, 7, 14, 2); R('#9AA7B1', -3.5, -8, 7, 3, 1); R('#fff', -3.5, -1, 7, 2, 0); },
+  candlejar: ({ R, P, C }) => { R('rgba(200,240,250,.75)', -5, -4, 10, 11, 2); R('#FF8A3D', -4, 0, 8, 6, 1); P('#FFC83D', -1, 0, 0, -4, 1, 0); C('rgba(255,220,120,.4)', 0, -2, 4); },
+  sweater: ({ P, R }) => { P('#E4606D', -4, -6, 4, -6, 9, -2, 7, 1, 5, -1, 5, 7, -5, 7, -5, -1, -7, 1, -9, -2); R('#fff', -5, 0, 10, 1.6, 0); R('#fff', -5, 3, 10, 1, 0); },
+  scarf: ({ R, L }) => { R('#E4606D', -8, -5, 16, 5, 2); R('#E4606D', 3, -2, 5, 11, 2); L('#fff', 1.2, -6, -2.5, 1, -2.5); L('#FFC83D', 1, 4, 9, 4, 11); L('#FFC83D', 1, 7, 9, 7, 11); },
+  skipole: ({ L, C }) => { L('#35C6D8', 1.8, -6, -8, 5, 8); C('#2F3A42', 3, 5, 2.4); L('#2F3A42', 2, -7, -9, -4, -6); },
+  coatrack: ({ L, C }) => { L('#35C6D8', 2, 0, -9, 0, 8); L('#35C6D8', 1.6, -5, 8, 5, 8); L('#35C6D8', 1.4, 0, -6, -5, -8); L('#35C6D8', 1.4, 0, -6, 5, -8); C('#E4606D', -5, -8, 1.5); },
+  cable: ({ A, L }) => { A('#2F3A42', 1.6, -2, 0, 4); A('#2F3A42', 1.6, 2, 1, 3.5); L('#FFC83D', 2.2, 5, 4, 8, 7); },
+  coilbowl: ({ E, A }) => { E('#FFC83D', 0, 2, 8, 5); for (let r = 2; r < 8; r += 2) A('#E09E1F', .8, 0, 2, r, Math.PI * .1, Math.PI * .9); E('#FFE58A', 0, -1, 7, 2); },
+  fleece: ({ R, T, L }) => { T(-.3); R('#8E7CF0', -8, -5, 16, 10, 3); L('#A99BF5', 1, -6, -2, 6, -2); L('#A99BF5', 1, -6, 1, 6, 1); },
+  knitmitt: ({ R, E, L }) => { R('#8E7CF0', -5, -4, 9, 11, 4); E('#8E7CF0', -6, 0, 2.2, 3.6, -.5); R('#fff', -5, 5, 9, 3, 1); L('#A99BF5', 1, -3, -1, 2, -1); },
+  teatin: ({ R }) => { R('#4CC38A', -5, -6, 10, 13, 1); R('#2FA39A', -5.5, -7.5, 11, 3, 1); R('#FFE58A', -3, -2, 6, 4, 1); },
+  snowglobe: ({ C, R }) => { R('#8B5A34', -6, 3, 12, 5, 2); C('rgba(200,240,250,.8)', 0, -2, 6.5); R('#4CC38A', -1, -3, 2, 4, 0); C('#fff', -3, -5, .9); C('#fff', 2, -6, .9); C('#fff', 3, -1, .9); },
+  kayak: ({ E, R, T }) => { T(-.2); E('#FF7A6B', 0, 0, 9, 3); E('#2F3A42', 1, -.5, 2.5, 1.4); R('#E0A968', -8, -.5, 5, 1.2, 0); },
+  kayakshelf: ({ R, E }) => { E('#FF7A6B', 0, -2, 9, 3); R('#8B5A34', -8, 0, 16, 2, 0); R('#35C6D8', -6, -8, 3, 5, 0); R('#FFC83D', -2, -7, 3, 4, 0); },
+  antenna: ({ L }) => { L('#9AA7B1', 1.6, 0, 8, 0, -8); L('#9AA7B1', 1.2, -7, -5, 7, -5); L('#9AA7B1', 1.2, -5, -1, 5, -1); L('#9AA7B1', 1.2, -3, 3, 3, 3); },
+  mobile: ({ L, C, P }) => { L('#9AA7B1', 1, -8, -6, 8, -6); L('#9AA7B1', .7, 0, -9, 0, -6); [[-6, '#4CC38A'], [0, '#8E7CF0'], [6, '#35C6D8']].forEach(([x, col], i) => { L('#9AA7B1', .6, x, -6, x, -1 + i); P(col, x, -1 + i, x + 3, 3 + i, x, 7 + i, x - 3, 3 + i); }); },
+  snowboard: ({ R, T }) => { T(.5); R('#2E6DB4', -3.5, -9, 7, 18, 3.5); R('#fff', -3.5, -3, 7, 1.6, 0); R('#FFC83D', -3.5, 2, 7, 1.6, 0); },
+  boardswing: ({ L, R }) => { L('#9AA7B1', 1, -6, -9, -6, 2); L('#9AA7B1', 1, 6, -9, 6, 2); R('#2E6DB4', -9, 2, 18, 4, 2); R('#FFC83D', -3, 2, 6, 4, 0); },
+  // Windmill Coast
+  clog: ({ P, E }) => { P('#F2A65A', -8, 3, -6, -3, 2, -4, 8, 1, 7, 5, -7, 5); E('#C97A30', -4, -1, 3, 1.6); },
+  clogpot: ({ P, E, C }) => { P('#F2A65A', -8, 5, -6, -1, 2, -2, 8, 3, 7, 7, -7, 7); E('#4CC38A', -3, -4, 2, 4); E('#4CC38A', 1, -5, 2, 4); P('#E4606D', -5, -8, -3, -11, -1, -8); P('#FF9AC4', -1, -9, 1, -12, 3, -9); },
+  wheel: ({ A, L }) => { A('#2F3A42', 2, 0, 0, 7); for (let i = 0; i < 6; i++) L('#9AA7B1', .8, 0, 0, Math.cos(i) * 7, Math.sin(i) * 7); },
+  wreath: ({ A, C }) => { A('#4CC38A', 3, 0, 0, 6.5); [0, 1.3, 2.6, 3.9, 5.2].forEach((a, i) => C(['#E4606D', '#FFC83D', '#FF9AC4'][i % 3], Math.cos(a) * 6.5, Math.sin(a) * 6.5, 1.8)); },
+  paint: ({ R, P }) => { R('#B9C3C6', -6, -5, 12, 12, 1); P('#FF7A6B', -6, -5, 6, -5, 6, 0, 2, 2, -1, -1, -6, 1); },
+  tulipvase: ({ R, P, L }) => { R('#FF7A6B', -4, 0, 8, 8, 2); L('#3E9E5C', 1.2, -2, 0, -3, -6); L('#3E9E5C', 1.2, 2, 0, 3, -6); P('#FFC83D', -5, -6, -3, -10, -1, -6); P('#E4606D', 1, -6, 3, -10, 5, -6); },
+  tile: ({ R, P }) => { R('#F4F7F8', -6, -6, 12, 12, 1); P('#2E6DB4', 0, -4, 4, 0, 0, 4, -4, 0); P('#DDE4E8', 2, -6, 6, -6, 6, -2); },
+  trivet: ({ R, C }) => { R('#F4F7F8', -8, -6, 16, 12, 2); C('#2E6DB4', -4, 0, 2.6); C('#2E6DB4', 4, 0, 2.6); R('#8B5A34', -8, -6, 16, 1.6, 1); },
+  tray: ({ R, L }) => { R('#4CC38A', -8, -4, 16, 9, 1); for (let x = -5; x < 7; x += 4) L('#2FA39A', 1, x, -3, x, 4); },
+  seedtray: ({ R, L }) => { R('#4CC38A', -8, -1, 16, 7, 1); [-5, -1, 3, 6].forEach(x => { L('#3E9E5C', 1.2, x, -1, x, -5); L('#3E9E5C', 1, x, -4, x + 1.5, -6); }); },
+  ladder: ({ L, T }) => { T(.3); L('#C99A5E', 1.6, -4, -9, -4, 9); L('#C99A5E', 1.6, 4, -9, 4, 9); for (let y = -6; y < 8; y += 4) L('#C99A5E', 1.4, -4, y, 4, y); },
+  plantstand: ({ L, E }) => { L('#C99A5E', 1.6, -6, 8, -3, -2); L('#C99A5E', 1.6, 6, 8, 3, -2); L('#C99A5E', 1.4, -5, 3, 5, 3); E('#E4606D', 0, -3, 5, 2.5); E('#4CC38A', 0, -6, 4, 3); },
+  tape: ({ R, C }) => { R('#2F3A42', -8, -5, 16, 10, 1); R('#E8E4DA', -6, -3, 12, 4, 1); C('#2F3A42', -3, -1, 1.4); C('#2F3A42', 3, -1, 1.4); },
+  wallet: ({ R, L }) => { R('#2F3A42', -8, -5, 16, 10, 2); L('#9AA7B1', 1, -6, -2, 6, -2); L('#9AA7B1', 1, -6, 1, 6, 1); R('#FF7A6B', 3, -1, 5, 4, 1); },
+  spray: ({ R, T }) => { T(.4); R('#8E7CF0', -3.5, -5, 7, 13, 2); R('#16324A', -1.5, -8, 3, 3.5, 1); R('#FFC83D', -3.5, -1, 7, 2, 0); },
+  artprint: ({ R, P, C }) => { R('#8B5A34', -8, -7, 16, 14, 1); R('#fff', -6.5, -5.5, 13, 11, 0); P('#4CC38A', -6.5, 5.5, -2, -1, 2, 3, 4, 0, 6.5, 5.5); C('#FFC83D', 3, -2.5, 1.6); },
+  tv: ({ R, L }) => { R('#7C8A95', -8, -6, 16, 12, 2); R('#35C6D8', -6, -4, 10, 8, 1); L('#7C8A95', 1, -3, -6, -6, -9); L('#7C8A95', 1, 3, -6, 6, -9); },
+  aquarium: ({ R, E, P }) => { R('#8B5A34', -8, 5, 16, 3, 1); R('rgba(120,210,240,.75)', -8, -6, 16, 11, 1); E('#FF8A3D', -2, 0, 3, 1.8); P('#FF8A3D', -5, 0, -7, -2, -7, 2); E('#4CC38A', 5, 2, 1.2, 3); },
+  // Blossom Bay
+  chopstick: ({ L }) => { L('#D2A873', 1.6, -7, -7, 6, 8); L('#C99A5E', 1.6, -4, -8, 8, 5); },
+  placemat: ({ R, L }) => { R('#D2A873', -8, -5, 16, 10, 1); for (let x = -6; x < 8; x += 2.2) L('#B98A55', .7, x, -5, x, 5); L('#E4606D', 1.4, -8, 3, 8, 3); },
+  cupnoodle: ({ P, R }) => { P('#fff', -6, -5, 6, -5, 4, 7, -4, 7); R('#E4606D', -5.5, -1, 11, 3, 0); R('#FFC83D', -6.5, -7, 13, 2.5, 1); },
+  minipot: ({ P, L, E }) => { P('#E4606D', -6, 2, 6, 2, 4, 7, -4, 7); L('#6B4226', 1.6, 0, 2, -1, -3, 2, -6); E('#3E9E5C', -3, -4, 4, 2.2); E('#4CC38A', 3, -6, 4, 2.2); },
+  petbottle: ({ R, T }) => { T(-.5); R('rgba(200,230,245,.9)', -4, -6, 8, 13, 3); R('#35C6D8', -2, -9, 4, 3.5, 1); R('#4CC38A', -4, -1, 8, 3, 0); },
+  broom: ({ L, P }) => { L('#C99A5E', 1.6, 0, -9, 0, 2); P('#35C6D8', -5, 2, 5, 2, 7, 9, -7, 9); L('#2A9DB0', .7, -3, 3, -4, 8); L('#2A9DB0', .7, 0, 3, 0, 8); L('#2A9DB0', .7, 3, 3, 4, 8); },
+  paperlamp: ({ E, L, R }) => { E('#F4EBDD', 0, 0, 6, 7.5); for (let y = -5; y < 6; y += 2.5) L('#D9C9A8', .6, -6, y, 6, y); R('#2F3A42', -3, -8.5, 6, 2, 1); },
+  papercrane: ({ P }) => { P('#FF9AC4', -9, 2, 0, -1, 9, 2, 0, 4); P('#FFD1E3', 0, -1, -3, -8, 2, 0); P('#FF9AC4', 0, -1, 6, -7, 3, 1); P('#E86FA0', 7, 2, 10, -2, 8, 3); },
+  brokenkite: ({ P, L }) => { P('#FF7A6B', -2, -8, 6, -2, 0, 2, -6, -3); P('#FFC83D', 0, 2, 6, -2, 3, 5); L('#16324A', .8, 0, 2, -4, 9); },
+  windsock: ({ P, L }) => { L('#8B5A34', 1.4, -8, -9, -8, 9); P('#FF7A6B', -8, -7, 8, -5, 8, -1, -8, 1); P('#fff', -3, -6.4, 2, -5.8, 2, -.8, -3, -.3); },
+  teacan: ({ R }) => { R('#4CC38A', -5, -6, 10, 13, 1); R('#9AA7B1', -5.5, -7.5, 11, 2.5, 1); R('#FF9AC4', -5, -1, 10, 3, 0); },
+  caddy: ({ R, C }) => { R('#4CC38A', -6, -6, 12, 13, 2); R('#2FA39A', -6.5, -7.5, 13, 3, 1); C('#FF9AC4', 0, 1, 2.6); C('#fff', 0, 1, 1); },
+  bowl: ({ P, E, L }) => { P('#F4F7F8', -8, -2, 8, -2, 5, 5, -5, 5); E('#DDE4E8', 0, -2, 8, 2); L('#9AA7B1', .8, 1, -2, 2, 2, 0, 5); },
+  goldbowl: ({ P, E, L }) => { P('#F4F7F8', -8, -2, 8, -2, 5, 5, -5, 5); E('#DDE4E8', 0, -2, 8, 2); L('#FFC83D', 1.4, 1, -2, 2, 2, 0, 5); L('#FFC83D', 1.2, -4, -2, -3, 3); },
+  parasol: ({ P, L, T }) => { T(.3); P('#FF9AC4', -8, 1, 0, -7, 8, 1); L('#E86FA0', .7, 0, -7, -4, 1); L('#E86FA0', .7, 0, -7, 4, 1); L('#8B5A34', 1.2, 0, 1, 0, 8); },
+  parasollamp: ({ P, R, C }) => { C('rgba(255,220,120,.35)', 0, 0, 8); P('#FF9AC4', -8, 0, 0, -8, 8, 0); R('#8B5A34', -.8, 0, 1.6, 7, 0); R('#8B5A34', -4, 7, 8, 1.6, 0); C('#FFE58A', 0, 1, 1.8); },
+  glassfloat: ({ C, L }) => { C('rgba(80,180,160,.75)', 0, 0, 7); L('#C9A06A', 1, -7, 0, 7, 0); L('#C9A06A', 1, 0, -7, 0, 7); C('rgba(255,255,255,.7)', -2.5, -3, 1.6); },
+  orb: ({ C, R }) => { R('#8B5A34', -5, 5, 10, 3, 1); C('rgba(120,210,240,.8)', 0, -1, 6.5); C('rgba(255,154,196,.7)', 1, 0, 3); C('#fff', -2.5, -3.5, 1.4); },
+  // Glow Lagoon
+  glowstick: ({ R, T }) => { T(.6); R('#9BF6C8', -1.5, -8, 3, 16, 1.5); R('rgba(155,246,200,.35)', -3.5, -9, 7, 18, 3.5); },
+  nightlight: ({ C, R }) => { C('rgba(155,246,200,.35)', 0, -1, 8); R('#9AA7B1', -4, 5, 8, 3, 1); C('#9BF6C8', 0, -1, 5); C('#fff', -1.5, -2.5, 1.4); },
+  battery: ({ R }) => { R('#2F3A42', -4, -6, 8, 14, 1); R('#FFC83D', -4, -6, 8, 5, 1); R('#9AA7B1', -1.5, -8, 3, 2, .5); },
+  flashlight: ({ R, P }) => { P('rgba(255,240,170,.4)', 5, -3, 10, -7, 10, 7, 5, 3); R('#FFC83D', -8, -2.5, 10, 5, 1.5); R('#2F3A42', 2, -3.5, 4, 7, 1); },
+  streamer: ({ L }) => { L('#FF9AC4', 1.6, -8, -6, -3, -2, -6, 2, 0, 6); L('#35C6D8', 1.6, 0, -8, 4, -3, 1, 1, 6, 6); },
+  tassel: ({ L, P }) => { L('#9AA7B1', .8, -9, -6, 9, -6); [[-6, '#FF9AC4'], [-2, '#FFC83D'], [2, '#9BF6C8'], [6, '#C9A6FF']].forEach(([x, col]) => P(col, x - 1.5, -6, x + 1.5, -6, x + 2, 5, x - 2, 5)); },
+  solar: ({ R, L, C }) => { L('#9AA7B1', 1.4, 0, 0, 0, 9); R('#2E4A6E', -5, -8, 10, 7, 1); L('#6E8FB8', .6, -5, -4.5, 5, -4.5); L('#6E8FB8', .6, 0, -8, 0, -1); C('#FFE58A', 0, 1, 1.6); },
+  starlamp: ({ C, P }) => { C('rgba(255,229,138,.4)', 0, 0, 9); P('#FFE58A', 0, -8, 2.2, -2.6, 7.6, -2.5, 3.4, 1.2, 4.8, 6.6, 0, 3.6, -4.8, 6.6, -3.4, 1.2, -7.6, -2.5, -2.2, -2.6); },
+  mask: ({ R, E }) => { R('#35C6D8', -8, -4, 16, 8, 3); E('rgba(200,240,250,.9)', -3.5, 0, 3, 2.5); E('rgba(200,240,250,.9)', 3.5, 0, 3, 2.5); R('#2F3A42', 7, -1, 3, 2, 1); },
+  maskplanter: ({ R, E }) => { R('#35C6D8', -8, -2, 16, 9, 3); E('#4CC38A', -3, -4, 3, 4); E('#3E9E5C', 3, -5, 3, 4.5); E('#FF9AC4', 0, -7, 1.8, 1.8); },
+  fin: ({ P, R }) => { P('#8E7CF0', -3, -8, 3, -8, 8, 8, -8, 8); R('#6B5BD0', -3, -8, 6, 5, 2); },
+  dustpan: ({ P, R }) => { P('#8E7CF0', -8, -2, 8, -2, 6, 7, -6, 7); R('#6B5BD0', -2, -8, 4, 7, 2); },
+  tripod: ({ L, R }) => { L('#2F3A42', 1.4, 0, -3, -6, 8); L('#2F3A42', 1.4, 0, -3, 6, 8); L('#2F3A42', 1.4, 0, -3, 0, 8); R('#5F6C76', -3, -7, 6, 4, 1); },
+  easel: ({ L, R }) => { L('#C99A5E', 1.6, 0, -9, -6, 9); L('#C99A5E', 1.6, 0, -9, 6, 9); L('#C99A5E', 1.4, 0, -6, 0, 9); R('#fff', -5, -7, 10, 8, 1); R('#35C6D8', -3, -4, 3, 3, 1); R('#FF9AC4', 1, -5, 2.5, 4, 1); },
+  record: ({ C, A }) => { C('#2F3A42', 0, 0, 7.5); A('#56626B', .6, 0, 0, 5); A('#56626B', .6, 0, 0, 3.6); C('#E4606D', 0, 0, 2); C('#fff', 0, 0, .5); },
+  recordbowl: ({ P, E, C }) => { P('#2F3A42', -8, -3, 8, -3, 4, 5, -4, 5); E('#56626B', 0, -3, 8, 2); C('#E4606D', 0, 4, 1.5); },
+  lens: ({ R, C }) => { R('#2F3A42', -6, -5, 12, 10, 2); C('#35C6D8', 0, 0, 4); C('#1E4F7A', 0, 0, 2.5); C('#fff', -1.5, -1.5, 1); },
+  prism: ({ P, L }) => { L('#C9A06A', .8, 0, -10, 0, -6); P('rgba(220,230,255,.9)', 0, -6, 6, 5, -6, 5); L('#FF7A6B', 1, 3, 1, 9, 3); L('#FFC83D', 1, 3, 2, 9, 5); L('#4CC38A', 1, 3, 3, 9, 7); },
+};
+
+// ================= ART: helpers, hats, trees and landmarks for coasts 4-13 =================
+const CRITTERS = {
+  raccoon:   { body:'#8C8C94', belly:'#C9CCD2', ear:'round', tail:'ring', mask:true },
+  otter:     { body:'#8B5A34', belly:'#D9B38A', ear:'tiny', tail:'long' },
+  fennec:    { body:'#E8C07A', belly:'#FFF1D6', ear:'big', tail:'bushy' },
+  monkey:    { body:'#8B5A34', belly:'#F2D6B0', ear:'side', tail:'curl', face:'#F2D6B0' },
+  arcticfox: { body:'#F4F7F8', belly:'#FFFFFF', ear:'point', tail:'bushy', line:'#C9D3D8' },
+  redpanda:  { body:'#C0563E', belly:'#2F3A42', ear:'point', tail:'ring', face:'#FFF4DE' },
+  hedgehog:  { body:'#9C7A58', belly:'#F2D6B0', ear:'tiny', tail:'none', spikes:true },
+};
+function drawCritter(c, k, kind){
+  c.save(); c.translate(k.x, k.y);
+  c.fillStyle = 'rgba(40,30,20,.2)'; c.beginPath(); c.ellipse(0, 8, 10, 3.5, 0, 0, 7); c.fill();
+  const w = reduce ? 0 : Math.sin(S.t * 14 + k.seed) * (k.moving ? 1.6 : .2);
+  if (kind === 'iguana') {
+    c.strokeStyle = '#3E4A40'; c.lineWidth = 3; c.lineCap = 'round'; c.beginPath(); c.moveTo(-6, 3); c.quadraticCurveTo(-14, 6 + w, -18, 1); c.stroke();
+    c.fillStyle = '#3E4A40'; [[-5, 7 + w], [5, 7 - w], [-5, -2 - w], [5, -2 + w]].forEach(([a, b]) => { c.beginPath(); c.ellipse(a, b, 3, 1.6, 0, 0, 7); c.fill(); });
+    c.fillStyle = '#56645A'; c.beginPath(); c.ellipse(0, 2, 8, 5, 0, 0, 7); c.fill(); c.beginPath(); c.ellipse(8, 0, 4.5, 3.5, 0, 0, 7); c.fill();
+    c.fillStyle = '#E4606D'; for (let i = -5; i < 6; i += 2.5) { c.beginPath(); c.moveTo(i - 1, -2); c.lineTo(i, -5); c.lineTo(i + 1, -2); c.fill(); }
+    c.fillStyle = '#16324A'; c.beginPath(); c.arc(9.5, -1, .9, 0, 7); c.fill();
+  } else if (kind === 'frog') {
+    c.fillStyle = '#3E9E5C'; c.beginPath(); c.ellipse(-6, 6 + w * .5, 4, 2.2, .3, 0, 7); c.ellipse(6, 6 - w * .5, 4, 2.2, -.3, 0, 7); c.fill();
+    c.fillStyle = '#4CC38A'; c.beginPath(); c.ellipse(0, 2, 8, 6.5, 0, 0, 7); c.fill(); c.fillStyle = '#C8F0DA'; c.beginPath(); c.ellipse(0, 4, 5, 3, 0, 0, 7); c.fill();
+    c.fillStyle = '#4CC38A'; c.beginPath(); c.arc(-4, -4, 3.2, 0, 7); c.arc(4, -4, 3.2, 0, 7); c.fill(); c.fillStyle = '#E4606D'; c.beginPath(); c.arc(-4, -4, 2, 0, 7); c.arc(4, -4, 2, 0, 7); c.fill();
+    c.fillStyle = '#16324A'; c.fillRect(-4.4, -5.5, .9, 3); c.fillRect(3.6, -5.5, .9, 3);
+  } else if (kind === 'axolotl') {
+    const g = c.createRadialGradient(0, 0, 2, 0, 0, 16); g.addColorStop(0, 'rgba(255,154,196,.35)'); g.addColorStop(1, 'rgba(255,154,196,0)'); c.fillStyle = g; c.beginPath(); c.arc(0, 0, 16, 0, 7); c.fill();
+    c.strokeStyle = '#FF9AC4'; c.lineWidth = 3.5; c.lineCap = 'round'; c.beginPath(); c.moveTo(-5, 3); c.quadraticCurveTo(-12, 3 + w, -16, -1); c.stroke();
+    c.fillStyle = '#FFB8D4'; c.beginPath(); c.ellipse(0, 2, 7, 5, 0, 0, 7); c.fill(); c.beginPath(); c.arc(6, -2, 5, 0, 7); c.fill();
+    c.strokeStyle = '#E86FA0'; c.lineWidth = 1.6; [-1, 0, 1].forEach(i => { c.beginPath(); c.moveTo(3, -5 + i * 2); c.lineTo(-1, -8 + i * 3); c.stroke(); c.beginPath(); c.moveTo(9, -5 + i * 2); c.lineTo(12, -8 + i * 3); c.stroke(); });
+    c.fillStyle = '#16324A'; c.beginPath(); c.arc(4.5, -3, .9, 0, 7); c.arc(7.5, -3, .9, 0, 7); c.fill();
+  } else {
+    const s = CRITTERS[kind] || CRITTERS.raccoon;
+    c.fillStyle = s.body;
+    if (s.tail === 'ring' || s.tail === 'bushy') { c.beginPath(); c.ellipse(-10, 1 + w * .4, 6, s.tail === 'bushy' ? 4 : 3, -.4, 0, 7); c.fill(); if (s.tail === 'ring') { c.fillStyle = s.belly === '#2F3A42' ? '#8C3A2A' : '#4F4F57'; c.fillRect(-12, -2, 1.8, 6); c.fillRect(-8.5, -1, 1.8, 6); } }
+    if (s.tail === 'long') { c.strokeStyle = s.body; c.lineWidth = 3; c.lineCap = 'round'; c.beginPath(); c.moveTo(-6, 3); c.lineTo(-13, 5 + w); c.stroke(); }
+    if (s.tail === 'curl') { c.strokeStyle = s.body; c.lineWidth = 2; c.beginPath(); c.moveTo(-6, 2); c.quadraticCurveTo(-14, 0, -12, -6); c.arc(-10, -6, 2, Math.PI, Math.PI * 2.4); c.stroke(); }
+    c.fillStyle = s.body; [[-5, 7 + w], [4, 7 - w]].forEach(([a, b]) => { c.beginPath(); c.ellipse(a, b, 2.4, 2, 0, 0, 7); c.fill(); });
+    c.beginPath(); c.ellipse(0, 2, 8, 6, 0, 0, 7); c.fill();
+    if (s.spikes) { c.fillStyle = '#6E5238'; for (let i = 0; i < 9; i++) { const a = Math.PI * (1.05 + i * .1); c.beginPath(); c.moveTo(Math.cos(a) * 6, 2 + Math.sin(a) * 5); c.lineTo(Math.cos(a) * 11, 1 + Math.sin(a) * 9); c.lineTo(Math.cos(a + .08) * 6, 2 + Math.sin(a + .08) * 5); c.fill(); } }
+    c.fillStyle = s.belly; c.beginPath(); c.ellipse(1, 4, 4.5, 3, 0, 0, 7); c.fill();
+    const hx = 6, hy = -4;
+    c.fillStyle = s.body;
+    if (s.ear === 'round' || s.ear === 'side') { c.beginPath(); c.arc(hx - 4.5, hy - 4, 2.4, 0, 7); c.arc(hx + 4.5, hy - 4, 2.4, 0, 7); c.fill(); }
+    if (s.ear === 'point' || s.ear === 'big') { const h = s.ear === 'big' ? 9 : 5.5, wd = s.ear === 'big' ? 3.5 : 2.6; [-1, 1].forEach(d => { c.beginPath(); c.moveTo(hx + d * 1.5, hy - 3); c.lineTo(hx + d * (3 + wd), hy - 3 - h); c.lineTo(hx + d * (4.5 + wd), hy - 1); c.fill(); }); }
+    c.beginPath(); c.arc(hx, hy, 5.2, 0, 7); c.fill();
+    if (s.line) { c.strokeStyle = s.line; c.lineWidth = .8; c.beginPath(); c.arc(hx, hy, 5.2, 0, 7); c.stroke(); }
+    if (s.face) { c.fillStyle = s.face; c.beginPath(); c.ellipse(hx, hy + 1, 3.6, 3, 0, 0, 7); c.fill(); }
+    if (s.mask) { c.fillStyle = '#2F3A42'; c.beginPath(); c.ellipse(hx, hy - .5, 4.8, 1.8, 0, 0, 7); c.fill(); }
+    c.fillStyle = s.mask ? '#fff' : '#16324A'; c.beginPath(); c.arc(hx - 1.8, hy - .5, .9, 0, 7); c.arc(hx + 1.8, hy - .5, .9, 0, 7); c.fill();
+    c.fillStyle = '#16324A'; c.beginPath(); c.arc(hx, hy + 1.8, .9, 0, 7); c.fill();
+  }
+  c.restore();
+  if (k.carry && k.carry.length) k.carry.forEach((it, i) => drawItem(c, it, k.x, k.y - 16 - i * 8, 12));
+}
+Object.assign(CARRIER_LOOK, {
+  gull:      { wing:'#E8ECEF', tip:'#2F3A42', body:'#fff', head:'#fff', beak:'#FFC83D' },
+  frigate:   { wing:'#2F3A42', body:'#2F3A42', head:'#2F3A42', beak:'#9AA7B1', throat:'#E4606D' },
+  cormorant: { wing:'#2F3A42', body:'#3A444C', head:'#2F3A42', beak:'#FFC83D' },
+  falcon:    { wing:'#8C6A4A', body:'#F4EBDD', head:'#5A4636', beak:'#FFC83D' },
+  toucan:    { wing:'#2F3A42', body:'#2F3A42', head:'#2F3A42', face:'#fff', beak:'#FF8A3D', bigBeak:true },
+  macaw:     { wing:'#2E6DB4', tip:'#FFC83D', body:'#E4606D', head:'#E4606D', beak:'#2F3A42' },
+  owl:       { wing:'#F4F7F8', body:'#fff', head:'#fff', beak:'#2F3A42', eyes:'#FFC83D' },
+  stork:     { wing:'#F4F1EA', tip:'#2F3A42', body:'#fff', head:'#fff', beak:'#E4606D', long:true },
+  crane:     { wing:'#fff', tip:'#2F3A42', body:'#fff', head:'#fff', crown:'#E4606D', beak:'#C9B98A', long:true },
+  moth:      { wing:'#C9A6FF', body:'#8E7CF0', head:'#8E7CF0', beak:null, glow:'rgba(201,166,255,.45)' },
+});
+const HAT_ART = {
+  sailor:   c => { c.fillStyle = '#fff'; c.beginPath(); c.ellipse(0, -18, 9.5, 5, 0, Math.PI, 0); c.fill(); c.fillRect(-9.5, -18.5, 19, 2.5); c.fillStyle = '#2E6DB4'; c.fillRect(-9.5, -17.5, 19, 1.8); },
+  visor:    c => { c.fillStyle = '#FF8A3D'; c.beginPath(); c.roundRect(-9, -20, 18, 3.5, 2); c.fill(); c.beginPath(); c.ellipse(5, -17, 8, 2.4, .1, 0, 7); c.fill(); c.fillStyle = '#E4606D'; c.fillRect(-9, -19, 18, 1.2); },
+  bucket:   c => { c.fillStyle = '#6B7B3A'; c.beginPath(); c.ellipse(0, -16.5, 12, 3.4, 0, 0, 7); c.fill(); c.beginPath(); c.moveTo(-7, -17); c.lineTo(-6, -25); c.lineTo(6, -25); c.lineTo(7, -17); c.fill(); c.fillStyle = '#8C9A5A'; c.fillRect(-6.5, -21, 13, 1.6); },
+  safari:   c => { c.fillStyle = '#D9C08A'; c.beginPath(); c.ellipse(0, -17, 13, 3.6, 0, 0, 7); c.fill(); c.beginPath(); c.ellipse(0, -20, 7, 5, 0, Math.PI, 0); c.fill(); c.fillStyle = '#8B5A34'; c.fillRect(-7, -20.5, 14, 2); },
+  explorer: c => { c.fillStyle = '#E8DCC0'; c.beginPath(); c.ellipse(0, -17, 12, 3, 0, 0, 7); c.fill(); c.beginPath(); c.ellipse(0, -19, 8.5, 7, 0, Math.PI, 0); c.fill(); c.fillStyle = '#4CC38A'; c.fillRect(-8.5, -19.5, 17, 2); },
+  tricorn:  c => { c.fillStyle = '#2F3A42'; c.beginPath(); c.moveTo(-13, -16); c.lineTo(0, -28); c.lineTo(13, -16); c.quadraticCurveTo(0, -20, -13, -16); c.fill(); c.strokeStyle = '#FFC83D'; c.lineWidth = 1.2; c.beginPath(); c.moveTo(-12, -16.5); c.quadraticCurveTo(0, -20.5, 12, -16.5); c.stroke(); c.fillStyle = '#fff'; c.beginPath(); c.arc(0, -22, 1.8, 0, 7); c.fill(); },
+  ushanka:  c => { c.fillStyle = '#8C6A4A'; c.beginPath(); c.ellipse(0, -18, 10, 6.5, 0, Math.PI, 0); c.fill(); c.fillStyle = '#F4EBDD'; c.beginPath(); c.roundRect(-11, -19, 22, 4.5, 2); c.fill(); c.beginPath(); c.ellipse(-10, -12, 3, 5, 0, 0, 7); c.ellipse(10, -12, 3, 5, 0, 0, 7); c.fill(); },
+  tulip:    c => { [['#E4606D', -7], ['#FFC83D', -3.5], ['#FF9AC4', 0], ['#FF8A3D', 3.5], ['#8E7CF0', 7]].forEach(([col, x], i) => { c.fillStyle = '#4CC38A'; c.fillRect(x - .5, -19, 1, 3); c.fillStyle = col; c.beginPath(); c.moveTo(x - 2.2, -19); c.lineTo(x - 2.2, -23.5 - (i % 2)); c.lineTo(x, -22 - (i % 2)); c.lineTo(x + 2.2, -23.5 - (i % 2)); c.lineTo(x + 2.2, -19); c.fill(); }); c.fillStyle = '#3E9E5C'; c.fillRect(-9, -17.5, 18, 1.6); },
+  petals:   c => { for (let i = 0; i < 7; i++) { const x = -9 + i * 3; c.fillStyle = i % 2 ? '#FFD1E3' : '#FF9AC4'; c.beginPath(); c.ellipse(x, -18.5 + Math.abs(i - 3) * .6, 2.4, 1.6, i, 0, 7); c.fill(); } c.fillStyle = '#FFC83D'; c.beginPath(); c.arc(0, -19, 1, 0, 7); c.fill(); },
+  antennae: c => { c.strokeStyle = '#2F3A42'; c.lineWidth = 1.4; c.beginPath(); c.arc(0, -14, 9.5, Math.PI * 1.1, Math.PI * 1.9); c.stroke(); c.beginPath(); c.moveTo(-4, -22); c.lineTo(-7, -30); c.moveTo(4, -22); c.lineTo(7, -30); c.stroke(); [-7, 7].forEach(x => { const g = c.createRadialGradient(x, -31, 0, x, -31, 6); g.addColorStop(0, 'rgba(155,246,200,.9)'); g.addColorStop(1, 'rgba(155,246,200,0)'); c.fillStyle = g; c.beginPath(); c.arc(x, -31, 6, 0, 7); c.fill(); c.fillStyle = '#9BF6C8'; c.beginPath(); c.arc(x, -31, 2.2, 0, 7); c.fill(); }); },
+};
+// trees
+function drawBush(x, y){ ctx.save(); ctx.translate(x, y); shade(4, 14, 26, 8, .16); [[-10, 4, 12, '#3E9E5C'], [8, 5, 11, '#379069'], [0, -4, 14, '#4FB86B']].forEach(([a, b, r, col]) => { ctx.fillStyle = col; ctx.beginPath(); ctx.arc(a, b, r, 0, 7); ctx.fill(); }); ctx.fillStyle = '#FF9AC4'; [[-6, -6], [6, -2], [-12, 4]].forEach(([a, b]) => { ctx.beginPath(); ctx.arc(a, b, 2, 0, 7); ctx.fill(); }); ctx.restore(); }
+function drawCactus(x, y){ ctx.save(); ctx.translate(x, y); shade(6, 16, 18, 6, .16); ctx.fillStyle = '#5FAF6A'; ctx.beginPath(); ctx.roundRect(-6, -40, 12, 56, 6); ctx.fill(); ctx.beginPath(); ctx.roundRect(-18, -24, 8, 20, 4); ctx.roundRect(10, -32, 8, 18, 4); ctx.fill(); ctx.fillRect(-14, -8, 10, 6); ctx.fillRect(4, -18, 10, 6);
+  ctx.strokeStyle = 'rgba(40,90,50,.35)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(0, -36); ctx.lineTo(0, 12); ctx.stroke(); ctx.fillStyle = '#FF9AC4'; ctx.beginPath(); ctx.arc(0, -41, 3, 0, 7); ctx.fill(); ctx.restore(); }
+function drawJungleTree(x, y, dir){ ctx.save(); ctx.translate(x, y); shade(dir * 20, 16, 36, 12, .18); ctx.strokeStyle = '#6B4A2E'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, 14); ctx.quadraticCurveTo(dir * 4, -20, 0, -46); ctx.stroke();
+  [[-16, -46, 16, '#2F7A4A'], [14, -50, 17, '#379069'], [0, -62, 18, '#3FA476'], [-6, -40, 12, '#4FB86B']].forEach(([a, b, r, col]) => { ctx.fillStyle = col; ctx.beginPath(); ctx.arc(a, b, r, 0, 7); ctx.fill(); });
+  ctx.strokeStyle = '#3E9E5C'; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.moveTo(-18, -38); ctx.quadraticCurveTo(-22, -20, -18, -6); ctx.stroke(); ctx.restore(); }
+function drawBlossomTree(x, y, dir){ ctx.save(); ctx.translate(x, y); shade(dir * 18, 16, 34, 12, .16); ctx.strokeStyle = '#6B4A3E'; ctx.lineWidth = 7; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(0, 14); ctx.quadraticCurveTo(dir * 8, -16, dir * 4, -34); ctx.moveTo(dir * 4, -24); ctx.lineTo(dir * 18, -36); ctx.stroke();
+  [[-12, -40, 14, '#FFB8D4'], [10, -44, 15, '#FF9AC4'], [0, -54, 15, '#FFD1E3'], [20, -34, 11, '#FFB8D4']].forEach(([a, b, r, col]) => { ctx.fillStyle = col; ctx.beginPath(); ctx.arc(a * dir, b, r, 0, 7); ctx.fill(); });
+  if (!reduce) for (let i = 0; i < 3; i++) { const k = ((S.t * .2 + i * .33 + x * .01) % 1); ctx.fillStyle = '#FFB8D4'; ctx.beginPath(); ctx.ellipse(dir * (10 + i * 8) + Math.sin(k * 9) * 6, -30 + k * 50, 2, 1.2, k * 6, 0, 7); ctx.fill(); }
+  ctx.restore(); }
+// landmarks
+const LANDMARKS = {
+  cranes: (ax, wl) => { [[ax + 300, 1], [ax + 365, .8]].forEach(([x, s]) => { const y = L.seaHigh + 4; ctx.save(); ctx.translate(x, y); ctx.scale(s, s); shade(6, 6, 22, 5, .18);
+    ctx.strokeStyle = '#E4606D'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(-10, 4); ctx.lineTo(-4, -60); ctx.moveTo(10, 4); ctx.lineTo(4, -60); ctx.moveTo(-8, -20); ctx.lineTo(8, -20); ctx.moveTo(-6, -40); ctx.lineTo(6, -40); ctx.stroke();
+    ctx.fillStyle = '#E4606D'; ctx.fillRect(-40, -66, 60, 6); ctx.fillStyle = '#FFC83D'; ctx.fillRect(-2, -72, 10, 8); ctx.strokeStyle = '#2F3A42'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(-34, -60); ctx.lineTo(-34, -30); ctx.stroke(); ctx.fillStyle = '#35C6D8'; ctx.fillRect(-40, -30, 12, 8); ctx.restore(); }); },
+  lanterns: (ax) => { const y0 = Math.max(L.seaLow + 6, L.seaHigh - 26); ctx.strokeStyle = 'rgba(40,40,50,.7)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(ax + 10, y0); ctx.quadraticCurveTo(ax + 200, y0 + 28, ax + 390, y0); ctx.stroke();
+    for (let i = 1; i < 10; i++) { const k = i / 10, x = ax + 10 + 380 * k, y = y0 + 28 * 2 * k * (1 - k) + 6; const g = ctx.createRadialGradient(x, y, 1, x, y, 12); g.addColorStop(0, 'rgba(255,200,120,.5)'); g.addColorStop(1, 'rgba(255,200,120,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 12, 0, 7); ctx.fill();
+      ctx.fillStyle = ['#E4606D', '#FFC83D', '#FF8A3D'][i % 3]; ctx.beginPath(); ctx.ellipse(x, y, 4.5, 5.5, 0, 0, 7); ctx.fill(); ctx.fillStyle = '#2F3A42'; ctx.fillRect(x - 2, y - 7, 4, 1.6); } },
+  hotspring: (ax) => { [[ax + 320, L.seaHigh + 14, 26], [ax + 372, L.seaHigh + 30, 18]].forEach(([x, y, r]) => { ctx.fillStyle = '#6E6660'; ctx.beginPath(); ctx.ellipse(x, y, r + 4, r * .45 + 3, 0, 0, 7); ctx.fill(); ctx.fillStyle = '#6FD8E0'; ctx.beginPath(); ctx.ellipse(x, y, r, r * .45, 0, 0, 7); ctx.fill();
+    if (!reduce) for (let i = 0; i < 3; i++) { const k = (S.t * .4 + i / 3) % 1; ctx.fillStyle = `rgba(255,255,255,${.5 * (1 - k)})`; ctx.beginPath(); ctx.arc(x - 8 + i * 8 + Math.sin(S.t + i) * 3, y - k * 30, 4 + k * 6, 0, 7); ctx.fill(); } }); },
+  volcano: (ax, wl) => { const x = ax + 330, base = Math.min(wl - 6, L.seaHigh - 10); ctx.fillStyle = '#4A4442'; ctx.beginPath(); ctx.moveTo(x - 90, base); ctx.lineTo(x - 22, base - 70); ctx.lineTo(x + 22, base - 70); ctx.lineTo(x + 90, base); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#5E5652'; ctx.beginPath(); ctx.moveTo(x - 30, base); ctx.lineTo(x - 22, base - 70); ctx.lineTo(x, base - 70); ctx.lineTo(x - 5, base); ctx.fill(); ctx.fillStyle = '#FF8A3D'; ctx.beginPath(); ctx.moveTo(x - 14, base - 70); ctx.lineTo(x - 10, base - 52); ctx.lineTo(x - 4, base - 62); ctx.lineTo(x + 4, base - 48); ctx.lineTo(x + 14, base - 70); ctx.fill();
+    if (!reduce) for (let i = 0; i < 4; i++) { const k = (S.t * .15 + i / 4) % 1; ctx.fillStyle = `rgba(200,200,200,${.45 * (1 - k)})`; ctx.beginPath(); ctx.arc(x + k * 30, base - 78 - k * 50, 6 + k * 14, 0, 7); ctx.fill(); } },
+  kelp: (ax, wl) => { for (let i = 0; i < 9; i++) { const x = ax + 30 + i * 42, top = wl * (.15 + (i % 3) * .08); ctx.strokeStyle = i % 2 ? 'rgba(60,110,50,.55)' : 'rgba(90,140,60,.55)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(x, wl - 4);
+    for (let y = wl - 4; y > top; y -= 8) ctx.lineTo(x + Math.sin(y * .1 + S.t * 1.2 + i) * 5, y); ctx.stroke(); ctx.fillStyle = 'rgba(120,150,60,.6)'; ctx.beginPath(); ctx.ellipse(x + Math.sin(top * .1 + S.t + i) * 5, top, 3, 2, 0, 0, 7); ctx.fill(); } },
+  seastacks: (ax, wl) => { [[ax + 290, 26, 80], [ax + 350, 20, 60], [ax + 380, 14, 40]].forEach(([x, w, h]) => { const b = Math.min(wl - 4, L.seaHigh - 6); ctx.fillStyle = '#7C7068'; ctx.beginPath(); ctx.moveTo(x - w / 2, b); ctx.lineTo(x - w / 3, b - h); ctx.lineTo(x + w / 3, b - h - 6); ctx.lineTo(x + w / 2, b); ctx.fill();
+    ctx.fillStyle = '#9C8E84'; ctx.beginPath(); ctx.moveTo(x - w / 3, b - h); ctx.lineTo(x + w / 3, b - h - 6); ctx.lineTo(x + w / 4, b - h + 6); ctx.fill(); ctx.fillStyle = '#6FA36A'; ctx.beginPath(); ctx.ellipse(x, b - h - 2, w / 3, 3, 0, 0, 7); ctx.fill(); ctx.fillStyle = 'rgba(255,255,255,.5)'; ctx.fillRect(x - w / 2 - 2, b - 2, w + 4, 3); }); },
+  cliffs: (ax) => { const y = L.seaHigh + 20; [[ax + 330, 34, 46], [ax + 372, 26, 34]].forEach(([x, w, h]) => { shade(x + 8, y + 4, w, 7, .2); ctx.fillStyle = '#C0563E'; ctx.beginPath(); ctx.moveTo(x - w, y); ctx.lineTo(x - w + 6, y - h); ctx.lineTo(x + w - 8, y - h - 4); ctx.lineTo(x + w, y); ctx.fill();
+    ctx.fillStyle = '#D9774E'; ctx.fillRect(x - w + 6, y - h, w * 2 - 14, 5); ctx.strokeStyle = 'rgba(120,40,20,.35)'; ctx.lineWidth = 1; for (let i = 1; i < 4; i++) { ctx.beginPath(); ctx.moveTo(x - w + 3, y - i * h / 4); ctx.lineTo(x + w - 3, y - i * h / 4); ctx.stroke(); } }); },
+  oasis: (ax) => { const x = ax + 345, y = L.seaHigh + 18; ctx.fillStyle = '#4CC38A'; ctx.beginPath(); ctx.ellipse(x, y, 44, 16, 0, 0, 7); ctx.fill(); ctx.fillStyle = '#46CFDD'; ctx.beginPath(); ctx.ellipse(x, y, 36, 11, 0, 0, 7); ctx.fill(); drawPalm(x + 36, y + 2, -1); },
+  waterfall: (ax, wl) => { const x = ax + 320; ctx.fillStyle = '#5E6E4A'; ctx.beginPath(); ctx.moveTo(x - 50, 0); ctx.lineTo(ax + AW + 30, 0); ctx.lineTo(ax + AW + 30, wl * .75); ctx.lineTo(x + 30, wl * .7); ctx.lineTo(x - 50, wl * .45); ctx.closePath(); ctx.fill(); ctx.fillStyle = '#3E9E5C'; ctx.beginPath(); ctx.ellipse(x + 10, wl * .1, 70, 20, 0, 0, 7); ctx.fill();
+    ctx.fillStyle = 'rgba(220,245,255,.85)'; ctx.fillRect(x - 12, wl * .15, 18, wl * .6); if (!reduce) { ctx.fillStyle = 'rgba(255,255,255,.6)'; for (let i = 0; i < 5; i++) { const k = (S.t * 1.5 + i / 5) % 1; ctx.fillRect(x - 10 + i * 3, wl * .15 + k * wl * .55, 2, 8); } }
+    ctx.fillStyle = 'rgba(255,255,255,.7)'; ctx.beginPath(); ctx.ellipse(x - 3, wl * .76, 18, 5, 0, 0, 7); ctx.fill(); },
+  wreck: (ax, wl) => { const x = ax + 320, y = wl * .62; ctx.save(); ctx.translate(x, y); ctx.rotate(-.18); ctx.fillStyle = '#6B4226'; ctx.beginPath(); ctx.moveTo(-50, 0); ctx.quadraticCurveTo(0, 22, 50, 0); ctx.lineTo(44, -12); ctx.lineTo(-44, -12); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = 'rgba(40,20,10,.5)'; ctx.lineWidth = 1.2; for (let i = -40; i < 44; i += 10) { ctx.beginPath(); ctx.moveTo(i, -12); ctx.lineTo(i + 2, 8); ctx.stroke(); } ctx.fillStyle = '#4A2E1A'; ctx.fillRect(-4, -60, 5, 50); ctx.fillStyle = 'rgba(244,235,221,.85)'; ctx.beginPath(); ctx.moveTo(1, -56); ctx.lineTo(24, -40); ctx.lineTo(4, -24); ctx.lineTo(10, -42); ctx.fill();
+    ctx.fillStyle = '#2F3A42'; ctx.fillRect(-4, -64, 14, 7); ctx.restore(); },
+  cave: (ax, wl) => { const x = ax + 330; ctx.fillStyle = '#6E6660'; ctx.beginPath(); ctx.moveTo(x - 70, wl * .85); ctx.quadraticCurveTo(x - 60, 0, x, 0); ctx.quadraticCurveTo(x + 80, 0, ax + AW + 40, wl * .8); ctx.lineTo(ax + AW + 40, 0); ctx.lineTo(x - 70, 0); ctx.fill();
+    ctx.fillStyle = '#1E2328'; ctx.beginPath(); ctx.moveTo(x - 30, wl * .85); ctx.quadraticCurveTo(x - 20, wl * .25, x + 10, wl * .3); ctx.quadraticCurveTo(x + 36, wl * .35, x + 34, wl * .85); ctx.fill(); ctx.fillStyle = '#FFC83D'; ctx.beginPath(); ctx.arc(x + 2, wl * .6, 3, 0, 7); ctx.fill(); },
+  icebergs: (ax, wl) => { [[ax + 90, .45, 1], [ax + 250, .3, 1.4], [ax + 340, .6, .9]].forEach(([x, k, s]) => { const y = wl * k + (reduce ? 0 : Math.sin(S.t * .8 + x) * 2); ctx.fillStyle = 'rgba(255,255,255,.95)'; ctx.beginPath(); ctx.moveTo(x - 22 * s, y); ctx.lineTo(x - 12 * s, y - 16 * s); ctx.lineTo(x + 2 * s, y - 24 * s); ctx.lineTo(x + 16 * s, y - 10 * s); ctx.lineTo(x + 24 * s, y); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#BFE3F2'; ctx.beginPath(); ctx.moveTo(x + 2 * s, y - 24 * s); ctx.lineTo(x + 16 * s, y - 10 * s); ctx.lineTo(x + 24 * s, y); ctx.lineTo(x + 6 * s, y); ctx.fill(); ctx.fillStyle = 'rgba(160,210,235,.5)'; ctx.fillRect(x - 24 * s, y, 48 * s, 3); }); },
+  igloo: (ax) => { const x = ax + 350, y = L.seaHigh + 22; shade(x + 6, y + 4, 30, 7, .18); ctx.fillStyle = '#F4F7F8'; ctx.beginPath(); ctx.arc(x, y, 26, Math.PI, 0); ctx.fill(); ctx.strokeStyle = '#C9D6E6'; ctx.lineWidth = 1.2;
+    for (let r = 1; r < 4; r++) { ctx.beginPath(); ctx.moveTo(x - 26 + r * 2, y - r * 7); ctx.lineTo(x + 26 - r * 2, y - r * 7); ctx.stroke(); } ctx.fillStyle = '#2E4A6E'; ctx.beginPath(); ctx.arc(x - 12, y, 8, Math.PI, 0); ctx.fill(); ctx.fillStyle = 'rgba(255,200,120,.6)'; ctx.beginPath(); ctx.arc(x - 12, y, 5, Math.PI, 0); ctx.fill(); },
+  tulips: (ax) => { for (let r = 0; r < 3; r++) for (let i = 0; i < 12; i++) { const x = ax + 14 + i * 9 + (r % 2) * 4, y = L.seaHigh + 8 + r * 7, col = ['#E4606D', '#FFC83D', '#FF9AC4', '#8E7CF0'][(r + Math.floor(i / 3)) % 4]; ctx.fillStyle = '#4CC38A'; ctx.fillRect(x - .5, y - 4, 1, 5); ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(x - 2.2, y - 4); ctx.lineTo(x - 2.2, y - 8); ctx.lineTo(x, y - 6.5); ctx.lineTo(x + 2.2, y - 8); ctx.lineTo(x + 2.2, y - 4); ctx.fill(); } },
+  windmill: (ax) => { const x = ax + 345, y = L.seaHigh + 16; shade(x + 6, y + 4, 24, 6, .18); ctx.fillStyle = '#8B5A34'; ctx.beginPath(); ctx.moveTo(x - 16, y); ctx.lineTo(x - 10, y - 50); ctx.lineTo(x + 10, y - 50); ctx.lineTo(x + 16, y); ctx.fill(); ctx.fillStyle = '#6B4226'; ctx.beginPath(); ctx.moveTo(x - 13, y - 50); ctx.lineTo(x, y - 62); ctx.lineTo(x + 13, y - 50); ctx.fill();
+    ctx.fillStyle = '#fff'; ctx.fillRect(x - 4, y - 12, 8, 12); ctx.save(); ctx.translate(x, y - 50); ctx.rotate(reduce ? .4 : S.t * .8); for (let i = 0; i < 4; i++) { ctx.rotate(Math.PI / 2); ctx.fillStyle = '#6B4226'; ctx.fillRect(-1, 0, 2, 34); ctx.fillStyle = 'rgba(244,235,221,.95)'; ctx.fillRect(1, 8, 8, 24); } ctx.restore(); ctx.fillStyle = '#2F3A42'; ctx.beginPath(); ctx.arc(x, y - 50, 2.5, 0, 7); ctx.fill(); },
+  drawbridge: (ax, wl) => { const x = ax + 320, y = wl * .55; ctx.fillStyle = '#F4EBDD'; ctx.fillRect(x - 60, y, 120, 6); ctx.fillStyle = '#fff'; [-50, 50].forEach(d => { ctx.fillRect(x + d - 4, y - 30, 8, 36); ctx.fillRect(x + d - 10, y - 32, 20, 4); });
+    ctx.strokeStyle = '#2F3A42'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x - 46, y - 28); ctx.lineTo(x - 10, y); ctx.moveTo(x + 46, y - 28); ctx.lineTo(x + 10, y); ctx.stroke(); ctx.fillStyle = 'rgba(0,40,60,.2)'; ctx.fillRect(x - 60, y + 6, 120, 4); },
+  bridge: (ax, wl) => { const x = ax + 320, y = wl * .55; ctx.strokeStyle = '#D9443A'; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(x - 64, y + 8); ctx.quadraticCurveTo(x, y - 30, x + 64, y + 8); ctx.stroke(); ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(x - 60, y - 6); ctx.quadraticCurveTo(x, y - 44, x + 60, y - 6); ctx.stroke();
+    for (let i = -48; i <= 48; i += 16) { const t = (i + 64) / 128, yy = y + 8 - 76 * t * (1 - t); ctx.beginPath(); ctx.moveTo(x + i, yy); ctx.lineTo(x + i, yy - 12); ctx.stroke(); } ctx.fillStyle = 'rgba(217,68,58,.25)'; ctx.beginPath(); ctx.ellipse(x, y + 16, 60, 6, 0, 0, 7); ctx.fill(); },
+  stonelanterns: (ax) => { [[ax + 320, 1], [ax + 370, .85]].forEach(([x, s]) => { const y = L.seaHigh + 20; ctx.save(); ctx.translate(x, y); ctx.scale(s, s); shade(4, 4, 14, 4, .2); ctx.fillStyle = '#9AA7B1'; ctx.fillRect(-8, -4, 16, 4); ctx.fillRect(-3, -20, 6, 16); ctx.fillRect(-9, -28, 18, 8);
+    ctx.fillStyle = 'rgba(255,220,120,.9)'; ctx.fillRect(-5, -26, 10, 4); ctx.fillStyle = '#7C8A95'; ctx.beginPath(); ctx.moveTo(-13, -28); ctx.lineTo(0, -38); ctx.lineTo(13, -28); ctx.fill(); ctx.restore(); }); },
+  glowshrooms: (ax) => { [[ax + 330, 10, '#9BF6C8'], [ax + 350, 7, '#C9A6FF'], [ax + 372, 12, '#35C6D8'], [ax + 30, 8, '#C9A6FF']].forEach(([x, r, col], i) => { const y = L.seaHigh + 22 + (i % 2) * 8; ctx.globalAlpha = .5 + (reduce ? 0 : .2 * Math.sin(S.t * 2 + i)); ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x, y - r, r * 2.2, 0, 7); ctx.globalAlpha *= .3; ctx.fill(); ctx.globalAlpha = 1; ctx.fillStyle = '#E8ECEF'; ctx.fillRect(x - 1.5, y - r, 3, r); ctx.fillStyle = col; ctx.beginPath(); ctx.ellipse(x, y - r, r, r * .6, 0, Math.PI, 0); ctx.fill(); }); },
+  moonrock: (ax, wl) => { const x = ax + 320, y = Math.max(L.seaLow * .45, 30); ctx.fillStyle = 'rgba(255,250,220,.22)'; ctx.beginPath(); ctx.arc(x, y, 30, 0, 7); ctx.fill(); ctx.fillStyle = '#FFF7D6'; ctx.beginPath(); ctx.arc(x, y, 18, 0, 7); ctx.fill(); ctx.fillStyle = 'rgba(220,210,170,.6)'; ctx.beginPath(); ctx.arc(x - 5, y - 4, 4, 0, 7); ctx.arc(x + 6, y + 5, 3, 0, 7); ctx.fill();
+    ctx.fillStyle = 'rgba(255,247,214,.25)'; for (let i = 0; i < 5; i++) ctx.fillRect(x - 14 + i * 2, wl - 30 + i * 5, 28 - i * 4, 2); },
+};
+// night skies and the northern lights
+function drawSky(kind, X0, X1, wl){
+  if (kind === 'aurora') { for (let b = 0; b < 3; b++) { ctx.fillStyle = ['rgba(120,255,190,.18)', 'rgba(160,120,255,.14)', 'rgba(90,220,255,.14)'][b]; ctx.beginPath(); const base = 18 + b * 16;
+    for (let x = X0 - 20; x <= X1 + 20; x += 12) ctx.lineTo(x, base + Math.sin(x * .02 + S.t * .4 + b) * 10); for (let x = X1 + 20; x >= X0 - 20; x -= 12) ctx.lineTo(x, base + 30 + Math.sin(x * .025 + S.t * .3 + b * 2) * 12); ctx.fill(); } }
+  if (kind === 'aurora' || kind === 'night') { for (let i = 0; i < 40; i++) { const sx = (i * 73.1) % (AW * 3), sy = ((i * 37.3) % Math.max(20, wl - 20)) + 4; if (sx < X0 || sx > X1) continue; ctx.fillStyle = `rgba(255,255,240,${.35 + .35 * Math.sin(S.t * 2 + i)})`; ctx.fillRect(sx, sy, 1.6, 1.6); } }
+  if (kind === 'night') { ctx.strokeStyle = 'rgba(90,220,255,.55)'; ctx.lineWidth = 5; ctx.beginPath(); for (let x = X0 - X0 % 10 - 10; x <= X1 + 10; x += 10) { const y = wl + Math.sin(x * .05 + S.t * 2) * 3; x <= X0 - X0 % 10 - 10 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); } ctx.stroke(); }
+}
+function skyTint(vw, vh){ if (COAST.sky === 'night' || COAST.sky === 'aurora') { ctx.fillStyle = COAST.sky === 'night' ? 'rgba(10,20,60,.28)' : 'rgba(20,30,70,.2)'; ctx.fillRect(0, 0, vw, vh); } }
 
 // ================= STATE =================
 const S = {
@@ -1321,6 +1823,7 @@ function draw(){
   for (const a of AREAS) { const [x0, x1] = span(a); if (x1 < X0 || x0 > X1) continue; const hp = health(a);
     const sea = ctx.createLinearGradient(0, 0, 0, wl); sea.addColorStop(0, lerpC(COAST.seaTop[0], COAST.seaTop[1], hp)); sea.addColorStop(1, lerpC(COAST.seaLow[0], COAST.seaLow[1], hp));
     ctx.fillStyle = sea; ctx.beginPath(); ctx.moveTo(x0, 0); ctx.lineTo(x1 + 1, 0); for (let x = x1 + 1; x >= x0 - 1; x -= 8) ctx.lineTo(x, wave(x, wl)); ctx.closePath(); ctx.fill(); }
+  if (COAST.sky) drawSky(COAST.sky, X0, X1, wl);
   const sh2 = ctx.createLinearGradient(0, wl - 26, 0, wl); sh2.addColorStop(0, 'rgba(255,255,255,0)'); sh2.addColorStop(1, 'rgba(210,250,245,.45)');
   ctx.fillStyle = sh2; ctx.fillRect(X0, wl - 26, X1 - X0, 26);
   ctx.strokeStyle = 'rgba(255,255,255,.95)'; ctx.lineWidth = 3.2; ctx.beginPath();
@@ -1394,7 +1897,7 @@ function draw(){
   vg.addColorStop(0, 'rgba(10,40,60,0)'); vg.addColorStop(1, S.storm ? 'rgba(20,30,60,.34)' : 'rgba(10,40,60,.22)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, vw, vh);
   if (S.storm && !reduce) { ctx.strokeStyle = 'rgba(220,235,255,.35)'; ctx.lineWidth = 1; for (let i = 0; i < 40; i++) { const rx = (i * 83 + t * 400) % vw, ry = (i * 131 + t * 900) % vh; ctx.beginPath(); ctx.moveTo(rx, ry); ctx.lineTo(rx - 4, ry + 12); ctx.stroke(); } }
   if (running && !S.modal) edgeTabs().forEach(drawEdgeTab);
-  spookyTint(vw, vh);
+  skyTint(vw, vh); spookyTint(vw, vh);
   drawSpotlight();
   if (joy.on && !S.modal) { ctx.fillStyle = 'rgba(255,255,255,.25)'; ctx.beginPath(); ctx.arc(joy.ox, joy.oy, 44, 0, 7); ctx.fill();
     const dx = joy.x - joy.ox, dy = joy.y - joy.oy, m = Math.min(1, 44 / Math.max(1, Math.hypot(dx, dy)));
@@ -1609,8 +2112,9 @@ function openSail(){
     ${nx.twist ? `<p class="twist">Twist: <b>${nx.twist.name}.</b> ${nx.twist.desc}</p>` : ''}
     <div class="amt"><span class="star"></span>+${now}</div>
     <p>${now < max ? `Heal every area to 100% before you go to earn up to <b>${max}</b>.` : 'You healed the whole coast: full stars!'}</p>
-    <div class="keep"><div><b>You keep</b>Sea Stars and perks, hats, your daily streak</div><div><b>Starts fresh</b>Coins, machines, helpers and areas</div></div>
-    <button class="btn green" type="button" id="sailGo">Set sail!</button><button class="btn ghost" type="button" data-close>Not yet</button>`);
+    <div class="keep"><div><b>You keep</b>Sea Stars and perks, hats, album, decorations, your daily streak</div><div><b>Starts fresh</b>Coins, machines, helpers and areas</div></div>
+    <p class="oneway"><b>This is a one-way trip.</b> You can't come back to ${COAST.name} once you leave, and everything you built here is left behind.</p>
+    <button class="btn green" type="button" id="sailGo">Set sail for good</button><button class="btn ghost" type="button" data-close>Not yet</button>`);
   m.el.querySelector('#sailGo').onclick = () => { m.close(); doSail(now); };
 }
 function doSail(earned){
@@ -1752,6 +2256,7 @@ const CREATURES = {
   fjord: [['puffin','Puffin','bird','#2F3A42'], ['seal','Seal pup','seal','#9AA7B1'], ['char','Arctic char','fish','#E4606D'], ['urchin','Sea urchin','urchin','#8E7CF0'], ['orca','Orca','orca','#1E2328'], ['narwhal','Narwhal','narwhal','#C9D3D8', true]],
   spooky: [['ghostcrab','Ghost crab','crab','#EDEBE4'], ['jelly','Glow jellyfish','jelly','#9BF6C8'], ['vampsquid','Vampire squid','squid','#8E2F4F']],
 };
+COASTS.forEach(c => { if (c.album) CREATURES[c.id] = c.album; });
 const PAGES = [...COASTS.map(c => ({ id: c.id, name: c.name })), { id:'spooky', name:'Spooky Shore', event:true }];
 const creature = id => { for (const k in CREATURES) { const c = CREATURES[k].find(x => x[0] === id); if (c) return { page: k, id: c[0], name: c[1], kind: c[2], col: c[3], rare: !!c[4] }; } return null; };
 function albumAdd(id, quiet){
@@ -1792,6 +2297,15 @@ function drawCreature(g, kind, col){
   if (kind === 'urchin') { g.strokeStyle = col; g.lineWidth = 1.6; for (let i = 0; i < 24; i++) { const a = i * Math.PI / 12; g.beginPath(); g.moveTo(Math.cos(a) * 7, Math.sin(a) * 7); g.lineTo(Math.cos(a) * 17, Math.sin(a) * 17); g.stroke(); } g.fillStyle = col; g.beginPath(); g.arc(0, 0, 10, 0, 7); g.fill(); }
   if (kind === 'crab') { g.strokeStyle = col; g.lineWidth = 2.4; for (const d of [-1, 1]) for (let i = 0; i < 3; i++) { g.beginPath(); g.moveTo(d * 7, i * 3); g.lineTo(d * 16, 4 + i * 4); g.stroke(); } g.fillStyle = col; g.beginPath(); g.ellipse(0, 0, 12, 9, 0, 0, 7); g.fill(); g.beginPath(); g.arc(-13, -8, 5, 0, 7); g.arc(13, -8, 5, 0, 7); g.fill(); eye(-3, -9, 2); eye(3, -9, 2); }
   if (kind === 'jelly') { g.fillStyle = col; g.globalAlpha = .85; g.beginPath(); g.arc(0, -3, 13, Math.PI, 0); g.quadraticCurveTo(0, 2, -13, -3); g.fill(); g.strokeStyle = col; g.lineWidth = 2; for (let i = -8; i <= 8; i += 4) { g.beginPath(); g.moveTo(i, 0); g.quadraticCurveTo(i + 3, 8, i, 17); g.stroke(); } g.globalAlpha = 1; eye(-4, -6, 1.5); eye(4, -6, 1.5); }
+  if (kind === 'octopus') { g.fillStyle = col; g.beginPath(); g.ellipse(0, -6, 10, 10, 0, 0, 7); g.fill(); g.strokeStyle = col; g.lineWidth = 3; for (let i = -3; i <= 3; i++) { g.beginPath(); g.moveTo(i * 3, 2); g.quadraticCurveTo(i * 6, 10, i * 5 + 3, 16); g.stroke(); } g.fillStyle = '#fff'; g.beginPath(); g.arc(-4, -6, 2.6, 0, 7); g.arc(4, -6, 2.6, 0, 7); g.fill(); eye(-4, -6, 1.3); eye(4, -6, 1.3); }
+  if (kind === 'whale') { g.fillStyle = col; g.beginPath(); g.moveTo(-20, 0); g.quadraticCurveTo(-10, -12, 10, -10); g.quadraticCurveTo(22, -8, 22, 2); g.quadraticCurveTo(10, 10, -20, 4); g.fill(); g.beginPath(); g.moveTo(-18, 2); g.lineTo(-26, -6); g.lineTo(-24, 2); g.lineTo(-26, 9); g.fill();
+    g.fillStyle = 'rgba(255,255,255,.35)'; g.beginPath(); g.ellipse(4, 5, 12, 2.4, 0, 0, 7); g.fill(); eye(14, -3, 1.5); if (col === '#F2C230') { g.fillStyle = '#fff'; [[0, -6], [8, -2], [-8, -2]].forEach(([a, b]) => { g.beginPath(); g.arc(a, b, 1.2, 0, 7); g.fill(); }); } }
+  if (kind === 'shark') { g.fillStyle = col; g.beginPath(); g.moveTo(-20, 0); g.quadraticCurveTo(0, -10, 20, 0); g.quadraticCurveTo(0, 7, -20, 0); g.fill(); g.beginPath(); g.moveTo(-3, -6); g.lineTo(2, -16); g.lineTo(6, -6); g.fill(); g.beginPath(); g.moveTo(-18, 0); g.lineTo(-25, -9); g.lineTo(-22, 0); g.lineTo(-25, 8); g.fill();
+    g.fillStyle = 'rgba(255,255,255,.55)'; g.beginPath(); g.ellipse(4, 3, 12, 2.2, 0, 0, 7); g.fill(); if (col === '#2E4A6E') { g.fillStyle = '#fff'; for (let i = -12; i < 14; i += 5) { g.beginPath(); g.arc(i, -2 + (i % 2), 1, 0, 7); g.fill(); } } eye(13, -2, 1.4); }
+  if (kind === 'eel') { g.strokeStyle = col; g.lineWidth = 6; g.beginPath(); g.moveTo(-20, 6); g.quadraticCurveTo(-8, -10, 2, 2); g.quadraticCurveTo(10, 12, 18, -4); g.stroke(); g.fillStyle = col; g.beginPath(); g.arc(18, -5, 4, 0, 7); g.fill(); eye(19, -6, 1.2); g.fillStyle = 'rgba(255,230,120,.6)'; [[-12, -1], [0, 1], [9, 5]].forEach(([a, b]) => { g.beginPath(); g.arc(a, b, 1.3, 0, 7); g.fill(); }); }
+  if (kind === 'lobster') { g.fillStyle = col; g.beginPath(); g.ellipse(0, 2, 5, 11, 0, 0, 7); g.fill(); g.beginPath(); g.ellipse(-9, -12, 4, 6, -.4, 0, 7); g.ellipse(9, -12, 4, 6, .4, 0, 7); g.fill(); g.strokeStyle = col; g.lineWidth = 2; g.beginPath(); g.moveTo(-3, -6); g.lineTo(-8, -8); g.moveTo(3, -6); g.lineTo(8, -8); g.moveTo(-2, -9); g.lineTo(-6, -20); g.moveTo(2, -9); g.lineTo(6, -20); g.stroke();
+    g.beginPath(); g.moveTo(-4, 12); g.lineTo(0, 17); g.lineTo(4, 12); g.fill(); eye(-2, -7, 1.2); eye(2, -7, 1.2); }
+  if (kind === 'otter') { g.fillStyle = col; g.beginPath(); g.ellipse(0, 4, 16, 8, 0, 0, 7); g.fill(); g.beginPath(); g.arc(13, -3, 7, 0, 7); g.fill(); g.fillStyle = '#D9B38A'; g.beginPath(); g.ellipse(14, -1, 4.5, 3.5, 0, 0, 7); g.fill(); g.beginPath(); g.ellipse(-2, 1, 8, 4, 0, 0, 7); g.fill(); g.fillStyle = col; g.beginPath(); g.arc(9, -8, 2, 0, 7); g.arc(17, -8, 2, 0, 7); g.fill(); eye(11, -4, 1.3); eye(16, -4, 1.3); g.fillStyle = '#16324A'; g.beginPath(); g.arc(14, -1, 1.2, 0, 7); g.fill(); }
   if (kind === 'squid') { g.fillStyle = col; g.beginPath(); g.ellipse(0, -6, 9, 12, 0, 0, 7); g.fill(); g.beginPath(); g.moveTo(-9, -12); g.lineTo(-16, -18); g.lineTo(-8, -4); g.moveTo(9, -12); g.lineTo(16, -18); g.lineTo(8, -4); g.fill();
     g.strokeStyle = col; g.lineWidth = 2.4; for (let i = -6; i <= 6; i += 3) { g.beginPath(); g.moveTo(i, 4); g.quadraticCurveTo(i * 1.6, 12, i * 1.2, 19); g.stroke(); } g.fillStyle = '#9BF6C8'; g.beginPath(); g.arc(-3.5, -4, 2.2, 0, 7); g.arc(3.5, -4, 2.2, 0, 7); g.fill(); }
 }
@@ -1835,7 +2349,7 @@ function featuresTick(dt){
   const p = S.player, wl = waterline(), a = hereArea();
   if (EVENT && !save.event.seen && !coachQ.length) eventIntro();
   const dock = pads().find(x => x.key === 'sail');
-  if (dock && areaAt(p.x) === AREAS[AREAS.length - 1]) coach('first:sail', [{ target: () => ({ x: dock.x, y: dock.y, r: 50 }), text: "The whole coast is restored! Stand on the <b>dock</b> when you're ready to <b>set sail</b> to a brand-new coast. You'll earn Sea Stars for perks that last forever.", btn: 'Got it' }]);
+  if (dock && areaAt(p.x) === AREAS[AREAS.length - 1]) coach('first:sail', [{ target: () => ({ x: dock.x, y: dock.y, r: 50 }), text: "The whole coast is restored! Stand on the <b>dock</b> when you're ready to <b>set sail</b> to a brand-new coast. You'll earn Sea Stars for perks that last forever, but it's one-way: you can't come back.", btn: 'Got it' }]);
   // timers
   S.msgT -= dt; if (S.msgT <= 0) { S.msgT = rnd(70, 130); if (!S.specials.some(s => s.type === 'msg')) { const sp = spawnSpecial('msg', a); coach('first:msg', [{ target: tipAt(sp), text: "A <b>message in a bottle</b>! Walk over it to see what's inside: coins, a Sea Star, or a treasure map piece.", btn: 'Got it', done: () => sp.gone }]); } }
   S.rareT -= dt; if (S.rareT <= 0) { S.rareT = rnd(200, 380); const r = (CREATURES[COAST.id] || []).find(c => c[4]); if (r) { const sp = spawnSpecial('rare', a, r[0]); if (save.coached['first:rare']) toast('Something rare is on the beach! Go look'); coach('first:rare', [{ target: tipAt(sp, 30), text: `A rare <b>${r[1]}</b>! Walk over it before it swims away to add it to your album.`, btn: 'Got it', done: () => sp.gone }]); } }
