@@ -25,7 +25,7 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
 .health .row b{color:var(--ink)}
 .health .bar{height:7px;background:#E2EEF2;border-radius:999px;margin-top:3px;overflow:hidden}
 .health .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#8BD3A5,var(--leaf));border-radius:999px;transition:width .4s}
-.health .next{font-size:10.5px;color:var(--ink-2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.health .next{font-size:10.5px;line-height:13px;min-height:13px;color:var(--ink-2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .side{display:flex;gap:5px;flex:none;pointer-events:auto}
 .iconBtn{position:relative;width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.94);box-shadow:0 3px 0 rgba(22,50,74,.18);display:grid;place-items:center;padding:0}
 .iconBtn svg{width:20px;height:20px}
@@ -1553,8 +1553,8 @@ function modal(html, onClose){
 }
 function offlineCheck(){
   if (!save.lastSeen) return;
-  const capS = (3 + perk('night')) * 3600, secs = Math.min(capS, (Date.now() - save.lastSeen) / 1000); if (secs < 120) return;
-  let rate = 0; for (const a of AREAS) { const st = A(a.id); if (!st.unlocked) continue; rate += a.mult * (st.pelicans ? st.crabs * .03 + st.pelicans * .05 : st.crabs * .01); }
+  const capS = (2 + perk('night')) * 3600, secs = Math.min(capS, (Date.now() - save.lastSeen) / 1000); if (secs < 120) return;
+  let rate = 0; for (const a of AREAS) { const st = A(a.id); if (!st.unlocked) continue; rate += a.mult * (st.pelicans ? st.crabs * .012 + st.pelicans * .02 : st.crabs * .004); }
   const amt = Math.floor(rate * secs * (1 + .1 * perk('income'))); if (amt < 5) return;
   const h = Math.floor(secs / 3600), mn = Math.floor(secs % 3600 / 60);
   const m = modal(`<h2>Welcome back!</h2><p>Your crew kept working for ${h ? h + ' hr ' : ''}${mn} min${secs >= capS - 1 ? ' (the most they can do alone)' : ''}.</p><div class="amt"><span class="coin"></span>${fmt(amt)}</div><button class="btn green" type="button" data-close>Collect</button>`, () => { save.coins += amt; save.stats.earned += amt; SFX.claim(); persist(); });
@@ -1661,8 +1661,8 @@ function endTutorial(){ tutStep = -1; save.tutDone = true; if (tipEl) { tipEl.re
 function tutTarget(step){
   if (step.center) return null;
   if (step.screen) return step.screen();
-  if (step.dom) { const r = $(step.dom).getBoundingClientRect(); return { sx: r.left + r.width / 2, sy: r.top + r.height / 2, r: Math.max(r.width, r.height) / 2 + 10 }; }
-  const t = step.target(); return { sx: (t.x - camX) * scale, sy: t.y * scale, r: t.r * scale };
+  if (step.dom) { const el = $(step.dom); if (!el) return null; const r = el.getBoundingClientRect(); return { sx: r.left + r.width / 2, sy: r.top + r.height / 2, r: Math.max(r.width, r.height) / 2 + 10 }; }
+  const t = step.target(); if (!t) return null; return { sx: (t.x - camX) * scale, sy: t.y * scale, r: t.r * scale };
 }
 function tutorialTick(){
   if (tutStep < 0) return;
@@ -1818,14 +1818,29 @@ function collectSpecial(sp){
     modal(`<h2>Treasure!</h2><div class="amt"><span class="star"></span>+5</div><p>You dug up 5 Sea Stars, ${fmt(c)} coins and a <b>${d.name}</b> for your beach.</p><button class="btn green" type="button" data-close>Awesome</button>`); }
   persist();
 }
+// New features switch on after the first area is healed, with a short guided intro
+function introCheck(){
+  if (save.featIntro || !save.tutDone || tutStep >= 0 || S.modal) return;
+  if (health(AREAS[0]) < 1 && !(save.sails > 0)) return;
+  save.featIntro = true; persist();
+  coach('intro', [
+    { center: true, text: `<b>${AREAS[0].name} is healed!</b> From here on the coast gets more exciting. Here's what's new.`, btn: 'Next' },
+    { dom: 'journalBtn', text: 'Your <b>Journal</b>: 3 daily tasks for bonus coins and Sea Stars, your <b>Sea Life Album</b>, decorations for your beach, and your hats.', btn: 'Next' },
+    { center: true, text: "<b>Watch the beach for surprises:</b> glowing messages in bottles, rare sea creatures, VIP tourists who pay triple, and Big Cleanup waves. You'll get a tip the first time each one shows up.", btn: 'Got it' } ]);
+}
+const tipAt = (sp, r) => () => sp.gone ? null : { x: sp.x, y: sp.y, r: r || 26 };
 function featuresTick(dt){
-  if (!save.tutDone || S.modal || S.sailing) return;
+  introCheck();
+  if (!save.featIntro || S.modal || S.sailing) return;
   const p = S.player, wl = waterline(), a = hereArea();
+  if (EVENT && !save.event.seen && !coachQ.length) eventIntro();
+  const dock = pads().find(x => x.key === 'sail');
+  if (dock && areaAt(p.x) === AREAS[AREAS.length - 1]) coach('first:sail', [{ target: () => ({ x: dock.x, y: dock.y, r: 50 }), text: "The whole coast is restored! Stand on the <b>dock</b> when you're ready to <b>set sail</b> to a brand-new coast. You'll earn Sea Stars for perks that last forever.", btn: 'Got it' }]);
   // timers
-  S.msgT -= dt; if (S.msgT <= 0) { S.msgT = rnd(70, 130); if (!S.specials.some(s => s.type === 'msg')) spawnSpecial('msg', a); }
-  S.rareT -= dt; if (S.rareT <= 0) { S.rareT = rnd(200, 380); const r = (CREATURES[COAST.id] || []).find(c => c[4]); if (r) { spawnSpecial('rare', a, r[0]); toast('Something rare is on the beach! Go look'); } }
-  if (EVENT) { S.candyT -= dt; if (S.candyT <= 0) { S.candyT = rnd(5, 10); if (S.specials.filter(s => s.type === 'candy').length < 4) spawnSpecial('candy', a); } }
-  if (save.chest && !S.specials.some(s => s.type === 'chest')) spawnSpecial('chest', a);
+  S.msgT -= dt; if (S.msgT <= 0) { S.msgT = rnd(70, 130); if (!S.specials.some(s => s.type === 'msg')) { const sp = spawnSpecial('msg', a); coach('first:msg', [{ target: tipAt(sp), text: "A <b>message in a bottle</b>! Walk over it to see what's inside: coins, a Sea Star, or a treasure map piece.", btn: 'Got it', done: () => sp.gone }]); } }
+  S.rareT -= dt; if (S.rareT <= 0) { S.rareT = rnd(200, 380); const r = (CREATURES[COAST.id] || []).find(c => c[4]); if (r) { const sp = spawnSpecial('rare', a, r[0]); if (save.coached['first:rare']) toast('Something rare is on the beach! Go look'); coach('first:rare', [{ target: tipAt(sp, 30), text: `A rare <b>${r[1]}</b>! Walk over it before it swims away to add it to your album.`, btn: 'Got it', done: () => sp.gone }]); } }
+  if (EVENT) { S.candyT -= dt; if (S.candyT <= 0) { S.candyT = rnd(5, 10); if (S.specials.filter(s => s.type === 'candy').length < 4) { const sp = spawnSpecial('candy', a); coach('first:candy', [{ target: tipAt(sp), text: '<b>Candy wrappers!</b> Walk over them for Spooky Shore rewards. Your progress is in the Journal.', btn: 'Got it', done: () => sp.gone }]); } } }
+  if (save.chest && !S.specials.some(s => s.type === 'chest')) { const sp = spawnSpecial('chest', a); coach('first:chest', [{ target: tipAt(sp, 30), text: 'Your treasure map is complete! Stand on the <b>X</b> for a moment to dig up the treasure.', btn: 'Got it', done: () => sp.gone }]); }
   // specials: pick up by walking over them (the chest needs a moment of digging)
   for (const sp of S.specials) { sp.t += dt;
     if (sp.type === 'rare') { sp.x += Math.sin(sp.t * .7) * 12 * dt; }
@@ -1837,10 +1852,11 @@ function featuresTick(dt){
   // VIP tourists: a big order that pays triple, if you're quick
   S.vipT -= dt;
   if (S.vipT <= 0) { S.vipT = rnd(120, 200); const outs = a.machines.filter(built).map(m => m.output), line = S.tourists.filter(t => t.area === a && !t.leaving);
-    if (outs.length && line.length < 5) { S.tourists.push({ area: a, x: a.x - 30, y: L.walkY, slot: line.length, want: pick(outs), left: 6 + a.i * 2, vip: true, born: S.t, shirt: '#16324A', skin: pick(SKINS), hat: '#FFC83D', walk: 0, wait: 0, buyT: 0 }); toast('A VIP tourist is here! They pay triple'); } }
+    if (outs.length && line.length < 5) { const vip = { area: a, x: a.x - 30, y: L.walkY, slot: line.length, want: pick(outs), left: 6 + a.i * 2, vip: true, born: S.t, shirt: '#16324A', skin: pick(SKINS), hat: '#FFC83D', walk: 0, wait: 0, buyT: 0 }; S.tourists.push(vip);
+      if (save.coached['first:vip']) toast('A VIP tourist is here! They pay triple'); coach('first:vip', [{ target: () => ({ x: vip.x, y: vip.y - 24, r: 36 }), text: `A <b>VIP tourist</b> wants ${vip.left} ${LABEL[vip.want].toLowerCase()}. Stock the counter before their timer runs out and they pay <b>triple</b>.`, btn: 'Got it' }]); } }
   // Big Cleanup: a wave of trash, collect it before time runs out
   S.cleanT -= dt;
-  if (!S.cleanup && S.cleanT <= 0) { S.cleanT = rnd(420, 660); S.cleanup = { area: a, left: 60, got: 0, need: 20 + a.i * 5 }; for (let i = 0; i < 26; i++) spawnOne(a, true); SFX.milestone(); }
+  if (!S.cleanup && S.cleanT <= 0) { S.cleanT = rnd(420, 660); S.cleanup = { area: a, left: 60, got: 0, need: 20 + a.i * 5 }; for (let i = 0; i < 26; i++) spawnOne(a, true); SFX.milestone(); bar(); coach('first:cleanup', [{ dom: 'eventBar', text: '<b>Big Cleanup!</b> A wave dumped trash on the beach. Pick up the number shown before time runs out for a bonus. Drop off at machines when your bag fills.', btn: 'Go!' }]); }
   if (S.cleanup) { const c = S.cleanup; c.left -= dt;
     if (c.got >= c.need) { const r = Math.round(120 * c.area.mult); earn(r, p.x, p.y - 30); bump('cleanups'); SFX.claim(); toast(`Big Cleanup done! +${r} coins`); if (Math.random() < .5) { save.map++; setTimeout(() => toast(`Bonus: a treasure map piece (${save.map}/4)`), 2700); if (save.map >= 4) { save.map = 0; save.chest = true; } } S.cleanup = null; persist(); }
     else if (c.left <= 0) { toast('The wave went back out. Next time!'); S.cleanup = null; } }
@@ -2043,7 +2059,6 @@ function featuresStart(){
   AREAS.forEach(a => MILESTONES.forEach((ms, i) => { if (A(a.id).recycled >= ms.at && CREATURES[COAST.id]) albumAdd(CREATURES[COAST.id][i][0], true); }));
   save.albumNew = save.albumNew && Object.keys(save.album).length > 0;
   dailyTasks(); eventCheck();
-  if (save.tutDone && !save.freshCoast) setTimeout(eventIntro, 900);
 }
 // ================= START & LOOP =================
 let running = false, last = performance.now(), saveT = 0;
@@ -2054,10 +2069,10 @@ function start(){
   for (let i = 0; i < 6; i++) spawnOne(beach, true);
   AREAS.forEach(a => { if (A(a.id).unlocked && a.i) for (let i = 0; i < 4; i++) spawnOne(a, true); });
   running = true; last = performance.now();
-  featuresStart();
   if (!save.tutDone) startTutorial();
   else if (save.freshCoast) welcomeCoast();
   else { offlineCheck(); if (S.storm) setTimeout(() => toast('Storm weekend! Extra trash is washing up.'), 800); }
+  featuresStart();   // after the offline check, since it saves the game
   persist();
 }
 function loop(now){
@@ -2072,6 +2087,8 @@ document.addEventListener('visibilitychange', () => { if (document.hidden && run
 $('play').onclick = start;
 layout(); S.player.y = L.row0 - 10;
 if (COAST_N > 0) { $('coastTag').hidden = false; $('coastTag').textContent = 'Coast ' + (COAST_N + 1) + ' · ' + COAST.name; }
+// keep the play area below the top bar whenever the bar changes height
+if (window.ResizeObserver) { let lastH = 0; new ResizeObserver(() => { const h = document.querySelector('.hud').getBoundingClientRect().bottom; if (Math.abs(h - lastH) > 1) { lastH = h; layout(); } }).observe(document.querySelector('.hud')); }
 if (document.fonts) document.fonts.ready.then(() => { layout(); if (!running) S.player.y = L.row0 - 10; });
 if (location.hash.includes('test')) window.__tt = { S, save, AREAS, MACHINES, MBY, get L(){ return L; }, get camX(){ return camX; }, pads, waterline, mst, built, dispCount, dispCap, goalAt, goalProgress, claimGoal, areaUpCost, machUpCost, globalCost, AREA_UPS, GLOBAL_UPS, ensureHelpers, cap, coachQ, edgeTabs, drawItem, spawnSpecial, openJournal, postcard, dailyTasks, albumAdd, EVENT, startPlacing, DECOR, CREATURES, drawCreature, COAST, COAST_N, NEXT_COAST, doSail, openSail, openStars, starsNow, PERKS, salePrice, get tut(){ return tutStep; }, endTutorial, start, openBoard, closeBoard };
 requestAnimationFrame(loop);
