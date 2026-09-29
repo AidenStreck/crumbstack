@@ -126,12 +126,12 @@ const AREAS = [
       { id:'kiln',  name:'Sea-Glass Kiln', input:'bottle', output:'beads',    cost:0,   col:'#35C6D8', shape:'kiln',  dx:75 },
       { id:'loom',  name:'Rope Loom',      input:'rope',   output:'bracelet', cost:25,  col:'#F2A65A', shape:'loom',  dx:200 },
       { id:'press', name:'Can Press',      input:'can',    output:'boat',     cost:100, col:'#E4606D', shape:'press', dx:325 } ] },
-  { id:'pier', name:'Old Pier', cost:300, mult:3, stall:'PIER MARKET',
+  { id:'pier', name:'Old Pier', cost:1500, mult:3, stall:'PIER MARKET',
     machines:[
       { id:'mender',   name:'Net Mender',     input:'net',  output:'hammock',   cost:0,   col:'#2FA39A', shape:'loom',  dx:75 },
       { id:'workshop', name:'Driftwood Shop', input:'wood', output:'birdhouse', cost:200, col:'#B97A44', shape:'bench', dx:200 },
       { id:'painter',  name:'Buoy Painter',   input:'buoy', output:'lantern',   cost:450, col:'#8E7CF0', shape:'booth', dx:325 } ] },
-  { id:'cove', name:'Lighthouse Cove', cost:1600, mult:9, stall:'COVE BOUTIQUE',
+  { id:'cove', name:'Lighthouse Cove', cost:8000, mult:9, stall:'COVE BOUTIQUE',
     machines:[
       { id:'stitcher',  name:'Sandal Stitcher',  input:'sandal', output:'keychain',  cost:0,    col:'#FF9AC4', shape:'press', dx:75 },
       { id:'terrarium', name:'Terrarium Studio', input:'jar',    output:'terrarium', cost:900, col:'#4CC38A', shape:'dome',  dx:200 },
@@ -181,25 +181,45 @@ const GOALS = [
   { t:'build', id:'press', r:60 },
   { t:'hire', area:'beach', k:'pelicans', n:1, r:80, text:'Hire a pelican courier' },
   { t:'health', area:'beach', pct:50, r:100 },
-  { t:'earn', n:500, r:120, text:'Earn 500 coins' },
-  { t:'area', id:'pier', r:150, text:'Restore the Old Pier', hat:'captain' },
-  { t:'sell', item:'hammock', n:8, r:120 },
-  { t:'build', id:'workshop', r:150 },
-  { t:'hire', area:'pier', k:'crabs', n:1, r:200, text:'Hire a crab at the pier' },
-  { t:'sell', item:'birdhouse', n:10, r:220 },
-  { t:'build', id:'painter', r:300 },
-  { t:'health', area:'beach', pct:100, r:350, hat:'flower' },
-  { t:'mlv', id:'mender', lv:1, r:300, text:'Upgrade the Net Mender' },
-  { t:'hire', area:'pier', k:'pelicans', n:1, r:400, text:'Hire a pelican at the pier' },
-  { t:'sell', item:'lantern', n:10, r:400 },
-  { t:'health', area:'pier', pct:50, r:450 },
-  { t:'area', id:'cove', r:600, text:'Restore Lighthouse Cove', hat:'snorkel' },
-  { t:'sell', item:'keychain', n:15, r:700 },
-  { t:'build', id:'terrarium', r:800 },
-  { t:'build', id:'planter', r:1000 },
-  { t:'health', area:'pier', pct:100, r:1200 },
-  { t:'health', area:'cove', pct:100, r:2500, text:'Heal the whole coast' },
+  { t:'sell', item:'boat', n:15, r:100 },
+  { t:'hire', area:'beach', k:'crabs', n:2, r:120, text:'Hire a second hermit crab' },
+  { t:'mlv', id:'loom', lv:2, r:150, text:'Upgrade the Rope Loom to ★2' },
+  { t:'health', area:'beach', pct:100, r:200, hat:'flower' },
+  { t:'earn', n:1500, r:200, text:'Earn 1,500 coins' },
+  { t:'area', id:'pier', r:300, text:'Restore the Old Pier', hat:'captain' },
+  { t:'sell', item:'hammock', n:10, r:250 },
+  { t:'build', id:'workshop', r:250 },
+  { t:'hire', area:'pier', k:'crabs', n:1, r:300, text:'Hire a crab at the pier' },
+  { t:'sell', item:'birdhouse', n:12, r:350 },
+  { t:'build', id:'painter', r:400 },
+  { t:'hire', area:'pier', k:'pelicans', n:1, r:450, text:'Hire a pelican at the pier' },
+  { t:'mlv', id:'mender', lv:2, r:500, text:'Upgrade the Net Mender to ★2' },
+  { t:'sell', item:'lantern', n:15, r:500 },
+  { t:'health', area:'pier', pct:50, r:600 },
+  { t:'mlv', id:'workshop', lv:2, r:600, text:'Upgrade the Driftwood Shop to ★2' },
+  { t:'mlv', id:'painter', lv:2, r:700, text:'Upgrade the Buoy Painter to ★2' },
+  { t:'hire', area:'pier', k:'pelicans', n:2, r:800, text:'Hire a second pier pelican' },
+  { t:'health', area:'pier', pct:100, r:1000 },
+  { t:'earn', n:8000, r:1000, text:'Earn 8,000 coins' },
+  { t:'area', id:'cove', r:1500, text:'Restore Lighthouse Cove', hat:'snorkel' },
+  { t:'sell', item:'keychain', n:15, r:1200 },
+  { t:'build', id:'terrarium', r:1500 },
+  { t:'build', id:'planter', r:2000 },
+  { t:'health', area:'cove', pct:100, r:4000, text:'Heal the whole coast' },
 ];
+// What each area needs before you can pay to restore it
+const REQS = {
+  pier: [
+    { t:'health', area:'beach', pct:100, text:'Heal Sunny Beach to 100%' },
+    { t:'allBuilt', area:'beach', text:'Build all 3 beach machines' },
+    { t:'hire', area:'beach', k:'crabs', n:2, text:'2 hermit crabs at the beach' },
+    { t:'hire', area:'beach', k:'pelicans', n:1, text:'A pelican at the beach' } ],
+  cove: [
+    { t:'health', area:'pier', pct:100, text:'Heal the Old Pier to 100%' },
+    { t:'allBuilt', area:'pier', text:'Build all 3 pier machines' },
+    { t:'mlvAll', area:'pier', lv:2, text:'Every pier machine at ★2' },
+    { t:'hire', area:'pier', k:'pelicans', n:2, text:'2 pelicans at the pier' } ],
+};
 function goalText(g){
   if (g.text) return g.text;
   if (g.t === 'recycle') return `Recycle ${g.n} ${LABEL[g.item]}`;
@@ -592,11 +612,12 @@ function drawPad(pad){
   ctx.save(); ctx.beginPath(); ctx.roundRect(pad.x - w / 2, pad.y - h / 2, w, h, 12); ctx.clip(); ctx.fillStyle = 'rgba(76,195,138,.5)'; ctx.fillRect(pad.x - w / 2, pad.y + h / 2 - h * k, w, h * k); ctx.restore();
   ctx.strokeStyle = active ? '#D99A12' : 'rgba(22,50,74,.45)'; ctx.setLineDash([6, 5]); ctx.lineWidth = 2; ctx.beginPath(); ctx.roundRect(pad.x - w / 2, pad.y - h / 2, w, h, 12); ctx.stroke(); ctx.setLineDash([]);
   if (pad.kind === 'machine') drawItem(ctx, pad.icon, pad.x, pad.y - 8, 15);
+  else if (pad.locked) { ctx.fillStyle = '#8A949A'; ctx.beginPath(); ctx.roundRect(pad.x - 7, pad.y - 16, 14, 11, 3); ctx.fill(); ctx.strokeStyle = '#8A949A'; ctx.lineWidth = 2.4; ctx.beginPath(); ctx.arc(pad.x, pad.y - 16, 4.5, Math.PI, 0); ctx.stroke(); }
   else { ctx.fillStyle = '#4CC38A'; ctx.beginPath(); ctx.arc(pad.x, pad.y - 12, 9, 0, 7); ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 2.4; ctx.beginPath(); ctx.moveTo(pad.x - 4, pad.y - 12); ctx.lineTo(pad.x - 1, pad.y - 9); ctx.lineTo(pad.x + 5, pad.y - 16); ctx.stroke(); }
   ctx.fillStyle = '#16324A'; ctx.textAlign = 'center'; ctx.font = `600 ${big ? 9.5 : 9}px Fredoka, sans-serif`;
   const lines = pad.label.toUpperCase().split('\n'); lines.forEach((ln, i) => ctx.fillText(ln, pad.x, pad.y + (big ? 5 : 8) + i * 10));
   ctx.fillStyle = '#FFC83D'; ctx.beginPath(); ctx.arc(pad.x - 12, pad.y + h / 2 - 9, 4.5, 0, 7); ctx.fill(); ctx.strokeStyle = '#D99A12'; ctx.lineWidth = 1; ctx.stroke();
-  ctx.font = '700 12px Fredoka, sans-serif'; ctx.fillStyle = '#8A5A00'; ctx.textAlign = 'left'; ctx.fillText(fmt(pad.cost - paid), pad.x - 5, pad.y + h / 2 - 4.5); ctx.textAlign = 'center';
+  ctx.font = '700 12px Fredoka, sans-serif'; ctx.fillStyle = pad.locked ? '#8A949A' : '#8A5A00'; ctx.textAlign = 'left'; ctx.fillText(fmt(pad.cost - paid), pad.x - 5, pad.y + h / 2 - 4.5); ctx.textAlign = 'center';
 }
 
 // ================= STATE =================
@@ -619,6 +640,15 @@ function dispCap(a){ return 12 + A(a.id).display * 8; }
 function dispCount(a){ return Object.values(A(a.id).disp).reduce((s, n) => s + n, 0); }
 function unlockedEnd(){ return unlockedCount() * AW; }
 function nextLocked(){ return AREAS.find(a => !A(a.id).unlocked); }
+function reqMet(r){
+  const a = AREAS.find(x => x.id === r.area), st = A(r.area);
+  if (r.t === 'health') return health(a) * 100 >= r.pct;
+  if (r.t === 'allBuilt') return a.machines.every(built);
+  if (r.t === 'hire') return st[r.k] >= r.n;
+  if (r.t === 'mlvAll') return a.machines.every(m => built(m) && mlv(m) >= r.lv);
+  return false;
+}
+function reqsMet(a){ return (REQS[a.id] || []).every(reqMet); }
 function waterline(){ const k = (Math.sin(S.t * 2 * Math.PI / 40) + 1) / 2; return L.seaLow + (L.seaHigh - L.seaLow) * k; }
 function builtOutputs(a){ return (a ? a.machines : MACHINES).filter(built).map(m => m.output); }
 function areaUpCost(a, u){ const lv = A(a.id)[u.k]; return lv < u.max ? u.base[lv] * a.mult : null; }
@@ -705,7 +735,7 @@ function pads(){
   }
   const nl = nextLocked();
   if (nl) { const prev = AREAS[nl.i - 1]; if (prev.machines.filter(built).length >= 2)
-    list.push({ key: 'a:' + nl.id, x: nl.x + 58, y: (L.machY + L.row0) / 2, cost: nl.cost, label: 'Restore\n' + nl.name, kind: 'area', area: nl }); }
+    list.push({ key: 'a:' + nl.id, x: nl.x + 58, y: (L.machY + L.row0) / 2, cost: nl.cost, label: 'Restore\n' + nl.name, kind: 'area', area: nl, locked: !reqsMet(nl) }); }
   return list;
 }
 function complete(pad){
@@ -797,6 +827,7 @@ function update(dt){
       if (S.payKey !== pad.key) { S.payKey = pad.key; S.dwell = 0; }
       S.dwell += dt;
       const paid = save.pads[pad.key] || 0;
+      if (pad.locked) { if (S.dwell > .35 && S.lockMsg !== pad.key) { S.lockMsg = pad.key; toast('Finish the checklist on the sign first'); } continue; }
       if (S.dwell > .35 && S.payT <= 0 && save.coins > 0 && paid < pad.cost) {
         const step = Math.min(save.coins, pad.cost - paid, Math.max(1, Math.ceil(pad.cost / 30)));
         save.coins -= step; save.pads[pad.key] = paid + step; S.payT = .05; SFX.pay();
@@ -804,7 +835,7 @@ function update(dt){
       }
     }
   }
-  if (!onPad) S.payKey = null;
+  if (!onPad) { S.payKey = null; S.lockMsg = null; }
 
   // Crew & Upgrades boards
   let onBoard = null;
@@ -1010,9 +1041,17 @@ function draw(){
     ctx.fillStyle = 'rgba(60,72,80,.4)'; ctx.fillRect(a.x, 0, a.i === AREAS.length - 1 ? Math.max(AW, X1 - a.x) : AW, viewH);
     const fx = a.x + 112; ctx.strokeStyle = '#E8D8B8'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(fx, L.seaHigh + 10); ctx.lineTo(fx, L.sellY + 20); ctx.stroke();
     for (let y = L.seaHigh + 10; y < L.sellY + 20; y += 44) { ctx.fillStyle = '#7A4E2E'; ctx.fillRect(fx - 3, y - 8, 6, 14); }
-    ctx.fillStyle = 'rgba(22,50,74,.9)'; ctx.beginPath(); ctx.roundRect(a.x + 130, L.machY - 60, 150, 44, 12); ctx.fill();
-    ctx.fillStyle = '#FFC83D'; ctx.font = '700 15px Fredoka, sans-serif'; ctx.textAlign = 'center'; ctx.fillText(a.name.toUpperCase(), a.x + 205, L.machY - 40);
-    ctx.fillStyle = '#fff'; ctx.font = '600 11px Fredoka, sans-serif'; ctx.fillText('Needs cleaning up', a.x + 205, L.machY - 25);
+    // sign with the checklist for restoring this area
+    const reqs = REQS[a.id] || [], sx = a.x + 128, sy = L.machY - 120, sw2 = 196, sh = 58 + reqs.length * 17;
+    ctx.fillStyle = 'rgba(22,50,74,.93)'; ctx.beginPath(); ctx.roundRect(sx, sy, sw2, sh, 12); ctx.fill();
+    ctx.fillStyle = '#FFC83D'; ctx.font = '700 15px Fredoka, sans-serif'; ctx.textAlign = 'center'; ctx.fillText(a.name.toUpperCase(), sx + sw2 / 2, sy + 20);
+    ctx.textAlign = 'left'; ctx.font = '600 11px Fredoka, sans-serif';
+    reqs.forEach((r, i) => { const ok = reqMet(r), y = sy + 40 + i * 17;
+      ctx.fillStyle = ok ? '#4CC38A' : 'rgba(255,255,255,.2)'; ctx.beginPath(); ctx.roundRect(sx + 12, y - 9, 12, 12, 3); ctx.fill();
+      if (ok) { ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(sx + 14.5, y - 3); ctx.lineTo(sx + 17, y); ctx.lineTo(sx + 22, y - 6); ctx.stroke(); }
+      ctx.fillStyle = ok ? '#C8F0DA' : '#fff'; ctx.fillText(r.text, sx + 30, y + 1); });
+    ctx.fillStyle = '#FFE58A'; ctx.font = '700 12px Fredoka, sans-serif'; ctx.fillText('Then pay ' + fmt(a.cost) + ' coins', sx + 12, sy + sh - 12);
+    ctx.textAlign = 'center';
   }
   for (const pad of pads()) if (pad.x > X0 - 40 && pad.x < X1 + 40) drawPad(pad);
   for (const tt of S.tourists) if (tt.x > X0 - 30 && tt.x < X1 + 30) drawTourist(ctx, tt);
