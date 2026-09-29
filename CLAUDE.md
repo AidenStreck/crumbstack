@@ -5,6 +5,7 @@ The owner is not a programmer. He sends requests from the Studio dashboard, revi
 ## Where things are
 
 - `src/game.html` is the entire game (HTML, CSS and JS in one file). Almost every request is a change here.
+- `prototypes/tidy-tides/src.html` is the second game, **Tidy Tides** (a single file, no doctype/head). Requests whose title names "Tidy Tides" are changes there, not to Crumbstack. Start commit messages for it with `Tidy Tides:` so Studio files them under that game. Its save key is `tidytides-save-v2`: same rules as Crumbstack's save.
 - `studio/` is the owner's control dashboard. `studio/apps.json` lists every game and its App Store launch checklist.
 - `scripts/build.mjs` builds `www/` (website + Studio). `scripts/patch-ios.mjs` customizes the generated iPhone project.
 - `.github/workflows/website.yml` publishes `www/` to GitHub Pages on every push to `main`.

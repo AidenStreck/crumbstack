@@ -4,7 +4,7 @@
     {
       "id": "crumbstack",
       "name": "Crumbstack",
-      "tagline": "Burger-stacking puzzle \u00b7 24 levels",
+      "tagline": "Burger-stacking puzzle · 24 levels",
       "repo": "AidenStreck/crumbstack",
       "site": "https://aidenstreck.github.io/crumbstack/",
       "icon": "https://aidenstreck.github.io/crumbstack/icons/icon-192.png",
@@ -71,6 +71,58 @@
         {
           "label": "Support page",
           "url": "https://aidenstreck.github.io/crumbstack/support.html"
+        }
+      ]
+    },
+    {
+      "id": "tidy-tides",
+      "name": "Tidy Tides",
+      "tagline": "Idle beach-cleanup tycoon · 3 areas",
+      "repo": "AidenStreck/crumbstack",
+      "path": "prototypes/tidy-tides",
+      "tag": "Tidy Tides",
+      "ios": false,
+      "site": "https://aidenstreck.github.io/crumbstack/prototypes/tidy-tides/",
+      "icon": "tidytides-icon.svg",
+      "stage": "Prototype",
+      "checklist": [
+        {
+          "label": "Playable prototype on the website",
+          "done": true
+        },
+        {
+          "label": "First-time tutorial",
+          "done": true
+        },
+        {
+          "label": "Three areas, helpers and goals",
+          "done": true
+        },
+        {
+          "label": "Friends play-test it and give feedback",
+          "done": false
+        },
+        {
+          "label": "Pacing tuned from feedback",
+          "done": false
+        },
+        {
+          "label": "Final name, icon and store look",
+          "done": false
+        },
+        {
+          "label": "iPhone app project",
+          "done": false
+        },
+        {
+          "label": "Submitted to Apple for review",
+          "done": false
+        }
+      ],
+      "links": [
+        {
+          "label": "Play link to share",
+          "url": "https://aidenstreck.github.io/crumbstack/prototypes/tidy-tides/"
         }
       ]
     }

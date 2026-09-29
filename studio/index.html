@@ -326,10 +326,19 @@ async function gh(path){
   return r.json();
 }
 
+// Several games can live in one repo; fetch the shared parts once per repo.
+const repoLoads = {};
 async function loadApp(app){
+  const shared = await (repoLoads[app.repo] = repoLoads[app.repo] || loadRepo(app.repo));
+  let commits = shared.commits;
+  if (app.path) commits = await gh(app.repo + '/commits?per_page=10&path=' + encodeURIComponent(app.path));
+  return { ...shared, commits };
+}
+async function loadRepo(repo){
+  const app = { repo };
   const [runs, commits, issues, branches] = await Promise.all([
     gh(app.repo + '/actions/runs?per_page=30'),
-    gh(app.repo + '/commits?per_page=10'),
+    gh(app.repo + '/commits?per_page=20'),
     gh(app.repo + '/issues?state=all&per_page=40&sort=updated'),
     gh(app.repo + '/branches?per_page=100'),
   ]);
@@ -347,6 +356,7 @@ async function load(){
   try {
     if (!CONFIG) CONFIG = await (await fetch('apps.json', { cache: 'no-cache' })).json();
     let data = {}, failed = false;
+    for (const k in repoLoads) delete repoLoads[k];
     for (const app of CONFIG.apps) {
       try { data[app.id] = await loadApp(app); cache('data:'+app.id, { at: Date.now(), d: data[app.id] }); }
       catch (e) { failed = e.message; const c = cache('data:'+app.id); if (c) data[app.id] = c.d; }
@@ -373,9 +383,12 @@ function runState(r){
 }
 
 // A request is an issue. Its status comes from linked pull requests or a request-N branch.
+function appOfIssue(i){
+  return CONFIG.apps.find(a => a.tag && (i.title || '').toLowerCase().includes(a.tag.toLowerCase())) || CONFIG.apps[0];
+}
 function requestsFor(app, d){
   const prs = d.issues.filter(i => i.pull_request);
-  return d.issues.filter(i => !i.pull_request && !/^\[Game idea\]/i.test(i.title)).map(i => {
+  return d.issues.filter(i => !i.pull_request && !/^\[Game idea\]/i.test(i.title) && appOfIssue(i) === app).map(i => {
     const pr = prs.find(p => p.state === 'open' && new RegExp('#' + i.number + '\\b').test((p.title||'') + ' ' + (p.body||'')));
     const br = d.branches.find(b => b === 'request-' + i.number || b.startsWith('request-' + i.number + '-'));
     let status, cls, link = null, linkText = '';
@@ -394,17 +407,18 @@ function render(data){
   let passing = 0, total = 0, allReqs = [], feed = [];
   const html = apps.map(app => {
     const d = data[app.id];
-    const web = d && latest(d.runs, 'Website'), ios = d && latest(d.runs, 'iPhone app');
-    [web, ios].forEach(r => { if (r) { total++; if (r.status === 'completed' && r.conclusion === 'success') passing++; } });
+    const first = apps.find(a => a.repo === app.repo) === app;
+    const web = d && latest(d.runs, 'Website'), ios = d && app.ios !== false && latest(d.runs, 'iPhone app');
+    (first ? [web, ios] : []).forEach(r => { if (r) { total++; if (r.status === 'completed' && r.conclusion === 'success') passing++; } });
     const ws = runState(web), is = runState(ios);
-    const c = d && d.commits[0];
+    const c = d && d.commits.find(cm => app.path || !apps.some(o => o.path && o.repo === app.repo && cm.commit.message.startsWith(o.name)));
     if (d) {
       allReqs.push(...requestsFor(app, d));
-      (d.marketing || []).forEach(m => { const url = `https://github.com/${app.repo}/compare/main...${m.name}?expand=1`;
+      (first ? d.marketing || [] : []).forEach(m => { const url = `https://github.com/${app.repo}/compare/main...${m.name}?expand=1`;
         allReqs.push({ app, status: 'Ready for your approval', cls: 'accent', link: url, linkText: 'Review new videos',
           issue: { title: 'New marketing videos (' + m.name.replace('marketing-', '') + ')', html_url: url, number: 'videos', created_at: m.date || new Date().toISOString(), updated_at: m.date || new Date().toISOString() } }); });
-      d.runs.slice(0, 8).forEach(r => feed.push({ at: r.updated_at, kind: 'run', ok: r.status !== 'completed' ? null : r.conclusion === 'success', text: (r.name === 'Website' ? 'Website' : 'iPhone build') + (r.status !== 'completed' ? ' running' : r.conclusion === 'success' ? ' succeeded' : ' failed'), sub: app.name + ' · ' + (r.display_title || '').split('\n')[0], url: r.html_url }));
-      d.commits.slice(0, 6).forEach(cm => feed.push({ at: cm.commit.author.date, kind: 'commit', text: cm.commit.message.split('\n')[0], sub: app.name + ' · change ' + cm.sha.slice(0,7), url: cm.html_url }));
+      (first ? d.runs.slice(0, 8) : []).forEach(r => feed.push({ at: r.updated_at, kind: 'run', ok: r.status !== 'completed' ? null : r.conclusion === 'success', text: (r.name === 'Website' ? 'Website' : 'iPhone build') + (r.status !== 'completed' ? ' running' : r.conclusion === 'success' ? ' succeeded' : ' failed'), sub: app.name + ' · ' + (r.display_title || '').split('\n')[0], url: r.html_url }));
+      d.commits.filter(cm => app.path || !apps.some(o => o.path && o.repo === app.repo && cm.commit.message.startsWith(o.name))).slice(0, 6).forEach(cm => feed.push({ at: cm.commit.author.date, kind: 'commit', text: cm.commit.message.split('\n')[0], sub: app.name + ' · change ' + cm.sha.slice(0,7), url: cm.html_url }));
     }
     const done = app.checklist.filter(x => x.done).length, next = app.checklist.find(x => !x.done);
     return `<article class="app">
@@ -419,11 +433,11 @@ function render(data){
       </div>
       <div class="status">
         <a class="st" href="${web ? esc(web.html_url) : '#'}" target="_blank" rel="noopener"><span class="lbl">Website</span><span class="val"><i class="dot ${ws.dot}"></i>${ws.text}</span><span class="sub">${web ? rel(web.updated_at) : '–'}</span></a>
-        <a class="st" href="${ios ? esc(ios.html_url) : '#'}" target="_blank" rel="noopener"><span class="lbl">iPhone build</span><span class="val"><i class="dot ${is.dot}"></i>${is.text}</span><span class="sub">${ios ? rel(ios.updated_at) : '–'}</span></a>
+        <a class="st" href="${ios ? esc(ios.html_url) : '#'}" target="_blank" rel="noopener"><span class="lbl">iPhone build</span><span class="val"><i class="dot ${is.dot}"></i>${app.ios === false ? 'Not set up yet' : is.text}</span><span class="sub">${ios ? rel(ios.updated_at) : '–'}</span></a>
         <a class="st" href="${c ? esc(c.html_url) : '#'}" target="_blank" rel="noopener"><span class="lbl">Last change</span><span class="val" style="font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block">${c ? esc(c.commit.message.split('\n')[0]) : '–'}</span><span class="sub">${c ? rel(c.commit.author.date) : ''}</span></a>
       </div>
       <div class="launch">
-        <div class="launchTop"><b>App Store launch</b><span class="mono">${done} of ${app.checklist.length} steps</span></div>
+        <div class="launchTop"><b>${app.stage === 'Prototype' ? 'Road to launch' : 'App Store launch'}</b><span class="mono">${done} of ${app.checklist.length} steps</span></div>
         <div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="${app.checklist.length}" aria-valuenow="${done}"><i style="width:${done/app.checklist.length*100}%"></i></div>
         ${next ? `<div class="next">Next step: <b>${esc(next.label)}</b></div>` : '<div class="next"><b>Live on the App Store</b></div>'}
         ${app.links && app.links.length ? `<div class="kit"><span>Launch kit</span>${app.links.map(l => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)}</a>`).join('')}</div>` : ''}
@@ -478,7 +492,7 @@ $('send').addEventListener('click', () => {
   if (!text) { $('reqText').focus(); $('reqText').placeholder = 'Type what you want changed first.'; return; }
   const app = CONFIG.apps.find(a => a.id === $('reqApp').value) || CONFIG.apps[0];
   const first = text.split('\n')[0];
-  const title = `[${type}] ${first.length > 70 ? first.slice(0, 67) + '…' : first}`;
+  const title = `[${type}]${app.tag ? ' ' + app.tag + ':' : ''} ${first.length > 70 ? first.slice(0, 67) + '…' : first}`;
   const body = `${text}\n\n---\nRequest type: ${type}\nSent from Studio. An agent will build this on its own branch and wait for approval before anything goes live.`;
   window.open(`https://github.com/${app.repo}/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`, '_blank', 'noopener');
   $('reqText').value = '';
