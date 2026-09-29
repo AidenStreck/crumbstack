@@ -9,74 +9,63 @@
       { "name": "Cute, demanding customers", "why": "Grumpy VIPs and flies give each clip a tiny story." }
     ],
     "channels": [
-      { "name": "TikTok", "note": "Main channel. Post the same vertical video here first." },
-      { "name": "Instagram Reels", "note": "Repost the TikTok video (without the TikTok watermark: use the original file)." },
-      { "name": "YouTube Shorts", "note": "Same video again. Shorts keep getting views for months." }
+      { "name": "TikTok", "note": "Main channel. Post each video here first." },
+      { "name": "Instagram Reels", "note": "Same video file, same caption." },
+      { "name": "YouTube Shorts", "note": "Same again. Shorts keep getting views for months." }
     ],
     "cadence": "3 posts a week. Before launch, the link in your bio goes to the free web version. After launch, it goes to the App Store.",
     "tips": [
-      "Add an upbeat trending sound inside TikTok before posting. The clips are silent on purpose so you can.",
-      "Reply to comments with a new video. It's the easiest way to get a second post out of one.",
+      "The narrator is an AI voice. When posting on TikTok, turn on \"AI-generated content\" under More options. TikTok asks creators to label AI voices.",
+      "The voiceover videos already have music. The launch clips are silent, so add a trending sound to those.",
       "Don't pay for ads yet. Paid ads start after launch, once Studio shows each player earns more than they cost."
     ]
   },
+  "phases": [
+    { "id": "now", "name": "Now: build an audience", "note": "Faceless \"I'm making a game\" videos with a narrator. They don't ask anyone to download from the App Store, so they work before launch." },
+    { "id": "launch", "name": "Launch week", "note": "Save these for when the App Store link works (or pre-orders are open). Post one a day that week." }
+  ],
   "posts": [
     {
-      "id": "p1-lunch-rush",
-      "title": "The lunch rush",
-      "week": 1,
-      "video": "lunch-rush",
+      "id": "n1-no-ads", "phase": "now", "title": "Making a game with no ads", "week": 1,
+      "media": { "dir": "voiced", "id": "vo-no-ads" },
+      "hook": "I'm making a mobile game with zero ads.",
+      "caption": "day 1 of making a mobile game with zero ads 🍔 would you play it? free to try, link in bio",
+      "hashtags": "#indiedev #gamedev #mobilegames #noads #cozygames"
+    },
+    {
+      "id": "n2-vip", "phase": "now", "title": "Meet the VIP", "week": 1,
+      "media": { "dir": "voiced", "id": "vo-vip" },
+      "hook": "Meet the VIP.",
+      "caption": "the VIPs in my game are ruthless 😤 could you keep him happy? free, no ads, link in bio",
+      "hashtags": "#indiedev #mobilegames #puzzlegame #cozygames #gaming"
+    },
+    {
+      "id": "n3-topple", "phase": "now", "title": "Eight layers", "week": 1,
+      "media": { "dir": "voiced", "id": "vo-topple" },
+      "hook": "Eight layers. One wobbly plate.",
+      "caption": "how high could you stack it? 🍔 free game, no ads, link in bio",
+      "hashtags": "#satisfying #mobilegames #indiegame #cozygames #fyp"
+    },
+    {
+      "id": "l1-lunch-rush", "phase": "launch", "title": "The lunch rush", "week": 1,
+      "media": { "dir": "clips", "id": "lunch-rush" },
       "hook": "POV: the lunch rush just hit",
-      "caption": "every customer wants it EXACTLY their way 🍔 free game, zero ads. link in bio",
+      "caption": "every customer wants it EXACTLY their way 🍔 out now on iPhone. free, zero ads",
       "hashtags": "#cozygames #mobilegames #burger #indiegame #satisfying"
     },
     {
-      "id": "p2-vip",
-      "title": "The VIP",
-      "week": 1,
-      "video": "vip-patience",
+      "id": "l2-vip", "phase": "launch", "title": "The VIP", "week": 1,
+      "media": { "dir": "clips", "id": "vip-patience" },
       "hook": "He tips double. He has zero patience.",
-      "caption": "the VIPs in this game are ruthless 😤 would you survive the rooftop grill? (free, no ads, link in bio)",
+      "caption": "the VIPs are ruthless 😤 would you survive the rooftop grill? free on the App Store, no ads",
       "hashtags": "#mobilegames #indiedev #puzzlegame #gaming #cozygames"
     },
     {
-      "id": "p3-topple",
-      "title": "Don't let it topple",
-      "week": 1,
-      "video": "dont-topple",
+      "id": "l3-topple", "phase": "launch", "title": "Don't let it topple", "week": 1,
+      "media": { "dir": "clips", "id": "dont-topple" },
       "hook": "Don't. Let. It. Topple.",
-      "caption": "8 layers at midnight. my hands were shaking 😭 free game, no ads, link in bio",
+      "caption": "8 layers at midnight. my hands were shaking 😭 free on the App Store, no ads",
       "hashtags": "#satisfying #mobilegames #burgertower #indiegame #fyp"
-    },
-    {
-      "id": "p4-no-ads",
-      "title": "\"I made a game with no ads\"",
-      "week": 2,
-      "video": "lunch-rush",
-      "hook": "I made a mobile game with no ads. On purpose.",
-      "caption": "tired of watching a 30 second ad every time you lose? me too. so i made crumbstack. free, no ads. link in bio",
-      "hashtags": "#indiedev #gamedev #mobilegames #noads #cozygames",
-      "note": "Talking-head style works best: film yourself saying the hook for 3 seconds, then cut to this clip. Use TikTok's green-screen effect if you'd rather not be on camera."
-    },
-    {
-      "id": "p5-rate-my-burger",
-      "title": "Rate my burger",
-      "week": 2,
-      "video": "dont-topple",
-      "hook": "Rate this burger 1–10",
-      "caption": "be honest. is 8 layers too many? 🍔 (free game, no ads, link in bio)",
-      "hashtags": "#ratemyburger #mobilegames #satisfying #cozygames #fyp",
-      "note": "Questions in the hook get comments, and comments push the video to more people."
-    },
-    {
-      "id": "p6-world-reveal",
-      "title": "Three worlds",
-      "week": 2,
-      "video": null,
-      "hook": "Which world are you picking?",
-      "caption": "diner, rooftop grill, or midnight food truck? 🍔🌇🌙 free game, no ads, link in bio",
-      "hashtags": "#mobilegames #cozygames #indiegame #gaming",
-      "note": "No clip yet: screen-record the level map on your phone (Control Center → Screen Recording) and scroll from world 1 to world 3."
     }
   ],
   "paidLater": [

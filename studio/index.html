@@ -154,7 +154,10 @@ input[type=text]{background:var(--bg);border:1px solid var(--line);border-radius
 .plan ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px;color:var(--ink-2);font-size:13px}
 .plan ul b{color:var(--ink)}
 .planSide{display:flex;flex-direction:column;gap:14px;min-width:0}
-.posts{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.posts{display:flex;flex-direction:column;gap:22px}
+.phaseH h3{margin:0;font-family:var(--display);font-size:16px}
+.phaseH p{margin:2px 0 10px;font-size:13px;color:var(--ink-2);max-width:70ch}
+.postGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
 .post{background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column}
 .post.done{opacity:.6}
 .post video,.post .novid{width:100%;aspect-ratio:9/16;max-height:420px;object-fit:cover;background:#150F33;display:block}
@@ -497,22 +500,27 @@ async function loadMarketing(){
   renderPosts();
   $('later').innerHTML = MK.paidLater.map(x => `<div><b>${esc(x.name)}</b>${esc(x.note)}</div>`).join('');
 }
+function mediaOf(p){ return p.media ? `../marketing/${p.media.dir}/${p.media.id}` : null; }
 function renderPosts(){
   const done = MK.posts.filter(p => cache(postedKey(p.id))).length;
   $('postCount').textContent = `${done} of ${MK.posts.length} posted`;
-  $('posts').innerHTML = MK.posts.map(p => {
-    const posted = !!cache(postedKey(p.id));
-    const vid = p.video ? `<video src="../marketing/clips/${esc(p.video)}.mp4" poster="../marketing/clips/${esc(p.video)}.jpg" controls muted playsinline preload="none"></video>` : `<div class="novid">No clip yet. See the note below.</div>`;
-    return `<article class="post ${posted ? 'done' : ''}">${vid}<div class="postBody">
-      <div class="postTop"><b>${esc(p.title)}</b><span class="pill ${posted ? 'good' : 'warn'}">${posted ? 'Posted' : 'Week ' + p.week}</span></div>
-      <div class="hookLine">On-screen hook: <i>${esc(p.hook)}</i></div>
-      <div class="caption" id="cap-${esc(p.id)}">${esc(p.caption)}<small>${esc(p.hashtags)}</small></div>
-      ${p.note ? `<div class="postNote">${esc(p.note)}</div>` : ''}
-      <div class="postActions">
-        <button class="btn" type="button" data-copy="${esc(p.id)}">Copy caption</button>
-        ${p.video ? `<a class="btn" href="../marketing/clips/${esc(p.video)}.mp4" download="crumbstack-${esc(p.video)}.mp4">Download video</a>` : ''}
-        <button class="btn ${posted ? '' : 'primary'}" type="button" data-posted="${esc(p.id)}">${posted ? 'Undo' : 'Mark posted'}</button>
-      </div></div></article>`;
+  const phases = MK.phases || [{ id: undefined, name: '', note: '' }];
+  $('posts').innerHTML = phases.map(ph => {
+    const list = MK.posts.filter(p => p.phase === ph.id);
+    return `<div class="phase"><div class="phaseH"><h3>${esc(ph.name)}</h3><p>${esc(ph.note)}</p></div><div class="postGrid">${list.map(p => {
+      const posted = !!cache(postedKey(p.id)), m = mediaOf(p);
+      const vid = m ? `<video src="${m}.mp4" poster="${m}.jpg" controls playsinline preload="none" onerror="this.outerHTML='<div class=&quot;novid&quot;>Video is being made. Check back in a few minutes.</div>'"></video>` : `<div class="novid">No video yet.</div>`;
+      return `<article class="post ${posted ? 'done' : ''}">${vid}<div class="postBody">
+        <div class="postTop"><b>${esc(p.title)}</b><span class="pill ${posted ? 'good' : ph.id === 'launch' ? 'info' : 'warn'}">${posted ? 'Posted' : ph.id === 'launch' ? 'Launch' : 'Week ' + p.week}</span></div>
+        <div class="hookLine">Opens with: <i>${esc(p.hook)}</i></div>
+        <div class="caption" id="cap-${esc(p.id)}">${esc(p.caption)}<small>${esc(p.hashtags)}</small></div>
+        ${p.note ? `<div class="postNote">${esc(p.note)}</div>` : ''}
+        <div class="postActions">
+          <button class="btn" type="button" data-copy="${esc(p.id)}">Copy caption</button>
+          ${m ? `<a class="btn" href="${m}.mp4" download="crumbstack-${esc(p.media.id)}.mp4">Download video</a>` : ''}
+          <button class="btn ${posted ? '' : 'primary'}" type="button" data-posted="${esc(p.id)}">${posted ? 'Undo' : 'Mark posted'}</button>
+        </div></div></article>`;
+    }).join('')}</div></div>`;
   }).join('');
 }
 $('posts').addEventListener('click', async e => {

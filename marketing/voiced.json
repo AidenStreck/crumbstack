@@ -1,0 +1,40 @@
+{
+  "voice": "af_heart",
+  "speed": 1.0,
+  "videos": [
+    {
+      "id": "vo-no-ads",
+      "clip": "lunch-rush",
+      "lines": [
+        "I'm making a mobile game with zero ads.",
+        "Customers want burgers stacked exactly their way.",
+        "You catch every ingredient, in order.",
+        "Would you play this?",
+        "It's free, and it has no ads. Link in bio."
+      ]
+    },
+    {
+      "id": "vo-vip",
+      "clip": "vip-patience",
+      "lines": [
+        "Meet the VIP.",
+        "He tips double.",
+        "He also has zero patience.",
+        "One wrong topping, and he walks out.",
+        "Could you keep him happy?",
+        "Free game, no ads. Link in bio."
+      ]
+    },
+    {
+      "id": "vo-topple",
+      "clip": "dont-topple",
+      "lines": [
+        "Eight layers.",
+        "One wobbly plate.",
+        "Move too fast, and the whole thing topples.",
+        "How high could you stack it?",
+        "Free game, no ads. Link in bio."
+      ]
+    }
+  ]
+}

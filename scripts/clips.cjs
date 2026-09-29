@@ -11,7 +11,7 @@ const TYPES = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css',
 
 // Each clip: level, seconds, a hook shown at the start, and optional setup tweaks.
 const CLIPS = [
-  { id: 'lunch-rush', level: 6, seconds: 15, hook: 'POV: the lunch rush<br>just hit' },
+  { id: 'lunch-rush', level: 4, seconds: 15, hook: 'POV: the lunch rush<br>just hit' },
   { id: 'vip-patience', level: 13, seconds: 15, hook: 'He tips double.<br>He has zero patience.', vip: true },
   { id: 'dont-topple', level: 18, seconds: 15, hook: 'Don\'t. Let. It.<br>Topple.', long: true },
 ];
@@ -75,6 +75,7 @@ const OVERLAY_CSS = `
   const browser = await chromium.launch();
   const RAW = 40; // seconds recorded; the best stretch is kept
   for (const clip of CLIPS.filter(c => !only.length || only.includes(c.id))) {
+  for (let attempt = 1; attempt <= 4; attempt++) {
     const page = await browser.newPage({ viewport: { width: 360, height: 640 }, deviceScaleFactor: 3 });
     const errors = []; page.on('pageerror', e => errors.push(e.message));
     await page.addInitScript(CLOCK);
@@ -113,6 +114,10 @@ const OVERLAY_CSS = `
       if (served[b] > served[a] && b - served.indexOf(served[b]) < 45) score += .5;
       if (score > bestScore) { bestScore = score; best = a; }
     }
+    if ((n < len || bestScore < 1) && attempt < 4) {
+      console.log(`${clip.id}: take ${attempt} had no served burger, recording again`);
+      fs.rmSync(dir, { recursive: true, force: true }); await page.close(); continue;
+    }
     // Overlays: hook text (first 2.6s) and an end card, rendered as transparent PNGs with the game's font.
     const ov = await browser.newPage({ viewport: { width: 360, height: 640 }, deviceScaleFactor: 3 });
     const font = n => fs.readFileSync(path.join(root, 'fonts', n)).toString('base64');
@@ -125,7 +130,10 @@ const OVERLAY_CSS = `
     await ov.setContent(base + `<div id="mk-end"><img src="data:image/png;base64,${icon}" alt=""><b>Crumbstack</b><span>Free. No ads.</span><small>Play free · link in bio</small></div>`);
     await ov.screenshot({ path: path.join(dir, 'end.png'), omitBackground: true });
     await ov.close();
-    const mp4 = path.join(out, clip.id + '.mp4'), dur = clip.seconds, endDur = 2.2;
+    const dur = clip.seconds, endDur = 2.2;
+    // Two versions: with the hook text (for posting as-is) and "-clean" without it (for voiceover videos with captions).
+    for (const clean of [false, true]) {
+    const mp4 = path.join(out, clip.id + (clean ? '-clean' : '') + '.mp4');
     execFileSync('ffmpeg', ['-y', '-loglevel', 'error',
       '-framerate', String(FPS), '-start_number', String(best), '-i', path.join(dir, 'f%04d.jpg'),
       '-loop', '1', '-i', path.join(dir, 'hook.png'), '-loop', '1', '-i', path.join(dir, 'end.png'),
@@ -133,14 +141,17 @@ const OVERLAY_CSS = `
       `[0:v]trim=end_frame=${len},setpts=PTS-STARTPTS,tpad=stop_mode=clone:stop_duration=${endDur}[g];` +
       `[1:v]format=rgba,fade=t=out:st=2.3:d=0.3:alpha=1[h];` +
       `[2:v]format=rgba,fade=t=in:st=${dur}:d=0.25:alpha=1[e];` +
-      `[g][h]overlay=0:0:enable='lte(t,2.6)':shortest=1[gh];[gh][e]overlay=0:0:shortest=1,format=yuv420p[v]`,
+      `[g][h]overlay=0:0:enable='${clean ? 0 : 'lte(t,2.6)'}':shortest=1[gh];[gh][e]overlay=0:0:shortest=1,format=yuv420p[v]`,
       '-map', '[v]', '-t', String(dur + endDur), '-r', String(FPS),
       '-c:v', 'libx264', '-preset', 'slow', '-crf', '20', '-movflags', '+faststart', mp4]);
+    }
     const poster = Math.min(n - 1, best + Math.round(len * .6));
     fs.copyFileSync(path.join(dir, `f${String(poster).padStart(4, '0')}.jpg`), path.join(out, clip.id + '.jpg'));
-    console.log(clip.id, `saved ${(fs.statSync(mp4).size / 1e6).toFixed(1)} MB, burgers served in clip: ${served[best + len - 1] - served[best]}, whole run: ${served[n - 1]}`, errors.length ? errors : '');
+    console.log(clip.id, `saved ${(fs.statSync(path.join(out, clip.id + '.mp4')).size / 1e6).toFixed(1)} MB (+ clean version), burgers served in clip: ${served[best + len - 1] - served[best]}, whole run: ${served[n - 1]}`, errors.length ? errors : '');
     fs.rmSync(dir, { recursive: true, force: true });
     await page.close();
+    break;
+  }
   }
   await browser.close(); server.close();
 })();
