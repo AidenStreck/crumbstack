@@ -9,7 +9,7 @@ import path from 'node:path';
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 export const APPS = {
   crumbstack: { appId: 'com.crumbstack.game', appName: 'Crumbstack', bg: '#22174A', res: 'resources' },
-  'tidy-tides': { appId: 'com.aidenstreck.tidytides', appName: 'Tidy Tides', bg: '#1C7F9A', res: 'resources/tidy-tides', proto: 'tidy-tides',
+  'tidy-tides': { appId: 'Com.aidenstreck.tidytides', appName: 'Tidy Tides', bg: '#1C7F9A', res: 'resources/tidy-tides', proto: 'tidy-tides',
     fonts: [{ family: 'Fredoka', weight: '300 700', file: 'Fredoka.ttf', url: 'https://github.com/google/fonts/raw/main/ofl/fredoka/Fredoka%5Bwdth%2Cwght%5D.ttf' }] },
 };
 const id = process.argv[2] || 'crumbstack', app = APPS[id];

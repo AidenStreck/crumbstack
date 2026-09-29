@@ -36,7 +36,7 @@ This project uses **Capacitor**, which wraps the game in a real native iPhone ap
 
 ## Getting it onto the App Store
 
-Apple Developer account: done (accepted Sept 29, 2026). **Tidy Tides goes first** (bundle ID `com.aidenstreck.tidytides`); Crumbstack follows with `com.crumbstack.game`. Which games get sent to TestFlight is set in `.github/workflows/ios.yml`; each game's bundle ID, name and icon are in `scripts/ios-app.mjs`.
+Apple Developer account: done (accepted Sept 29, 2026). **Tidy Tides goes first** (bundle ID `Com.aidenstreck.tidytides`, with a capital C: that is how it was registered at Apple, and it must match exactly); Crumbstack follows with `com.crumbstack.game`. Which games get sent to TestFlight is set in `.github/workflows/ios.yml`; each game's bundle ID, name and icon are in `scripts/ios-app.mjs`.
 
 1. **Register the app ID.** developer.apple.com → Certificates, IDs & Profiles → Identifiers → + → App IDs → App. Description `Tidy Tides`, Bundle ID (Explicit) `com.aidenstreck.tidytides`.
 2. **Create the app.** appstoreconnect.apple.com → Apps → + → New App: iOS, name `Tidy Tides` (if Apple says it's taken, try `Tidy Tides: Beach Cleanup`), language English (U.S.), bundle ID `com.aidenstreck.tidytides`, SKU `tidytides`, Full Access.
