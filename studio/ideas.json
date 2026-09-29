@@ -21,7 +21,7 @@
       "id": "tidy-tides",
       "name": "Tidy Tides",
       "pitch": "Idle-arcade coast cleanup: collect washed-up trash, recycle it into goods, stock your counter, and hire animal helpers to automate it. Restore a coast, then set sail to the next one for Sea Stars and permanent perks.",
-      "stage": "Prototype",
+      "stage": "Testing",
       "by": "You",
       "notes": "Play it: aidenstreck.github.io/crumbstack/prototypes/tidy-tides/ · 13 coasts (Sunny Coast to Glow Lagoon), then endless tours with twists. Sea Stars, perks, album, daily tasks, decorating, Spooky Shore event."
     },
