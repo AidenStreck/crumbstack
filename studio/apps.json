@@ -1,0 +1,26 @@
+{
+  "owner": "AidenStreck",
+  "apps": [
+    {
+      "id": "crumbstack",
+      "name": "Crumbstack",
+      "tagline": "Burger-stacking puzzle · 24 levels",
+      "repo": "AidenStreck/crumbstack",
+      "site": "https://aidenstreck.github.io/crumbstack/",
+      "icon": "https://aidenstreck.github.io/crumbstack/icons/icon-192.png",
+      "stage": "Testing on the web",
+      "checklist": [
+        { "label": "Playable game with 24 levels", "done": true },
+        { "label": "Sound, music and vibration", "done": true },
+        { "label": "Website live for testing", "done": true },
+        { "label": "iPhone app builds on GitHub", "done": true },
+        { "label": "Apple Developer account ($99/yr)", "done": false },
+        { "label": "TestFlight build on your iPhone", "done": false },
+        { "label": "Real coin purchases connected", "done": false },
+        { "label": "Privacy policy page", "done": false },
+        { "label": "App Store screenshots and description", "done": false },
+        { "label": "Submitted to Apple for review", "done": false }
+      ]
+    }
+  ]
+}

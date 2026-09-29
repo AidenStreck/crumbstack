@@ -97,4 +97,7 @@ if ('serviceWorker' in navigator && location.protocol === 'https:' && !window.Ca
 `;
 fs.writeFileSync(path.join(www, 'index.html'), html);
 fs.writeFileSync(path.join(www, '.nojekyll'), '');
+
+// 6) Studio: the control dashboard, published at /studio/
+fs.cpSync(path.join(root, 'studio'), path.join(www, 'studio'), { recursive: true });
 console.log('Built www/ (' + Math.round(html.length / 1024) + ' KB)');
