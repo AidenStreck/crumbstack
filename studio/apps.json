@@ -136,6 +136,14 @@
         {
           "label": "Submitted to Apple for review",
           "done": true
+        },
+        {
+          "label": "Version 1.1: optional rewarded videos (tested on iPhone with Google test ads)",
+          "done": true
+        },
+        {
+          "label": "After 1.0 is approved: switch to real ads, update privacy + advertising answers, submit 1.1",
+          "done": false
         }
       ],
       "links": [
