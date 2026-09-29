@@ -1,0 +1,704 @@
+<title>Sunsprout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&display=swap">
+<style>
+/* Sunsprout: a calm light puzzle. Portrait, one screen at a time: home, level map, puzzle, garden.
+   Soft garden palette: cream paper, leaf green, sun yellow, terracotta pots. */
+:root{
+  --paper:#FFF8EC; --paper-2:#F5EBD8; --ink:#2E3B2F; --ink-2:#5E6B5A; --leaf:#4CAF6A; --leaf-d:#2E8A4C; --sun:#FFC83D; --sun-d:#E0A21A;
+  --pot:#D9774E; --pot-d:#B25A35; --line:#E6D9BF; --sky:#EAF7E1;
+  --display:"Fredoka","Arial Rounded MT Bold","Trebuchet MS",sans-serif; --body:"Nunito",system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--sky);font-family:var(--body);color:var(--ink);overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;transition:background .4s}
+button{font-family:var(--display);color:inherit;cursor:pointer;border:0}
+button:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.screen{position:fixed;inset:0;display:flex;flex-direction:column;padding:calc(12px + env(safe-area-inset-top,0px)) 16px calc(14px + env(safe-area-inset-bottom,0px))}
+.screen[hidden]{display:none}
+/* home */
+#home{align-items:center;justify-content:center;gap:14px;text-align:center}
+#homeArt{width:220px;height:200px}
+.logo{font-family:var(--display);font-weight:700;font-size:clamp(46px,14vw,64px);line-height:.95;color:var(--leaf-d);letter-spacing:-.5px}
+.logo span{color:var(--sun-d)}
+.tag{font-size:16px;color:var(--ink-2);font-weight:700;max-width:28ch;line-height:1.35;margin:0}
+.btn{font-weight:700;font-size:21px;border-radius:18px;padding:13px 28px;background:var(--leaf);color:#fff;box-shadow:0 5px 0 var(--leaf-d);min-width:230px;display:flex;align-items:center;justify-content:center;gap:10px}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 var(--leaf-d)}
+.btn.sun{background:var(--sun);color:#4A3A10;box-shadow:0 5px 0 var(--sun-d)}
+.btn.soft{background:#fff;color:var(--ink);box-shadow:0 5px 0 var(--line)}
+.btn small{font-family:var(--body);font-size:13px;font-weight:800;opacity:.85}
+.row{display:flex;gap:10px;align-items:center}
+.iconBtn{width:44px;height:44px;border-radius:50%;background:#fff;box-shadow:0 3px 0 var(--line);display:grid;place-items:center;position:relative;flex:none}
+.iconBtn svg{width:22px;height:22px}
+.iconBtn .n{position:absolute;right:-4px;top:-4px;min-width:19px;height:19px;border-radius:10px;background:var(--sun);color:#4A3A10;font-size:11px;font-weight:700;display:grid;place-items:center;padding:0 4px;box-shadow:0 0 0 2px #fff}
+.homeCorner{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));right:16px}
+/* top bar */
+.bar{display:flex;align-items:center;gap:10px;min-height:48px}
+.bar h2{flex:1;margin:0;font-family:var(--display);font-weight:600;font-size:19px;line-height:1.1;text-align:center}
+.bar h2 small{display:block;font-family:var(--body);font-size:12px;color:var(--ink-2);font-weight:800;letter-spacing:.5px;text-transform:uppercase}
+/* level map */
+.scroll{flex:1;overflow-y:auto;padding:4px 2px 20px;-webkit-overflow-scrolling:touch}
+.world{background:rgba(255,255,255,.75);border-radius:22px;padding:14px 14px 16px;margin:12px 0;box-shadow:0 4px 0 rgba(0,0,0,.06)}
+.world h3{margin:0;font-family:var(--display);font-size:20px;font-weight:600;display:flex;align-items:center;gap:8px}
+.world h3 i{width:14px;height:14px;border-radius:50%;display:inline-block}
+.world p{margin:2px 0 10px;color:var(--ink-2);font-size:14px;font-weight:700}
+.lvls{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}
+.lv{aspect-ratio:1;border-radius:50%;font-size:17px;font-weight:600;background:#fff;box-shadow:0 3px 0 var(--line);display:grid;place-items:center;position:relative}
+.lv.done{background:var(--leaf);color:#fff;box-shadow:0 3px 0 var(--leaf-d)}
+.lv.next{background:var(--sun);color:#4A3A10;box-shadow:0 3px 0 var(--sun-d);animation:bob 1.4s ease-in-out infinite}
+.lv:disabled{opacity:.4;cursor:default}
+@keyframes bob{50%{transform:translateY(-3px)}}
+/* game */
+#boardWrap{flex:1;position:relative;min-height:0}
+#board{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
+.status{text-align:center;font-weight:800;font-size:14px;color:var(--ink-2);min-height:20px;margin:4px 0}
+.tray{display:flex;gap:10px;justify-content:center;align-items:center;min-height:74px;background:rgba(255,255,255,.7);border-radius:20px;padding:8px 10px;box-shadow:0 3px 0 rgba(0,0,0,.05)}
+.tray[hidden]{display:none}
+.tray .label{font-family:var(--display);font-size:13px;color:var(--ink-2);font-weight:600;writing-mode:initial;margin-right:2px}
+.piece{width:56px;height:56px;border-radius:16px;background:#fff;box-shadow:0 3px 0 var(--line);display:grid;place-items:center;touch-action:none;padding:0}
+.piece.sel{box-shadow:0 0 0 3px var(--sun),0 3px 0 var(--line)}
+.piece canvas{width:46px;height:46px;pointer-events:none}
+.tip{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(100px + env(safe-area-inset-bottom,0px));z-index:5;background:var(--ink);color:#fff;border-radius:16px;padding:10px 16px;font-size:15px;font-weight:700;max-width:min(330px,calc(100vw - 32px));text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);animation:pop .3s cubic-bezier(.2,1.6,.4,1);pointer-events:none;line-height:1.35}
+.tip b{color:var(--sun)}
+@keyframes pop{from{transform:translateX(-50%) scale(.7);opacity:0}}
+/* modal */
+.modalWrap{position:fixed;inset:0;z-index:9;background:rgba(30,45,30,.45);display:flex;align-items:center;justify-content:center;padding:16px}
+.modal{background:var(--paper);border-radius:26px;width:100%;max-width:350px;padding:22px 20px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;box-shadow:0 8px 0 var(--line),0 24px 50px rgba(0,0,0,.3);animation:mpop .35s cubic-bezier(.2,1.6,.4,1)}
+@keyframes mpop{from{transform:scale(.75);opacity:0}}
+.modal h2{margin:0;font-family:var(--display);font-size:30px;font-weight:700;color:var(--leaf-d)}
+.modal p{margin:0;font-size:16px;color:var(--ink-2);font-weight:700;line-height:1.4}
+.modal canvas{width:150px;height:130px}
+/* garden */
+#gardenArt{flex:1;width:100%;min-height:0}
+.toast{position:fixed;left:50%;top:calc(70px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:10;background:var(--ink);color:#fff;font-weight:700;padding:9px 18px;border-radius:999px;font-size:15px;white-space:nowrap;animation:pop .3s;pointer-events:none}
+.proto{position:fixed;right:10px;bottom:calc(4px + env(safe-area-inset-bottom,0px));font-size:10px;letter-spacing:1px;color:rgba(46,59,47,.45);font-weight:800;pointer-events:none}
+@media (prefers-reduced-motion:reduce){.lv.next,.modal,.tip,.toast{animation:none}}
+</style>
+
+<div class="screen" id="home">
+  <canvas id="homeArt" width="440" height="400" aria-hidden="true"></canvas>
+  <div class="logo">Sun<span>sprout</span></div>
+  <p class="tag">Bend the sunlight. Wake up the garden.</p>
+  <button class="btn" id="playBtn" type="button">Play<small id="playSub"></small></button>
+  <button class="btn sun" id="dailyBtn" type="button">Daily puzzle<small id="dailySub"></small></button>
+  <div class="row"><button class="btn soft" id="gardenBtn" type="button" style="min-width:110px">Garden</button><button class="btn soft" id="levelsBtn" type="button" style="min-width:110px">Levels</button></div>
+  <div class="homeCorner"><button class="iconBtn" id="muteBtn" type="button" aria-label="Sound on"><svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12.5 5v14l-5-4.5H4z" fill="currentColor"/><path id="waves" d="M15.5 9a4 4 0 010 6M18 6.5a7.5 7.5 0 010 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
+</div>
+
+<div class="screen" id="map" hidden>
+  <div class="bar"><button class="iconBtn" data-go="home" type="button" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h2>Levels<small id="mapSub"></small></h2><span style="width:44px"></span></div>
+  <div class="scroll" id="worlds"></div>
+</div>
+
+<div class="screen" id="game" hidden>
+  <div class="bar">
+    <button class="iconBtn" id="backBtn" type="button" aria-label="Back to levels"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <h2 id="lvTitle">Level</h2>
+    <button class="iconBtn" id="resetBtn" type="button" aria-label="Start over"><svg viewBox="0 0 24 24"><path d="M5 12a7 7 0 1 0 2.2-5.1M5 4v4h4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <button class="iconBtn" id="hintBtn" type="button" aria-label="Hint"><svg viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0-3.5 10.9V16h7v-2.1A6 6 0 0 0 12 3z" fill="#FFC83D" stroke="#B88A12" stroke-width="1.4"/><rect x="9" y="17.5" width="6" height="2.5" rx="1" fill="#B88A12"/></svg><i class="n" id="hintN">3</i></button>
+  </div>
+  <div class="status" id="status"></div>
+  <div id="boardWrap"><canvas id="board" aria-label="Puzzle board"></canvas></div>
+  <div class="tray" id="tray" hidden></div>
+</div>
+
+<div class="screen" id="garden" hidden>
+  <div class="bar"><button class="iconBtn" data-go="home" type="button" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h2>My garden<small id="gardenSub"></small></h2><span style="width:44px"></span></div>
+  <canvas id="gardenArt" aria-label="Your garden"></canvas>
+</div>
+<div class="proto">PROTOTYPE</div>
+
+<script>
+(() => {
+const $ = id => document.getElementById(id);
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// ================= PUZZLE ENGINE =================
+// The board is a grid. Suns shine a beam in one direction. Mirrors ("/" = o 0, "\" = o 1) turn it,
+// crystals split it in two, coloured glass tints it, rocks block it. A seed pot drinks every beam that
+// reaches it and needs exactly the number shown, in its own colour. Too much (or the wrong colour) wilts it.
+const DX = [1, 0, -1, 0], DY = [0, 1, 0, -1];          // 0 right, 1 down, 2 left, 3 up
+const MIR = [[3, 2, 1, 0], [1, 0, 3, 2]];              // new direction after a mirror, by orientation
+function rng(seed){ let s = (seed >>> 0) || 1; return () => { s ^= s << 13; s >>>= 0; s ^= s >>> 17; s ^= s << 5; s >>>= 0; return s / 4294967296; }; }
+function hashStr(str){ let h = 2166136261; for (const ch of str) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
+
+function simulate(b){
+  const hits = new Map(), segs = [], seen = new Set(), q = [];
+  b.g.forEach((p, i) => { if (p && p.t === 'sun') q.push({ x: i % b.w, y: (i / b.w) | 0, d: p.d, c: 'w' }); });
+  let guard = 0;
+  while (q.length && guard++ < 300) {
+    let { x, y, d, c } = q.shift(); let pts = [[x, y]], end = 'edge';
+    for (let step = 0; step < 400; step++) {
+      const nx = x + DX[d], ny = y + DY[d];
+      if (nx < 0 || ny < 0 || nx >= b.w || ny >= b.h) { pts.push([x + DX[d] * .5, y + DY[d] * .5]); end = 'edge'; break; }
+      x = nx; y = ny;
+      const key = (y * b.w + x) * 16 + d * 4 + 'wrby'.indexOf(c); if (seen.has(key)) { pts.push([x, y]); end = 'loop'; break; } seen.add(key);
+      const p = b.g[y * b.w + x];
+      if (!p) continue;
+      if (p.t === 'mirror') { pts.push([x, y]); d = MIR[p.o][d]; continue; }
+      if (p.t === 'filter') { if (c !== p.c) { pts.push([x, y]); segs.push({ pts, c, end: 'filter' }); pts = [[x, y]]; c = p.c; } continue; }
+      if (p.t === 'split') { pts.push([x, y]); q.push({ x, y, d: (d + 1) % 4, c }, { x, y, d: (d + 3) % 4, c }); end = 'split'; break; }
+      if (p.t === 'seed') { pts.push([x, y]); const i = y * b.w + x; if (!hits.has(i)) hits.set(i, []); hits.get(i).push(c); end = 'seed'; break; }
+      pts.push([x - DX[d] * .5, y - DY[d] * .5]); end = 'block'; break;   // rock or sun
+    }
+    segs.push({ pts, c, end });
+  }
+  return { hits, segs };
+}
+function judge(b, sim){
+  let solved = true, seeds = 0; const st = new Map();
+  b.g.forEach((p, i) => { if (!p || p.t !== 'seed') return; seeds++;
+    const h = sim.hits.get(i) || [], good = h.filter(c => c === p.c).length, bad = h.length - good;
+    const s = bad > 0 || good > p.need ? 'wilt' : good === p.need ? 'happy' : 'thirsty';
+    st.set(i, { s, good, bad }); if (s !== 'happy') solved = false; });
+  return { solved: solved && seeds > 0, st };
+}
+const cloneBoard = b => ({ w: b.w, h: b.h, g: b.g.map(p => p && { ...p }), tray: (b.tray || []).map(p => ({ ...p })) });
+
+// ---------- Level generator: build a working garden first, then take it apart ----------
+function tryGen(spec, r){
+  const { w, h } = spec, g = Array(w * h).fill(null), used = new Uint8Array(w * h);
+  const ri = (a, b) => a + Math.floor(r() * (b - a + 1)), inb = (x, y) => x >= 0 && y >= 0 && x < w && y < h, I = (x, y) => y * w + x;
+  const cols = (spec.colors || []).slice(); let filtersLeft = spec.filters || 0, splitsLeft = spec.splits || 0;
+  const pathMirrors = [];
+  function endSeed(x, y, d, col){
+    // sometimes aim at a seed that's already there, so it needs two beams
+    if (spec.merge && r() < spec.merge) { let cx = x, cy = y; for (let k = 0; k < 8; k++) { cx += DX[d]; cy += DY[d]; if (!inb(cx, cy)) break; const p = g[I(cx, cy)]; if (p) { if (p.t === 'seed' && p.c === col) { for (let m = 1; m < k + 1; m++) used[I(x + DX[d] * m, y + DY[d] * m)] = 1; return true; } break; } } }
+    if (used[I(x, y)] || g[I(x, y)]) return false;
+    g[I(x, y)] = { t: 'seed', need: 0, c: col }; used[I(x, y)] = 1; return true;
+  }
+  function walk(x, y, d, turns, col, depth){
+    if (depth > 12) return false;
+    let run = ri(1, Math.max(1, Math.floor((d % 2 ? h : w) * .6)));
+    for (let steps = 1; ; steps++) {
+      const nx = x + DX[d], ny = y + DY[d];
+      if (!inb(nx, ny)) return false;
+      const np = g[I(nx, ny)];
+      if (np) { if (np.t === 'seed' && np.c === col && turns === 0) return true; return false; }
+      x = nx; y = ny;
+      const blockedAhead = !inb(x + DX[d], y + DY[d]) || !!g[I(x + DX[d], y + DY[d])];
+      if ((steps >= run || blockedAhead) && !used[I(x, y)]) {
+        if (filtersLeft > 0 && cols.length && col === 'w' && r() < .5 && !blockedAhead) { g[I(x, y)] = { t: 'filter', c: col = cols.shift() }; used[I(x, y)] = 1; filtersLeft--; run = steps + ri(1, 3); continue; }
+        if (splitsLeft > 0 && turns > 0 && r() < .55) {
+          const a = (d + 1) % 4, b2 = (d + 3) % 4;
+          if (inb(x + DX[a], y + DY[a]) && inb(x + DX[b2], y + DY[b2])) { splitsLeft--; g[I(x, y)] = { t: 'split' }; used[I(x, y)] = 1;
+            const t1 = Math.max(0, Math.ceil((turns - 1) / 2)), t2 = Math.max(0, turns - 1 - t1);
+            return walk(x, y, a, t1, col, depth + 1) && walk(x, y, b2, t2, col, depth + 1); }
+        }
+        if (turns > 0) {
+          const opts = [(d + 1) % 4, (d + 3) % 4].sort(() => r() - .5).filter(nd => inb(x + DX[nd], y + DY[nd]) && !g[I(x + DX[nd], y + DY[nd])]);
+          if (opts.length) { const nd = opts[0], o = MIR[0][d] === nd ? 0 : 1; const m = { t: 'mirror', o }; g[I(x, y)] = m; used[I(x, y)] = 1; pathMirrors.push(m); return walk(x, y, nd, turns - 1, col, depth + 1); }
+          if (blockedAhead) return false;
+          continue;
+        }
+        return endSeed(x, y, d, col);
+      }
+      if (blockedAhead) return false;
+      used[I(x, y)] = 1;
+    }
+  }
+  // suns on the edge, shining inward
+  for (let s = 0; s < spec.suns; s++) {
+    let ok = false;
+    for (let t = 0; t < 30 && !ok; t++) {
+      const side = ri(0, 3); let x, y, d;
+      if (side === 0) { x = 0; y = ri(0, h - 1); d = 0; } else if (side === 1) { x = w - 1; y = ri(0, h - 1); d = 2; } else if (side === 2) { x = ri(0, w - 1); y = 0; d = 1; } else { x = ri(0, w - 1); y = h - 1; d = 3; }
+      if (g[I(x, y)] || used[I(x, y)] || !inb(x + DX[d], y + DY[d]) || g[I(x + DX[d], y + DY[d])]) continue;
+      g[I(x, y)] = { t: 'sun', d }; used[I(x, y)] = 1; ok = walk(x, y, d, ri(spec.turns[0], spec.turns[1]), 'w', 0);
+      if (!ok) return null;
+    }
+    if (!ok) return null;
+  }
+  if (filtersLeft > 0 && (spec.filters || 0) > 0 && filtersLeft === spec.filters) return null;   // colour levels must use colour
+  if (splitsLeft === spec.splits && spec.splits > 0) return null;
+  // the finished garden must work: every beam lands in a seed, every seed gets light
+  const sol = { w, h, g, tray: [] }, sim = simulate(sol);
+  if (sim.segs.some(s => s.end !== 'seed' && s.end !== 'split' && s.end !== 'filter')) return null;
+  let seeds = 0; g.forEach((p, i) => { if (p && p.t === 'seed') { const hh = sim.hits.get(i) || []; if (!hh.length || hh.some(c => c !== p.c)) seeds = -99; p.need = hh.length; seeds++; } });
+  if (seeds < 1 || !judge(sol, sim).solved) return null;
+  if (spec.needTwo && !g.some(p => p && p.t === 'seed' && p.need >= 2)) return null;
+  if (pathMirrors.length < (spec.minMirrors || 1)) return null;
+  // decoys on cells no beam uses
+  const free = () => { const f = []; for (let i = 0; i < w * h; i++) if (!g[i] && !used[i]) f.push(i); return f; };
+  for (let k = 0; k < (spec.rocks || 0); k++) { const f = free(); if (f.length) g[f[ri(0, f.length - 1)]] = { t: 'rock' }; }
+  const decoys = [];
+  for (let k = 0; k < (spec.decoys || 0); k++) { const f = free(); if (f.length) { const m = { t: 'mirror', o: ri(0, 1), decoy: true }; g[f[ri(0, f.length - 1)]] = m; decoys.push(m); } }
+  if (!judge(sol, simulate(sol)).solved) return null;
+  return makePuzzle(sol, pathMirrors, decoys, spec, r);
+}
+function makePuzzle(sol, pathMirrors, decoys, spec, r){
+  const nFixed = Math.floor(pathMirrors.length * (spec.fixedFrac || 0));
+  const order = pathMirrors.slice().sort(() => r() - .5), fixed = new Set(order.slice(0, nFixed));
+  pathMirrors.forEach(m => { m.sol = m.o; if (fixed.has(m)) m.fixed = true; });
+  decoys.forEach(m => { m.sol = m.o; m.fixed = true; });   // decoys never turn: they just catch stray light
+  const b = cloneBoard(sol);
+  const idx = []; b.g.forEach((p, i) => { if (p && p.t === 'mirror') idx.push(i); });
+  if (spec.mode === 'place') {
+    // take the moving mirrors off the board: they go in the basket
+    const moving = idx.filter(i => !b.g[i].fixed && !b.g[i].decoy);
+    if (!moving.length) return null;
+    b.solution = moving.map(i => ({ i, o: b.g[i].o }));
+    b.tray = moving.map(i => ({ t: 'mirror', o: Math.floor(r() * 2), movable: true }));
+    moving.forEach(i => { b.g[i] = null; });
+    b.g.forEach(p => { if (p && p.t === 'mirror') p.fixed = true; });     // everything left on the board stays put
+    b.mode = 'place';
+    if (judge(b, simulate(b)).solved) return null;
+    return b;
+  }
+  // rotate mode: find every orientation that works, then scramble far from them
+  const rot = idx.filter(i => !b.g[i].fixed);
+  if (rot.length > 15 || rot.length < 1) return null;
+  const sols = [];
+  for (let mask = 0; mask < (1 << rot.length); mask++) {
+    rot.forEach((i, k) => { b.g[i].o = (mask >> k) & 1; });
+    if (judge(b, simulate(b)).solved) { sols.push(mask); if (sols.length > (spec.maxSol || 2)) return null; }
+  }
+  if (!sols.length) return null;
+  let best = null, bestD = -1;
+  for (let t = 0; t < 40; t++) {
+    const m = Math.floor(r() * (1 << rot.length)); let dmin = 99;
+    for (const s of sols) { let x = m ^ s, c = 0; while (x) { c += x & 1; x >>= 1; } dmin = Math.min(dmin, c); }
+    if (dmin > bestD) { bestD = dmin; best = m; }
+  }
+  if (bestD < (spec.minFlips || 1)) return null;
+  rot.forEach((i, k) => { b.g[i].o = (best >> k) & 1; b.g[i].sol = (sols[0] >> k) & 1; });
+  b.mode = 'rotate'; b.par = bestD;
+  return b;
+}
+function genLevel(spec, seed){
+  for (let a = 0; a < 600; a++) { const lv = tryGen(spec, rng(seed + a * 7919)); if (lv) { lv.spec = spec; return lv; } }
+  return null;
+}
+
+// ---------- The four worlds ----------
+const WORLDS = [
+  { id:'spring', name:'Spring Meadow', teach:'Turn the mirrors',       col:'#7CC46A', soil:['#9C6B45', '#B98357'], sky:'#EAF7E1' },
+  { id:'summer', name:'Summer Terrace', teach:'Place your own mirrors', col:'#F2B33D', soil:['#A8744A', '#C48C5B'], sky:'#FFF4D6' },
+  { id:'autumn', name:'Autumn Orchard', teach:'Crystals split the light', col:'#E0784A', soil:['#8E5E3E', '#A8704A'], sky:'#FBE9DA' },
+  { id:'winter', name:'Winter Greenhouse', teach:'Coloured glass tints the light', col:'#6FA8DC', soil:['#7E6A5A', '#95806E'], sky:'#E6F0FA' },
+];
+const PER_WORLD = 15;
+function levelSpec(wi, i){
+  const t = i / (PER_WORLD - 1), lerp = (a, b) => Math.round(a + (b - a) * t);
+  if (wi === 0) {
+    if (i === 0) return { w:4, h:5, suns:1, turns:[1,1], mode:'rotate', minFlips:1, maxSol:9 };
+    if (i === 1) return { w:4, h:5, suns:1, turns:[2,2], mode:'rotate', minFlips:1, maxSol:9 };
+    if (i === 2) return { w:5, h:5, suns:1, turns:[2,3], mode:'rotate', minFlips:2, maxSol:4, decoys:1 };
+    return { w: lerp(5, 7), h: lerp(6, 8), suns: i < 7 ? 1 : 2, turns:[2, lerp(3, 5)], mode:'rotate', decoys: lerp(1, 4), rocks: lerp(0, 3), fixedFrac:.15, merge: i > 6 ? .8 : 0, needTwo: i >= 8 && i % 2 === 0, minFlips: lerp(2, 5), maxSol:2, minMirrors: lerp(2, 5) };
+  }
+  if (wi === 1) {
+    if (i === 0) return { w:4, h:5, suns:1, turns:[1,1], mode:'place' };
+    if (i === 1) return { w:5, h:5, suns:1, turns:[2,2], mode:'place', rocks:1 };
+    return { w: lerp(5, 7), h: lerp(6, 8), suns: i < 8 ? 1 : 2, turns:[2, lerp(2, 4)], mode:'place', fixedFrac: .3, rocks: lerp(1, 4), decoys: lerp(0, 2), merge: i > 7 ? .8 : 0, needTwo: i >= 9 && i % 2 === 1, minMirrors: lerp(2, 4) };
+  }
+  if (wi === 2) {
+    const mode = i % 2 ? 'place' : 'rotate';
+    return { w: lerp(5, 7), h: lerp(6, 8), suns: i < 9 ? 1 : 2, turns:[2, lerp(3, 5)], splits: i < 6 ? 1 : 2, mode, fixedFrac: mode === 'place' ? .3 : .15, rocks: lerp(0, 3), decoys: lerp(0, 3), minFlips: lerp(2, 4), maxSol:2, minMirrors: lerp(2, 4) };
+  }
+  const mode = i % 2 ? 'place' : 'rotate', pal = ['r', 'b', 'y'];
+  return { w: lerp(5, 7), h: lerp(6, 8), suns: i < 6 ? 1 : 2, turns:[2, lerp(3, 5)], filters: i < 5 ? 1 : 2, colors: [pal[i % 3], pal[(i + 1) % 3]], splits: i > 7 ? 1 : 0, mode, fixedFrac: mode === 'place' ? .3 : .15, rocks: lerp(0, 3), decoys: lerp(0, 2), minFlips: lerp(2, 4), maxSol:2, minMirrors: 2 };
+}
+const levelCache = {};
+function getLevel(wi, i){ const k = wi + ':' + i; return levelCache[k] || (levelCache[k] = genLevel(levelSpec(wi, i), hashStr('sunsprout-v1-' + k))); }
+function dailyLevel(day){
+  const d = new Date(day + 'T12:00:00'), wi = d.getDay() % 4, i = 8 + (d.getDate() % 5);
+  return genLevel(levelSpec(wi, i), hashStr('sunsprout-daily-' + day));
+}
+
+// ================= ART =================
+const BEAM = { w: ['255,236,150', '#FFF7D1'], r: ['255,107,107', '#FFD6D6'], b: ['90,169,255', '#DDEEFF'], y: ['255,176,0', '#FFE9B0'] };
+const GLASS = { r: '#FF6B6B', b: '#5AA9FF', y: '#FFB000' };
+const FLOWER = { spring: 'tulip', summer: 'sunflower', autumn: 'marigold', winter: 'snowdrop', r: 'rose', b: 'bluebell', y: 'daffodil' };
+function rr(c, x, y, w, h, r){ c.beginPath(); c.roundRect(x, y, w, h, r); }
+function drawSun(c, x, y, s, d, t){
+  c.save(); c.translate(x, y);
+  const g = c.createRadialGradient(0, 0, s * .1, 0, 0, s * .62); g.addColorStop(0, 'rgba(255,220,100,.55)'); g.addColorStop(1, 'rgba(255,220,100,0)'); c.fillStyle = g; c.beginPath(); c.arc(0, 0, s * .62, 0, 7); c.fill();
+  c.save(); c.rotate((reduce ? 0 : t * .4)); c.fillStyle = '#FFB81F';
+  for (let i = 0; i < 10; i++) { c.rotate(Math.PI / 5); c.beginPath(); c.moveTo(-s * .06, -s * .28); c.lineTo(0, -s * .42); c.lineTo(s * .06, -s * .28); c.fill(); }
+  c.restore();
+  c.fillStyle = '#FFC83D'; c.beginPath(); c.arc(0, 0, s * .27, 0, 7); c.fill(); c.strokeStyle = '#F0A81A'; c.lineWidth = s * .03; c.stroke();
+  c.strokeStyle = '#8A5A10'; c.lineWidth = s * .035; c.lineCap = 'round';
+  c.beginPath(); c.arc(-s * .09, -s * .03, s * .045, Math.PI * 1.1, Math.PI * 1.9); c.stroke(); c.beginPath(); c.arc(s * .09, -s * .03, s * .045, Math.PI * 1.1, Math.PI * 1.9); c.stroke();
+  c.beginPath(); c.arc(0, s * .05, s * .08, .2, Math.PI - .2); c.stroke();
+  c.fillStyle = 'rgba(255,120,90,.45)'; c.beginPath(); c.arc(-s * .16, s * .06, s * .04, 0, 7); c.arc(s * .16, s * .06, s * .04, 0, 7); c.fill();
+  // which way it shines
+  c.rotate(d * Math.PI / 2); c.fillStyle = '#F0A81A'; c.beginPath(); c.moveTo(s * .47, 0); c.lineTo(s * .37, -s * .08); c.lineTo(s * .37, s * .08); c.fill();
+  c.restore();
+}
+function drawBase(c, x, y, s, kind){
+  c.save(); c.translate(x, y);
+  c.fillStyle = 'rgba(40,30,15,.22)'; c.beginPath(); c.ellipse(0, s * .06, s * .36, s * .33, 0, 0, 7); c.fill();
+  if (kind === 'fixed') { c.fillStyle = '#9EA39A'; c.beginPath(); c.arc(0, 0, s * .34, 0, 7); c.fill(); c.fillStyle = '#B7BCB2'; c.beginPath(); c.arc(-s * .04, -s * .04, s * .28, 0, 7); c.fill();
+    c.fillStyle = '#7F857B'; [[.22, .22], [-.22, -.22], [.22, -.22], [-.22, .22]].forEach(([a, b]) => { c.beginPath(); c.arc(a * s, b * s, s * .03, 0, 7); c.fill(); }); }
+  else { c.fillStyle = kind === 'move' ? '#E0A968' : '#C8955E'; c.beginPath(); c.arc(0, 0, s * .34, 0, 7); c.fill(); c.fillStyle = kind === 'move' ? '#EFC389' : '#DDAE75'; c.beginPath(); c.arc(0, 0, s * .28, 0, 7); c.fill();
+    c.strokeStyle = 'rgba(120,70,30,.45)'; c.lineWidth = s * .025; c.lineCap = 'round';
+    if (kind === 'rot') { c.beginPath(); c.arc(0, 0, s * .31, -.5, .5); c.stroke(); c.beginPath(); c.arc(0, 0, s * .31, Math.PI - .5, Math.PI + .5); c.stroke();
+      c.fillStyle = 'rgba(120,70,30,.55)'; [[.5, 1], [Math.PI + .5, -1]].forEach(([a]) => { const px = Math.cos(a) * s * .31, py = Math.sin(a) * s * .31; c.beginPath(); c.arc(px, py, s * .03, 0, 7); c.fill(); }); }
+    else { c.fillStyle = 'rgba(120,70,30,.35)'; [[-.12, -.2], [0, -.2], [.12, -.2]].forEach(([a, b]) => { c.beginPath(); c.arc(a * s, b * s, s * .022, 0, 7); c.fill(); }); } }
+  c.restore();
+}
+function drawMirror(c, x, y, s, ang, kind, hinted){
+  drawBase(c, x, y, s, kind);
+  c.save(); c.translate(x, y); c.rotate(ang);
+  const L = s * .4, T = s * .08;
+  c.fillStyle = '#5E6B75'; rr(c, -L, -T + s * .02, L * 2, T * 2, T); c.fill();
+  const g = c.createLinearGradient(0, -T, 0, T); g.addColorStop(0, '#F4FAFD'); g.addColorStop(.5, '#C8D8E0'); g.addColorStop(1, '#8FA5B0'); c.fillStyle = g; rr(c, -L, -T, L * 2, T * 2, T); c.fill();
+  c.strokeStyle = 'rgba(255,255,255,.95)'; c.lineWidth = s * .02; c.beginPath(); c.moveTo(-L * .7, -T * .35); c.lineTo(L * .4, -T * .35); c.stroke();
+  if (hinted) { c.strokeStyle = '#FFC83D'; c.lineWidth = s * .03; rr(c, -L - 2, -T - 2, L * 2 + 4, T * 2 + 4, T + 2); c.stroke(); }
+  c.restore();
+}
+function drawRock(c, x, y, s){
+  c.save(); c.translate(x, y);
+  c.fillStyle = 'rgba(40,30,15,.22)'; c.beginPath(); c.ellipse(0, s * .16, s * .36, s * .14, 0, 0, 7); c.fill();
+  c.fillStyle = '#8E948A'; c.beginPath(); c.moveTo(-s * .34, s * .16); c.quadraticCurveTo(-s * .36, -s * .2, -s * .05, -s * .3); c.quadraticCurveTo(s * .32, -s * .3, s * .35, s * .16); c.closePath(); c.fill();
+  c.fillStyle = '#A9AFA4'; c.beginPath(); c.ellipse(-s * .08, -s * .12, s * .15, s * .09, -.4, 0, 7); c.fill();
+  c.fillStyle = '#7BB36A'; c.beginPath(); c.ellipse(s * .14, s * .08, s * .13, s * .06, .2, 0, 7); c.fill();
+  c.restore();
+}
+function drawCrystal(c, x, y, s, t){
+  c.save(); c.translate(x, y);
+  drawBase(c, 0, 0, s, 'fixed');
+  const glow = reduce ? .3 : .25 + .12 * Math.sin(t * 3); c.fillStyle = `rgba(200,160,255,${glow})`; c.beginPath(); c.arc(0, 0, s * .42, 0, 7); c.fill();
+  c.fillStyle = '#B690F5'; c.beginPath(); c.moveTo(0, -s * .3); c.lineTo(s * .2, -s * .06); c.lineTo(s * .14, s * .22); c.lineTo(-s * .14, s * .22); c.lineTo(-s * .2, -s * .06); c.closePath(); c.fill();
+  c.fillStyle = '#D9C4FF'; c.beginPath(); c.moveTo(0, -s * .3); c.lineTo(s * .2, -s * .06); c.lineTo(0, 0); c.closePath(); c.fill();
+  c.fillStyle = '#9A72E0'; c.beginPath(); c.moveTo(0, 0); c.lineTo(s * .14, s * .22); c.lineTo(-s * .14, s * .22); c.closePath(); c.fill();
+  c.fillStyle = '#fff'; c.beginPath(); c.arc(-s * .06, -s * .12, s * .03, 0, 7); c.fill();
+  c.restore();
+}
+function drawFilter(c, x, y, s, col){
+  c.save(); c.translate(x, y);
+  c.fillStyle = 'rgba(40,30,15,.2)'; rr(c, -s * .3, -s * .26, s * .62, s * .6, s * .08); c.fill();
+  c.fillStyle = '#8B5A34'; rr(c, -s * .32, -s * .32, s * .64, s * .64, s * .1); c.fill();
+  c.globalAlpha = .82; c.fillStyle = GLASS[col]; rr(c, -s * .25, -s * .25, s * .5, s * .5, s * .06); c.fill(); c.globalAlpha = 1;
+  c.fillStyle = 'rgba(255,255,255,.55)'; c.beginPath(); c.moveTo(-s * .2, -s * .2); c.lineTo(-s * .02, -s * .2); c.lineTo(-s * .2, s * .0); c.fill();
+  c.restore();
+}
+// flowers: used in pots, on the win card and in the garden
+function drawPlant(c, x, y, s, kind, g, state, t){
+  // g: 0 = seed, 1 = full bloom. y is the soil line.
+  c.save(); c.translate(x, y);
+  const sway = reduce ? 0 : Math.sin((t || 0) * 1.6 + x) * .05 * g;
+  if (state === 'wilt') { c.strokeStyle = '#8A7A4A'; c.lineWidth = s * .05; c.lineCap = 'round'; c.beginPath(); c.moveTo(0, 0); c.quadraticCurveTo(s * .05, -s * .3, s * .22, -s * .22); c.stroke();
+    c.fillStyle = '#A8925A'; c.beginPath(); c.ellipse(s * .24, -s * .18, s * .07, s * .04, .8, 0, 7); c.fill(); c.fillStyle = '#9C8A55'; c.beginPath(); c.ellipse(-s * .06, -s * .1, s * .08, s * .035, -.5, 0, 7); c.fill(); c.restore(); return; }
+  if (g <= .02) { c.fillStyle = '#6B4A2E'; c.beginPath(); c.ellipse(0, -s * .02, s * .06, s * .045, 0, 0, 7); c.fill(); c.restore(); return; }
+  const H = s * (.12 + .5 * g); c.rotate(sway);
+  c.strokeStyle = '#3E9E5C'; c.lineWidth = s * .05; c.lineCap = 'round'; c.beginPath(); c.moveTo(0, 0); c.lineTo(0, -H); c.stroke();
+  c.fillStyle = '#4CAF6A'; const lf = Math.min(1, g * 2);
+  c.beginPath(); c.ellipse(-s * .09 * lf, -H * .35, s * .1 * lf, s * .04 * lf, -.6, 0, 7); c.fill(); c.beginPath(); c.ellipse(s * .09 * lf, -H * .55, s * .1 * lf, s * .04 * lf, .6, 0, 7); c.fill();
+  const b = Math.max(0, (g - .55) / .45); // bloom
+  c.translate(0, -H);
+  if (b <= 0) { c.fillStyle = '#6FCF7F'; c.beginPath(); c.ellipse(0, 0, s * .05, s * .08, 0, 0, 7); c.fill(); c.restore(); return; }
+  const r = s * .2 * b;
+  if (kind === 'tulip' || kind === 'rose') { c.fillStyle = kind === 'rose' ? '#E84A5F' : '#FF8FB1'; c.beginPath(); c.moveTo(-r, -r * .1); c.lineTo(-r, -r); c.lineTo(-r * .45, -r * .55); c.lineTo(0, -r * 1.1); c.lineTo(r * .45, -r * .55); c.lineTo(r, -r); c.lineTo(r, -r * .1); c.quadraticCurveTo(0, r * .9, -r, -r * .1); c.fill();
+    c.fillStyle = 'rgba(255,255,255,.3)'; c.beginPath(); c.ellipse(-r * .4, -r * .4, r * .18, r * .35, .2, 0, 7); c.fill(); }
+  else if (kind === 'sunflower' || kind === 'gold') { c.fillStyle = kind === 'gold' ? '#FFD84A' : '#FFC83D'; for (let i = 0; i < 12; i++) { c.save(); c.rotate(i * Math.PI / 6); c.beginPath(); c.ellipse(0, -r * .85, r * .22, r * .45, 0, 0, 7); c.fill(); c.restore(); }
+    c.fillStyle = kind === 'gold' ? '#E0A21A' : '#7A4A20'; c.beginPath(); c.arc(0, 0, r * .5, 0, 7); c.fill(); if (kind === 'gold') { c.fillStyle = '#fff'; c.beginPath(); c.arc(-r * .15, -r * .15, r * .12, 0, 7); c.fill(); } }
+  else if (kind === 'marigold') { ['#E8622C', '#F28C28', '#FFB347'].forEach((col, k) => { c.fillStyle = col; for (let i = 0; i < 8; i++) { c.save(); c.rotate(i * Math.PI / 4 + k * .2); c.beginPath(); c.arc(0, -r * (.7 - k * .22), r * (.34 - k * .06), 0, 7); c.fill(); c.restore(); } }); }
+  else if (kind === 'snowdrop' || kind === 'bluebell') { c.fillStyle = kind === 'bluebell' ? '#5A7BFF' : '#FFFFFF'; c.strokeStyle = kind === 'bluebell' ? '#3E5AD0' : '#C9D6E6'; c.lineWidth = 1;
+    [-.5, 0, .5].forEach(a => { c.save(); c.rotate(a); c.beginPath(); c.moveTo(0, -r * .2); c.quadraticCurveTo(-r * .45, r * .3, -r * .15, r * .85); c.lineTo(r * .15, r * .85); c.quadraticCurveTo(r * .45, r * .3, 0, -r * .2); c.fill(); c.stroke(); c.restore(); });
+    c.fillStyle = '#4CAF6A'; c.beginPath(); c.arc(0, -r * .2, r * .15, 0, 7); c.fill(); }
+  else if (kind === 'daffodil') { c.fillStyle = '#FFF1A8'; for (let i = 0; i < 6; i++) { c.save(); c.rotate(i * Math.PI / 3); c.beginPath(); c.ellipse(0, -r * .6, r * .28, r * .5, 0, 0, 7); c.fill(); c.restore(); } c.fillStyle = '#FFB000'; c.beginPath(); c.arc(0, 0, r * .38, 0, 7); c.fill(); c.fillStyle = '#E08E00'; c.beginPath(); c.arc(0, 0, r * .2, 0, 7); c.fill(); }
+  c.restore();
+}
+function drawPot(c, x, y, s, seed, state, g, got, t, worldId){
+  c.save(); c.translate(x, y);
+  const band = seed.c !== 'w' ? GLASS[seed.c] : null;
+  c.fillStyle = 'rgba(40,30,15,.22)'; c.beginPath(); c.ellipse(0, s * .34, s * .3, s * .08, 0, 0, 7); c.fill();
+  c.fillStyle = state === 'wilt' ? '#B7775C' : '#D9774E'; c.beginPath(); c.moveTo(-s * .26, s * .02); c.lineTo(s * .26, s * .02); c.lineTo(s * .19, s * .34); c.lineTo(-s * .19, s * .34); c.closePath(); c.fill();
+  c.fillStyle = state === 'wilt' ? '#A5684E' : '#C4643E'; rr(c, -s * .3, -s * .04, s * .6, s * .1, s * .03); c.fill();
+  if (band) { c.fillStyle = band; rr(c, -s * .22, s * .13, s * .44, s * .07, s * .03); c.fill(); }
+  c.fillStyle = '#5A3A22'; c.beginPath(); c.ellipse(0, -s * .03, s * .25, s * .05, 0, 0, 7); c.fill();
+  const kind = seed.c !== 'w' ? FLOWER[seed.c] : FLOWER[worldId];
+  drawPlant(c, 0, -s * .03, s * 1.05, kind, g, state, t);
+  // how many beams it wants: little suns, filled when lit
+  const n = seed.need, gap = s * .15, x0 = -(n - 1) * gap / 2;
+  for (let i = 0; i < n; i++) { const lit = i < got; c.fillStyle = lit ? '#FFC83D' : 'rgba(255,255,255,.85)'; c.strokeStyle = lit ? '#E0A21A' : 'rgba(90,70,40,.45)'; c.lineWidth = 1.2;
+    c.beginPath(); c.arc(x0 + i * gap, s * .43, s * .055, 0, 7); c.fill(); c.stroke(); }
+  if (state === 'wilt') { c.fillStyle = '#D9443A'; c.font = `700 ${s * .2}px Fredoka, sans-serif`; c.textAlign = 'center'; c.fillText('!', s * .3, -s * .18); }
+  c.restore();
+}
+function drawBeams(c, segs, ox, oy, cs, t){
+  const P = p => [ox + (p[0] + .5) * cs, oy + (p[1] + .5) * cs];
+  c.save(); c.lineCap = 'round'; c.lineJoin = 'round';
+  for (const pass of [[.42, .18], [.2, .55], [.07, 1]]) {
+    for (const sg of segs) { const col = BEAM[sg.c]; c.strokeStyle = pass[1] === 1 ? col[1] : `rgba(${col[0]},${pass[1]})`; c.lineWidth = cs * pass[0];
+      c.beginPath(); sg.pts.forEach((p, k) => { const [x, y] = P(p); k ? c.lineTo(x, y) : c.moveTo(x, y); }); c.stroke(); }
+  }
+  if (!reduce) for (const sg of segs) { // light flowing along each beam
+    let len = 0; const L = []; for (let k = 1; k < sg.pts.length; k++) { const a = P(sg.pts[k - 1]), b = P(sg.pts[k]); const d = Math.hypot(b[0] - a[0], b[1] - a[1]); L.push([a, b, d]); len += d; }
+    c.fillStyle = '#fff';
+    for (let u = (t * cs * 2.2) % (cs * .8); u < len; u += cs * .8) { let rem = u; for (const [a, b, d] of L) { if (rem <= d) { const k = d ? rem / d : 0; c.globalAlpha = .9; c.beginPath(); c.arc(a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, cs * .035, 0, 7); c.fill(); break; } rem -= d; } }
+    c.globalAlpha = 1;
+  }
+  c.restore();
+}
+function pieceIcon(p, size){
+  const cv = document.createElement('canvas'); cv.width = cv.height = size * 2; const g = cv.getContext('2d'); g.scale(2, 2);
+  if (p.t === 'mirror') drawMirror(g, size / 2, size / 2, size * 1.05, p.o ? Math.PI / 4 : -Math.PI / 4, 'move');
+  return cv;
+}
+function drawHome(c, W, H, t){
+  c.clearRect(0, 0, W, H);
+  const s = W / 220;
+  drawSun(c, 40 * s, 60 * s, 70 * s, 0, t);
+  // beam: sun -> mirror -> pot
+  const segs = [{ pts: [[0, 0], [2.6, 0], [2.6, 2.1]], c: 'w' }];
+  drawBeams(c, segs, 40 * s - 30 * s * .5 - 3, 60 * s - 30 * s * .5, 42 * s, t);
+  drawMirror(c, 40 * s + 2.6 * 42 * s - 3 + 0, 60 * s, 56 * s, Math.PI / 4 + (reduce ? 0 : Math.sin(t) * .05), 'rot');
+  const g = reduce ? 1 : Math.min(1, .6 + .4 * ((Math.sin(t * .8) + 1) / 2));
+  drawPot(c, 40 * s + 2.6 * 42 * s - 3, 60 * s + 2.1 * 42 * s + 6 * s, 64 * s, { need: 1, c: 'w' }, 'happy', g, 1, t, 'spring');
+}
+
+// ================= SAVE =================
+const KEY = 'sunsprout-save-v1';
+let save = { v:1, done:{}, hints:3, hintDay:'', daily:{}, streak:0, lastDaily:'', muted:false, tips:{} };
+try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.v === 1) save = Object.assign(save, s); } catch(e){}
+const persist = () => { try { localStorage.setItem(KEY, JSON.stringify(save)); } catch(e){} };
+const dayStr = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+const today = () => dayStr(new Date());
+if (save.hintDay !== today()) { if (save.hintDay) save.hints = Math.min(5, save.hints + 1); save.hintDay = today(); persist(); }
+const TOTAL = WORLDS.length * PER_WORLD;
+const key = (wi, i) => wi + ':' + i;
+const isDone = (wi, i) => save.done[key(wi, i)] != null;
+function nextLevel(){ for (let n = 0; n < TOTAL; n++) { const wi = Math.floor(n / PER_WORLD), i = n % PER_WORLD; if (!isDone(wi, i)) return [wi, i]; } return null; }
+const unlocked = (wi, i) => { const n = wi * PER_WORLD + i; return n === 0 || isDone(wi, i) || (n > 0 && isDone(Math.floor((n - 1) / PER_WORLD), (n - 1) % PER_WORLD)); };
+const dailyWorld = day => new Date(day + 'T12:00:00').getDay() % 4;
+
+// ================= SOUND =================
+let ac = null;
+function audio(){ if (ac || save.muted) return; const A = window.AudioContext || window.webkitAudioContext; if (A) ac = new A(); }
+function tone(f, dur, type, vol, delay){ if (!ac || save.muted) return; const t = ac.currentTime + (delay || 0), o = ac.createOscillator(), g = ac.createGain();
+  o.type = type || 'sine'; o.frequency.setValueAtTime(f, t); g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(vol || .1, t + .015); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+  o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + dur + .05); }
+const PENTA = [523, 587, 659, 784, 880, 1047, 1175, 1319];
+const SFX = {
+  turn(){ tone(900, .05, 'triangle', .06); tone(1300, .04, 'triangle', .04, .03); },
+  place(){ tone(330, .09, 'sine', .12); tone(495, .08, 'sine', .06, .04); },
+  happy(k){ tone(PENTA[k % PENTA.length], .5, 'sine', .09); tone(PENTA[k % PENTA.length] * 2, .4, 'sine', .03, .02); },
+  wilt(){ tone(220, .25, 'triangle', .06); tone(185, .3, 'triangle', .05, .1); },
+  win(){ [0, 2, 4, 5, 7].forEach((k, i) => tone(PENTA[k], .7, 'sine', .08, i * .09)); },
+  tap(){ tone(700, .04, 'triangle', .05); },
+};
+const buzz = ms => { try { navigator.vibrate && navigator.vibrate(ms); } catch(e){} };
+
+// ================= SCREENS =================
+const SCREENS = ['home', 'map', 'game', 'garden'];
+let screen = 'home';
+function show(name){
+  screen = name; SCREENS.forEach(s => $(s).hidden = s !== name); hideTip();
+  document.body.style.background = name === 'game' && G ? WORLDS[G.wi].sky : '#EAF7E1';
+  if (name === 'home') renderHome(); if (name === 'map') renderMap(); if (name === 'garden') sizeCanvas($('gardenArt'));
+  if (name === 'game') requestAnimationFrame(layoutBoard);
+}
+document.querySelectorAll('[data-go]').forEach(b => b.onclick = () => { SFX.tap(); show(b.dataset.go); });
+function renderHome(){
+  const nx = nextLevel();
+  $('playSub').textContent = nx ? `${WORLDS[nx[0]].name} ${nx[1] + 1}` : 'All 60 solved!';
+  const d = save.daily[today()];
+  $('dailySub').textContent = d ? `Solved · ${save.streak} day streak` : save.streak ? `${save.streak} day streak` : 'New every day';
+}
+$('playBtn').onclick = () => { audio(); SFX.tap(); const nx = nextLevel() || [WORLDS.length - 1, PER_WORLD - 1]; startLevel(nx[0], nx[1]); };
+$('dailyBtn').onclick = () => { audio(); SFX.tap(); startDaily(); };
+$('gardenBtn').onclick = () => { audio(); SFX.tap(); show('garden'); };
+$('levelsBtn').onclick = () => { audio(); SFX.tap(); show('map'); };
+$('muteBtn').onclick = () => { save.muted = !save.muted; persist(); $('waves').style.opacity = save.muted ? .2 : 1; $('muteBtn').setAttribute('aria-label', save.muted ? 'Sound off' : 'Sound on'); if (!save.muted) audio(); };
+$('waves').style.opacity = save.muted ? .2 : 1;
+function renderMap(){
+  const box = $('worlds'); box.innerHTML = '';
+  const done = Object.keys(save.done).length; $('mapSub').textContent = `${done} of ${TOTAL} solved`;
+  WORLDS.forEach((w, wi) => {
+    const el = document.createElement('section'); el.className = 'world';
+    const n = Array.from({ length: PER_WORLD }, (_, i) => isDone(wi, i)).filter(Boolean).length;
+    el.innerHTML = `<h3><i style="background:${w.col}"></i>${w.name}</h3><p>${w.teach} · ${n}/${PER_WORLD}</p><div class="lvls"></div>`;
+    const grid = el.querySelector('.lvls'), nx = nextLevel();
+    for (let i = 0; i < PER_WORLD; i++) { const b = document.createElement('button'); b.type = 'button'; b.className = 'lv' + (isDone(wi, i) ? ' done' : '') + (nx && nx[0] === wi && nx[1] === i ? ' next' : ''); b.textContent = i + 1;
+      b.setAttribute('aria-label', `${w.name} level ${i + 1}${isDone(wi, i) ? ', solved' : ''}`);
+      if (!unlocked(wi, i)) b.disabled = true; else b.onclick = () => { audio(); SFX.tap(); startLevel(wi, i); };
+      grid.appendChild(b); }
+    box.appendChild(el);
+  });
+  const nx = document.querySelector('.lv.next'); if (nx) setTimeout(() => nx.scrollIntoView({ block: 'center' }), 30);
+}
+
+// ================= PUZZLE =================
+let G = null;
+const angOf = o => o ? Math.PI / 4 : -Math.PI / 4;
+function prepBoard(src){
+  const b = cloneBoard(src); b.mode = src.mode; b.solution = src.solution; b.par = src.par;
+  b.g.forEach(p => { if (p && p.t === 'mirror') { p._a = p._t = angOf(p.o); } });
+  return b;
+}
+function startLevel(wi, i){ const src = getLevel(wi, i); if (!src) return toast('This level is still growing. Try another!'); begin({ wi, i, daily: false, src }); }
+function startDaily(){ const d = today(), src = dailyLevel(d); if (!src) return toast('Come back tomorrow!'); begin({ wi: dailyWorld(d), i: -1, daily: true, src }); }
+function begin(o){
+  G = { ...o, b: prepBoard(o.src), moves: 0, won: false, sel: null, drag: null, press: null, grow: new Map(), petals: [], lastHappy: new Set(), tipCell: null };
+  $('lvTitle').innerHTML = G.daily ? `Daily puzzle<small>${new Date().toLocaleDateString(undefined, { month: 'long', day: 'numeric' })}</small>` : `${WORLDS[G.wi].name}<small>Level ${G.i + 1} of ${PER_WORLD}</small>`;
+  show('game'); renderTray(); refresh(true); showTips();
+}
+function refresh(first){
+  G.sim = simulate(G.b); G.j = judge(G.b, G.sim);
+  // chimes for pots that just became happy, a sigh for wilting ones
+  let k = 0; const happyNow = new Set();
+  G.j.st.forEach((s, i) => { if (s.s === 'happy') { happyNow.add(i); if (!first && !G.lastHappy.has(i)) { SFX.happy(k++); buzz(12); } } if (s.s === 'wilt' && !first && !(G.lastWilt || new Set()).has(i)) SFX.wilt(); });
+  G.lastHappy = happyNow; G.lastWilt = new Set([...G.j.st].filter(([, s]) => s.s === 'wilt').map(([i]) => i));
+  const pots = G.j.st.size, happy = happyNow.size;
+  $('status').textContent = G.won ? 'The garden is awake!' : `${happy} of ${pots} pot${pots > 1 ? 's' : ''} happy` + (G.b.mode === 'rotate' ? ` · ${G.moves} move${G.moves === 1 ? '' : 's'}` : '');
+  $('hintN').textContent = save.hints;
+  if (G.j.solved && !G.won) win();
+}
+function renderTray(){
+  const tr = $('tray'); tr.hidden = G.b.mode !== 'place'; if (tr.hidden) return;
+  tr.innerHTML = '<span class="label">Basket</span>';
+  if (!G.b.tray.length) tr.insertAdjacentHTML('beforeend', '<span class="label" style="opacity:.6">empty</span>');
+  G.b.tray.forEach((p, k) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'piece' + (G.sel === k ? ' sel' : ''); b.setAttribute('aria-label', 'Mirror'); b.appendChild(pieceIcon(p, 46));
+    b.addEventListener('pointerdown', e => { audio(); e.preventDefault(); G.drag = { piece: p, from: 'tray', k, x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, moved: false }; });
+    tr.appendChild(b); });
+}
+// board geometry
+const bc = $('board'), bx = bc.getContext('2d'); let dpr = 1, BW = 0, BH = 0;
+function sizeCanvas(cv){ dpr = Math.min(2, devicePixelRatio || 1); const r = cv.getBoundingClientRect(); cv.width = Math.max(1, r.width * dpr); cv.height = Math.max(1, r.height * dpr); return r; }
+function layoutBoard(){
+  if (!G) return; const r = sizeCanvas(bc); BW = r.width; BH = r.height;
+  const b = G.b; G.cs = Math.min(84, BW / (b.w + .3), BH / (b.h + .3)); G.ox = (BW - b.w * G.cs) / 2; G.oy = (BH - b.h * G.cs) / 2;
+}
+addEventListener('resize', () => { if (screen === 'game') layoutBoard(); if (screen === 'garden') sizeCanvas($('gardenArt')); });
+function cellAt(cx, cy){ const r = bc.getBoundingClientRect(), x = Math.floor((cx - r.left - G.ox) / G.cs), y = Math.floor((cy - r.top - G.oy) / G.cs); return x >= 0 && y >= 0 && x < G.b.w && y < G.b.h ? { x, y, i: y * G.b.w + x } : null; }
+function turn(p){ p.o ^= 1; p._t += Math.PI / 2; G.moves++; SFX.turn(); buzz(6); hideTip(); refresh(); }
+function putMirror(i, piece, o){ G.b.g[i] = { t: 'mirror', o, movable: true, _a: angOf(o), _t: angOf(o), pop: 0 }; SFX.place(); buzz(10); G.moves++; hideTip(); refresh(); }
+bc.addEventListener('pointerdown', e => {
+  audio(); if (!G || G.won) return; const c = cellAt(e.clientX, e.clientY); if (!c) return; const p = G.b.g[c.i];
+  if (G.b.mode === 'rotate') { if (p && p.t === 'mirror' && !p.fixed && !p.hinted) turn(p); return; }
+  if (p && p.t === 'mirror' && p.movable) { G.press = { i: c.i, p, sx: e.clientX, sy: e.clientY }; try { bc.setPointerCapture(e.pointerId); } catch(_){} return; }
+  if (!p && G.sel != null && G.b.tray[G.sel]) { const pc = G.b.tray.splice(G.sel, 1)[0]; G.sel = null; putMirror(c.i, pc, pc.o); renderTray(); }
+});
+addEventListener('pointermove', e => {
+  if (!G) return;
+  if (G.press && !G.press.p.hinted && Math.hypot(e.clientX - G.press.sx, e.clientY - G.press.sy) > 8) { const { i, p } = G.press; G.b.g[i] = null; G.drag = { piece: { t: 'mirror', o: p.o }, from: 'board', x: e.clientX, y: e.clientY, moved: true }; G.press = null; refresh(); }
+  if (G.drag) { G.drag.x = e.clientX; G.drag.y = e.clientY; if (Math.hypot(e.clientX - (G.drag.sx ?? e.clientX), e.clientY - (G.drag.sy ?? e.clientY)) > 8) G.drag.moved = true; }
+});
+addEventListener('pointerup', e => {
+  if (!G) return;
+  if (G.press) { const p = G.press.p; G.press = null; if (!p.hinted) turn(p); return; }
+  if (!G.drag) return; const d = G.drag; G.drag = null;
+  if (d.from === 'tray' && !d.moved) { G.sel = G.sel === d.k ? null : d.k; SFX.tap(); renderTray(); if (G.sel != null) tip('Now tap an empty spot on the soil'); return; }
+  const c = cellAt(e.clientX, e.clientY);
+  if (c && !G.b.g[c.i]) { if (d.from === 'tray') G.b.tray.splice(G.b.tray.indexOf(d.piece), 1); putMirror(c.i, d.piece, d.piece.o); }
+  else if (d.from === 'board') { G.b.tray.push({ t: 'mirror', o: d.piece.o, movable: true }); SFX.tap(); refresh(); }
+  G.sel = null; renderTray();
+});
+$('backBtn').onclick = () => { SFX.tap(); show(G && G.daily ? 'home' : 'map'); };
+$('resetBtn').onclick = () => { SFX.tap(); if (!G || G.won) return; begin({ wi: G.wi, i: G.i, daily: G.daily, src: G.src }); };
+$('hintBtn').onclick = () => {
+  audio(); if (!G || G.won) return;
+  if (save.hints <= 0) return toast('No hints left. A new one grows every day.');
+  const b = G.b; let done = false;
+  if (b.mode === 'rotate') { const m = b.g.find(p => p && p.t === 'mirror' && !p.fixed && !p.hinted && p.o !== p.sol) || b.g.find(p => p && p.t === 'mirror' && !p.fixed && !p.hinted);
+    if (m) { if (m.o !== m.sol) { m.o = m.sol; m._t += Math.PI / 2; } m.hinted = true; done = true; } }
+  else { for (const s of b.solution) { const cur = b.g[s.i];
+      if (cur && cur.t === 'mirror' && cur.movable && cur.o === s.o && cur.hinted) continue;
+      if (cur && cur.t === 'mirror' && cur.movable) { if (cur.o !== s.o) { cur.o = s.o; cur._t += Math.PI / 2; } cur.hinted = true; done = true; break; }
+      if (!cur) { if (!b.tray.length) { const j = b.g.findIndex((p, k) => p && p.movable && !p.hinted && !b.solution.some(z => z.i === k)); if (j < 0) continue; b.g[j] = null; b.tray.push({ t: 'mirror', o: 0, movable: true }); }
+        b.tray.pop(); b.g[s.i] = { t: 'mirror', o: s.o, movable: true, hinted: true, _a: angOf(s.o), _t: angOf(s.o), pop: 0 }; done = true; break; } }
+    renderTray(); }
+  if (!done) return toast('Everything here is already right!');
+  save.hints--; persist(); SFX.place(); refresh();
+};
+function win(){
+  G.won = true; SFX.win(); buzz([20, 40, 20]);
+  if (G.daily) { const d = today(); if (!save.daily[d]) { const y = dayStr(new Date(Date.now() - 864e5)); save.streak = save.lastDaily === y ? save.streak + 1 : 1; save.lastDaily = d; save.daily[d] = G.moves; } }
+  else { const k = key(G.wi, G.i); save.done[k] = Math.min(save.done[k] ?? 1e9, G.moves); }
+  persist();
+  for (let n = 0; n < (reduce ? 0 : 40); n++) G.petals.push({ x: Math.random() * BW, y: -10 - Math.random() * 80, vy: 40 + Math.random() * 60, vx: -20 + Math.random() * 40, r: Math.random() * 6, c: ['#FF8FB1', '#FFC83D', '#FFFFFF', '#9BE08A'][n % 4] });
+  refresh();
+  setTimeout(winCard, reduce ? 300 : 1400);
+}
+function winCard(){
+  const nx = nextLevel(), wrap = document.createElement('div'); wrap.className = 'modalWrap';
+  const newWorld = !G.daily && G.i === PER_WORLD - 1 && G.wi < WORLDS.length - 1;
+  wrap.innerHTML = `<div class="modal"><canvas width="300" height="260"></canvas><h2>${G.daily ? 'Daily done!' : 'Sprouted!'}</h2>
+    <p>${G.daily ? `A golden flower for your garden. Streak: <b>${save.streak}</b> day${save.streak === 1 ? '' : 's'}.` : newWorld ? `You finished ${WORLDS[G.wi].name}! Next up: <b>${WORLDS[G.wi + 1].name}</b>.` : `A new plant is growing in your garden.${G.b.mode === 'rotate' ? ` Solved in ${G.moves} move${G.moves === 1 ? '' : 's'}.` : ''}`}</p>
+    ${G.daily || !nx ? '' : '<button class="btn" type="button" id="wNext">Next level</button>'}
+    <button class="btn soft" type="button" id="wGarden">${G.daily ? 'See my garden' : 'My garden'}</button></div>`;
+  document.body.appendChild(wrap);
+  const cv = wrap.querySelector('canvas'), g = cv.getContext('2d'); let t0 = performance.now();
+  const kind = G.daily ? 'gold' : FLOWER[WORLDS[G.wi].id];
+  (function anim(now){ if (!wrap.isConnected) return; const t = (now - t0) / 1000; g.setTransform(2, 0, 0, 2, 0, 0); g.clearRect(0, 0, 150, 130);
+    g.fillStyle = '#EAF7E1'; g.beginPath(); g.arc(75, 70, 58, 0, 7); g.fill(); drawPlant(g, 75, 112, 150, kind, Math.min(1, t / 1.2), 'happy', t); requestAnimationFrame(anim); })(t0);
+  const close = () => wrap.remove();
+  const n = wrap.querySelector('#wNext'); if (n) n.onclick = () => { SFX.tap(); close(); startLevel(nx[0], nx[1]); };
+  wrap.querySelector('#wGarden').onclick = () => { SFX.tap(); close(); show('garden'); };
+}
+// first-time tips
+let tipEl = null;
+function tip(html, cell){ hideTip(); tipEl = document.createElement('div'); tipEl.className = 'tip'; tipEl.innerHTML = html; document.body.appendChild(tipEl); if (G) G.tipCell = cell ?? null; }
+function hideTip(){ if (tipEl) { tipEl.remove(); tipEl = null; } if (G) G.tipCell = null; }
+function showTips(){
+  const once = (k, html, cell) => { if (save.tips[k]) return false; save.tips[k] = 1; persist(); setTimeout(() => { if (G && screen === 'game') tip(html, cell); }, 400); return true; };
+  const b = G.b, find = f => b.g.findIndex(f);
+  if (G.daily) return once('daily', 'A fresh puzzle every day. Solve it to grow a <b>golden flower</b> and keep your streak!');
+  if (G.wi === 0 && G.i === 0) return once('turn', 'Tap the mirror to <b>turn it</b>. Bend the sunbeam into the pot!', find(p => p && p.t === 'mirror' && !p.fixed));
+  if (G.wi === 0 && G.i === 1) return once('need', 'The little suns under a pot show <b>how many beams</b> it needs.', find(p => p && p.t === 'seed'));
+  if (b.g.some(p => p && p.t === 'seed' && p.need > 1)) { if (once('two', 'This pot needs <b>two beams</b>. But careful: too much light makes a pot wilt!', find(p => p && p.t === 'seed' && p.need > 1))) return; }
+  if (b.g.some(p => p && p.t === 'mirror' && p.fixed && !p.decoy) || b.g.some(p => p && p.decoy)) { if (once('stone', 'Stone mirrors are stuck in place. Only <b>wooden</b> ones turn.')) return; }
+  if (b.mode === 'place') { if (once('place', '<b>Drag</b> mirrors from your basket onto the soil. Tap a placed mirror to turn it.')) return; }
+  if (b.g.some(p => p && p.t === 'split')) { if (once('split', '<b>Crystals</b> split one beam into two.', find(p => p && p.t === 'split'))) return; }
+  if (b.g.some(p => p && p.t === 'filter')) { if (once('filter', '<b>Coloured glass</b> tints the light. A pot with a coloured band only drinks <b>that colour</b>.', find(p => p && p.t === 'filter'))) return; }
+}
+
+// ================= DRAW LOOP =================
+function drawGame(t){
+  const c = bx, b = G.b, cs = G.cs, ox = G.ox, oy = G.oy, W = WORLDS[G.wi];
+  c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, BW, BH);
+  // garden bed
+  c.fillStyle = 'rgba(40,60,30,.15)'; rr(c, ox - 8, oy - 4, b.w * cs + 16, b.h * cs + 16, 18); c.fill();
+  c.fillStyle = W.col; rr(c, ox - 8, oy - 8, b.w * cs + 16, b.h * cs + 16, 18); c.fill();
+  for (let y = 0; y < b.h; y++) for (let x = 0; x < b.w; x++) { c.fillStyle = W.soil[(x + y) % 2]; c.fillRect(ox + x * cs, oy + y * cs, cs + .5, cs + .5); }
+  c.fillStyle = 'rgba(255,255,255,.06)'; for (let y = 0; y < b.h; y++) c.fillRect(ox, oy + y * cs, b.w * cs, 2);
+  // spots you can place on
+  if (b.mode === 'place' && (G.sel != null || G.drag)) for (let i = 0; i < b.g.length; i++) if (!b.g[i]) { const x = i % b.w, y = (i / b.w) | 0; c.fillStyle = 'rgba(255,240,200,.14)'; rr(c, ox + x * cs + cs * .12, oy + y * cs + cs * .12, cs * .76, cs * .76, cs * .2); c.fill(); }
+  drawBeams(c, G.sim.segs, ox, oy, cs, t);
+  b.g.forEach((p, i) => { if (!p) return; const x = ox + (i % b.w + .5) * cs, y = oy + (((i / b.w) | 0) + .5) * cs;
+    if (p.t === 'sun') drawSun(c, x, y, cs, p.d, t);
+    else if (p.t === 'mirror') { p._a += (p._t - p._a) * .25; if (p.pop != null) p.pop = Math.min(1, p.pop + .12);
+      const k = p.pop != null ? .6 + .4 * Math.sin(p.pop * Math.PI / 2) : 1; c.save(); c.translate(x, y); c.scale(k, k); drawMirror(c, 0, 0, cs, p._a, p.fixed ? 'fixed' : b.mode === 'place' ? 'move' : 'rot', p.hinted); c.restore(); }
+    else if (p.t === 'rock') drawRock(c, x, y, cs);
+    else if (p.t === 'split') drawCrystal(c, x, y, cs, t);
+    else if (p.t === 'filter') drawFilter(c, x, y, cs, p.c);
+    else if (p.t === 'seed') { const st = G.j.st.get(i) || { s: 'thirsty', good: 0 };
+      const target = st.s === 'happy' ? 1 : st.s === 'wilt' ? 0 : .12 + .3 * (st.good / p.need); const cur = G.grow.get(i) ?? target; const gv = cur + (target - cur) * .08; G.grow.set(i, gv);
+      drawPot(c, x, y, cs, p, st.s, G.won ? Math.min(1, gv + .01) : gv, st.good, t, W.id); } });
+  // tip ring
+  if (G.tipCell != null && G.tipCell >= 0) { const x = ox + (G.tipCell % b.w + .5) * cs, y = oy + (((G.tipCell / b.w) | 0) + .5) * cs; c.strokeStyle = '#fff'; c.lineWidth = 3; c.setLineDash([7, 6]); c.lineDashOffset = -t * 20; c.beginPath(); c.arc(x, y, cs * (.52 + (reduce ? 0 : .04 * Math.sin(t * 5))), 0, 7); c.stroke(); c.setLineDash([]); }
+  // dragging a mirror
+  if (G.drag && G.drag.moved) { const r = bc.getBoundingClientRect(); drawMirror(c, G.drag.x - r.left, G.drag.y - r.top - cs * .2, cs * 1.1, angOf(G.drag.piece.o), 'move'); }
+  // petals when solved
+  for (const p of G.petals) { p.y += p.vy / 60; p.x += p.vx / 60 + Math.sin(t * 2 + p.r) * .4; c.fillStyle = p.c; c.beginPath(); c.ellipse(p.x, p.y, 4, 2.4, t * 2 + p.r, 0, 7); c.fill(); }
+  G.petals = G.petals.filter(p => p.y < BH + 10);
+}
+function drawGarden(t){
+  const cv = $('gardenArt'), c = cv.getContext('2d'), r = cv.getBoundingClientRect(), W = r.width, H = r.height; if (!W) return;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, W, H);
+  const rows = [...WORLDS.map((w, wi) => ({ name: w.name, col: w.col, soil: w.soil[1], kind: FLOWER[w.id], have: Array.from({ length: PER_WORLD }, (_, i) => isDone(wi, i)) })),
+    { name: 'Daily flowers', col: '#FFC83D', soil: '#B98357', kind: 'gold', have: Array.from({ length: PER_WORLD }, (_, i) => i < Object.keys(save.daily).length) }];
+  const rh = Math.min(120, H / rows.length), slot = (W - 20) / PER_WORLD, s = Math.min(slot * 1.5, rh * .75);
+  rows.forEach((row, k) => { const y0 = k * rh;
+    c.fillStyle = row.soil; rr(c, 6, y0 + rh * .7, W - 12, rh * .22, 10); c.fill(); c.fillStyle = row.col; rr(c, 6, y0 + rh * .66, W - 12, rh * .08, 6); c.fill();
+    c.fillStyle = '#2E3B2F'; c.font = '600 13px Fredoka, sans-serif'; c.textAlign = 'left'; c.fillText(row.name + (row.name === 'Daily flowers' && Object.keys(save.daily).length > PER_WORLD ? ` ×${Object.keys(save.daily).length}` : ''), 10, y0 + 16);
+    row.have.forEach((h, i) => { const x = 10 + slot * (i + .5), y = y0 + rh * .72;
+      if (h) drawPlant(c, x, y, s, row.kind, 1, 'happy', t + i); else { c.fillStyle = 'rgba(90,58,34,.5)'; c.beginPath(); c.ellipse(x, y, slot * .22, 3, 0, 0, 7); c.fill(); } }); });
+  $('gardenSub').textContent = `${Object.keys(save.done).length + Object.keys(save.daily).length} plants`;
+}
+const homeCv = $('homeArt'), hx = homeCv.getContext('2d');
+function loop(now){
+  const t = now / 1000;
+  if (screen === 'game' && G && G.cs) drawGame(t);
+  else if (screen === 'home') { hx.setTransform(2, 0, 0, 2, 0, 0); drawHome(hx, 220, 200, t); }
+  else if (screen === 'garden') drawGarden(t);
+  requestAnimationFrame(loop);
+}
+function toast(msg){ const el = document.createElement('div'); el.className = 'toast'; el.textContent = msg; document.body.appendChild(el); setTimeout(() => el.remove(), 2400); }
+if (location.hash.includes('test')) window.__ss = { get G(){ return G; }, save, getLevel, dailyLevel, startLevel, startDaily, show, simulate, judge, WORLDS, PER_WORLD, cellAt, layoutBoard };
+show('home'); requestAnimationFrame(loop);
+})();
+</script>

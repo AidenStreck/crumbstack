@@ -133,6 +133,54 @@
           "url": "https://aidenstreck.github.io/crumbstack/prototypes/tidy-tides/"
         }
       ]
+    },
+    {
+      "id": "sunsprout",
+      "name": "Sunsprout",
+      "tagline": "Light-bending garden puzzle · 60 levels + daily",
+      "repo": "AidenStreck/crumbstack",
+      "path": "prototypes/sunsprout",
+      "tag": "Sunsprout",
+      "ios": false,
+      "site": "https://aidenstreck.github.io/crumbstack/prototypes/sunsprout/",
+      "icon": "sunsprout-icon.svg",
+      "stage": "Prototype",
+      "checklist": [
+        {
+          "label": "Playable prototype on the website",
+          "done": true
+        },
+        {
+          "label": "60 levels + daily puzzle",
+          "done": true
+        },
+        {
+          "label": "Friends play-test it and give feedback",
+          "done": false
+        },
+        {
+          "label": "Difficulty tuned from feedback",
+          "done": false
+        },
+        {
+          "label": "Final name, icon and store look",
+          "done": false
+        },
+        {
+          "label": "iPhone app project",
+          "done": false
+        },
+        {
+          "label": "Submitted to Apple for review",
+          "done": false
+        }
+      ],
+      "links": [
+        {
+          "label": "Play link to share",
+          "url": "https://aidenstreck.github.io/crumbstack/prototypes/sunsprout/"
+        }
+      ]
     }
   ]
 }

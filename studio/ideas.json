@@ -28,10 +28,10 @@
     {
       "id": "sunsprout",
       "name": "Sunsprout",
-      "pitch": "Calm puzzle: rotate mirrors in a tiny garden so each seed gets exactly the sunlight it needs. A new daily puzzle, and your garden grows over time.",
-      "stage": "Idea",
-      "by": "Claude",
-      "notes": "Daily puzzle games keep players coming back every day."
+      "pitch": "Calm light puzzle: turn and place mirrors, split beams with crystals and tint them with coloured glass so every seed pot gets exactly the sunlight it needs. A daily puzzle and a garden that grows as you solve.",
+      "stage": "Prototype",
+      "by": "You",
+      "notes": "Play it: aidenstreck.github.io/crumbstack/prototypes/sunsprout/ · 4 worlds × 15 levels (all solver-checked), daily puzzle with streak, hints, garden. Original idea, nothing like it on the store."
     },
     {
       "id": "moon-mail",
