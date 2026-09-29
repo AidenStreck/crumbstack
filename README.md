@@ -36,10 +36,10 @@ This project uses **Capacitor**, which wraps the game in a real native iPhone ap
 
 ## Getting it onto the App Store
 
-Apple Developer account: done (accepted Sept 29, 2026).
+Apple Developer account: done (accepted Sept 29, 2026). **Tidy Tides goes first** (bundle ID `com.aidenstreck.tidytides`); Crumbstack follows with `com.crumbstack.game`. Which games get sent to TestFlight is set in `.github/workflows/ios.yml`; each game's bundle ID, name and icon are in `scripts/ios-app.mjs`.
 
-1. **Register the app ID.** developer.apple.com → Certificates, IDs & Profiles → Identifiers → + → App IDs → App. Description `Crumbstack`, Bundle ID (Explicit) `com.crumbstack.game`. Tick **In-App Purchase** (it's usually on already).
-2. **Create the app.** appstoreconnect.apple.com → Apps → + → New App: iOS, name `Crumbstack`, language English (U.S.), bundle ID `com.crumbstack.game`, SKU `crumbstack`, Full Access.
+1. **Register the app ID.** developer.apple.com → Certificates, IDs & Profiles → Identifiers → + → App IDs → App. Description `Tidy Tides`, Bundle ID (Explicit) `com.aidenstreck.tidytides`.
+2. **Create the app.** appstoreconnect.apple.com → Apps → + → New App: iOS, name `Tidy Tides` (if Apple says it's taken, try `Tidy Tides: Beach Cleanup`), language English (U.S.), bundle ID `com.aidenstreck.tidytides`, SKU `tidytides`, Full Access.
 3. **Make an API key** (lets GitHub's Mac sign and upload for you). App Store Connect → Users and Access → Integrations → App Store Connect API → Team Keys → +. Name `GitHub`, access **Admin**. Download the `.p8` file (Apple only lets you download it once). Note the **Key ID** and the **Issuer ID** shown above the list.
 4. **Find your Team ID.** developer.apple.com/account → Membership details → Team ID (10 letters/numbers).
 5. **Add four secrets to GitHub.** github.com/AidenStreck/crumbstack → Settings → Secrets and variables → Actions → New repository secret:
@@ -48,7 +48,7 @@ Apple Developer account: done (accepted Sept 29, 2026).
    - `ASC_KEY_P8`: open the .p8 file in Notepad and paste all of it, including the BEGIN/END lines
    - `APPLE_TEAM_ID`: the Team ID
 6. **Send a build.** GitHub → Actions → iPhone app → Run workflow (or push anything to main). About 15–30 minutes later it appears in App Store Connect → TestFlight. Install the **TestFlight** app on your iPhone and add yourself as an internal tester to play it.
-7. **Paid Apps agreement** (needed for coin purchases): App Store Connect → Business → sign the Paid Apps agreement and fill in tax and bank info. Then the coin packs get set up as in-app purchases and connected, with a Restore purchases button.
+7. **Paid Apps agreement** (only needed for Crumbstack's coin purchases; Tidy Tides has none): App Store Connect → Business → sign the Paid Apps agreement and fill in tax and bank info. Then the coin packs get set up as in-app purchases and connected, with a Restore purchases button.
 8. Fill in the store page from `store/listing.md` and the screenshots, then submit for review.
 
 ## Working on it yourself (optional)

@@ -1,7 +1,7 @@
-# Builds the iPhone app on GitHub's free Mac servers.
-# Before the App Store key is added (see README) it only checks that the app compiles.
-# Once the four APPLE_/ASC_ secrets exist, every push to main also signs the app and
-# sends a new build to TestFlight (it shows up on your iPhone about 15-30 minutes later).
+# Builds the iPhone apps on GitHub's free Mac servers, one per game in the list below.
+# Games with testflight: true are signed and sent to TestFlight on every push to main once the
+# four APPLE_/ASC_ secrets exist (see README); they show up on your iPhone ~15-30 minutes later.
+# The others (and all of them before the key is added) just check that the app compiles.
 name: iPhone app
 on:
   push:
@@ -10,8 +10,17 @@ on:
 jobs:
   build:
     runs-on: macos-15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - app: tidy-tides
+            testflight: true
+          - app: crumbstack
+            testflight: false
+    name: ${{ matrix.app }}
     env:
-      HAS_KEY: ${{ secrets.ASC_KEY_ID != '' && secrets.ASC_ISSUER_ID != '' && secrets.ASC_KEY_P8 != '' && secrets.APPLE_TEAM_ID != '' }}
+      HAS_KEY: ${{ matrix.testflight && secrets.ASC_KEY_ID != '' && secrets.ASC_ISSUER_ID != '' && secrets.ASC_KEY_P8 != '' && secrets.APPLE_TEAM_ID != '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -20,8 +29,8 @@ jobs:
       - run: npm install --no-audit --no-fund
       - run: npm run build
       - name: Create the iPhone project
-        run: npx cap add ios && node scripts/patch-ios.mjs && npx cap sync ios
-      - name: Build for the iPhone Simulator (no Apple key yet)
+        run: node scripts/ios-app.mjs ${{ matrix.app }} && npx cap add ios && node scripts/patch-ios.mjs && npx cap sync ios
+      - name: Build for the iPhone Simulator (check only)
         if: env.HAS_KEY != 'true'
         run: |
           set -o pipefail
@@ -60,4 +69,4 @@ jobs:
             -exportOptionsPlist "$RUNNER_TEMP/export.plist" -exportPath "$RUNNER_TEMP/out" \
             "${AUTH[@]}" | tail -40
           rm -f "$KEY"
-          echo "Build ${{ github.run_number }} sent to TestFlight."
+          echo "${{ matrix.app }} build ${{ github.run_number }} sent to TestFlight."

@@ -81,10 +81,9 @@
       "repo": "AidenStreck/crumbstack",
       "path": "prototypes/tidy-tides",
       "tag": "Tidy Tides",
-      "ios": false,
       "site": "https://aidenstreck.github.io/crumbstack/prototypes/tidy-tides/",
       "icon": "tidytides-icon.svg",
-      "stage": "Testing with friends",
+      "stage": "Heading to TestFlight",
       "checklist": [
         {
           "label": "Playable prototype on the website",
@@ -119,7 +118,19 @@
           "done": false
         },
         {
-          "label": "iPhone app project",
+          "label": "iPhone app project (builds on GitHub)",
+          "done": true
+        },
+        {
+          "label": "Apple Developer account",
+          "done": true
+        },
+        {
+          "label": "TestFlight build on your iPhone",
+          "done": false
+        },
+        {
+          "label": "Privacy policy, store screenshots and description",
           "done": false
         },
         {

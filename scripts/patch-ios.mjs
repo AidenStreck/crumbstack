@@ -6,20 +6,22 @@ import path from 'node:path';
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const app = path.join(root, 'ios/App/App');
 if (!fs.existsSync(app)) { console.error('ios/App/App not found. Run `npx cap add ios` first.'); process.exit(1); }
+// which game (set by scripts/ios-app.mjs); icons and splash come from its resources folder
+const res = path.join(root, fs.existsSync(path.join(root, '.ios-app.json')) ? JSON.parse(fs.readFileSync(path.join(root, '.ios-app.json'), 'utf8')).res : 'resources');
 
 // 1) App icon: replace every 1024px image in the AppIcon set with ours.
 const iconSet = path.join(app, 'Assets.xcassets/AppIcon.appiconset');
 const iconJson = JSON.parse(fs.readFileSync(path.join(iconSet, 'Contents.json'), 'utf8'));
 let n = 0;
 for (const img of iconJson.images) {
-  if (img.filename) { fs.copyFileSync(path.join(root, 'resources/icon-1024.png'), path.join(iconSet, img.filename)); n++; }
+  if (img.filename) { fs.copyFileSync(path.join(res, 'icon-1024.png'), path.join(iconSet, img.filename)); n++; }
 }
 console.log(`App icon: replaced ${n} image(s).`);
 
 // 2) Launch screen: replace the default splash images.
 const splashSet = path.join(app, 'Assets.xcassets/Splash.imageset');
 if (fs.existsSync(splashSet)) {
-  for (const f of fs.readdirSync(splashSet)) if (f.endsWith('.png')) fs.copyFileSync(path.join(root, 'resources/splash-2732.png'), path.join(splashSet, f));
+  for (const f of fs.readdirSync(splashSet)) if (f.endsWith('.png')) fs.copyFileSync(path.join(res, 'splash-2732.png'), path.join(splashSet, f));
   console.log('Launch screen replaced.');
 }
 

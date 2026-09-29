@@ -3,3 +3,5 @@ ios/
 .DS_Store
 *.log
 www/
+app-www/
+.ios-app.json
