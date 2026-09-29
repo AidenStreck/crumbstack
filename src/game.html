@@ -2,7 +2,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@700;800;900&display=swap">
 <style>
-/* Layout: phone-shaped app. Home is a vertical level map (level 1 at the bottom, climbing up through three worlds).
+/* Layout: phone-shaped app. Home is a vertical level map (level 1 at the bottom, climbing up through three worlds, then endless bonus worlds that cycle the same kitchens).
    Play screen: HUD (level, goal, hearts, star meter), order ticket with the customer, then the kitchen canvas. Single deliberate candy-bright look. */
 :root{
   --bg:#22174A;          /* deep plum frame */
@@ -436,8 +436,17 @@ const WORLDS = [
   {key:'roof',  name:'Rooftop Grill',     from:9,  to:16, counter:['#C98A55','#9A6236'], trim:'#6B4226'},
   {key:'night', name:'Midnight Food Truck', from:17, to:24, counter:['#9FB4C8','#6E8298'], trim:'#DCE6F0'},
 ];
-const TOTAL = 24;
-const worldOf = n => WORLDS.find(w => n >= w.from && n <= w.to);
+const TOTAL = 24; // hand-made levels; after these the worlds repeat forever (bonus laps)
+const WSIZE = 8;
+const worldCache = {};
+// World for any level. Levels past TOTAL keep cycling the three kitchens as World 4, 5, 6...
+function worldOf(n){
+  if(n <= TOTAL) return WORLDS.find(w => n >= w.from && n <= w.to);
+  const idx = Math.floor((n-1)/WSIZE);
+  return worldCache[idx] || (worldCache[idx] = {...WORLDS[idx % WORLDS.length], from:idx*WSIZE+1, to:(idx+1)*WSIZE, lap:Math.floor(idx/WORLDS.length)+1});
+}
+// Last level worth showing: the end of the world the player has reached (never less than TOTAL).
+const mapEnd = () => Math.max(TOTAL, Math.ceil(save.unlocked/WSIZE)*WSIZE);
 // When each feature first appears. `icon` draws a picture in the tip.
 const UNLOCK = {power:3, wobble:5, freeze:7, rush:8, flies:10, vip:13, fast:17};
 const TIPS = {
@@ -451,9 +460,12 @@ const TIPS = {
   10:{text:'<b>Flies</b> buzz in from now on. Don\'t catch them, they cost a heart.', icon:'fly', isNew:true},
   13:{text:'<b>VIPs</b> wear a crown. They pay double but won\'t wait long.', icon:'vip', isNew:true},
   17:{text:'The <b>Midnight Food Truck</b>. Everything falls faster out here.', icon:'fast', isNew:true},
+  25:{text:'<b>Bonus worlds!</b> The kitchens repeat from here on, food falls a little faster, and the levels never run out.'},
 };
 function levelDef(n){
   const w = worldOf(n);
+  // Past the hand-made levels, speed creeps up a little every world, then levels off so it stays beatable.
+  const dn = n <= TOTAL ? n : TOTAL + Math.min(3, Math.floor((n-TOTAL-1)/WSIZE));
   const minMid = Math.min(4, 1 + Math.floor((n-1)/7));
   const maxMid = Math.min(5, 2 + Math.floor((n-1)/4));
   const goal = Math.min(8, 3 + Math.floor((n-1)/3));
@@ -464,8 +476,8 @@ function levelDef(n){
   const r10 = v => Math.round(v/10)*10;
   return {
     n, world:w, goal, timed, minMid, maxMid,
-    speed: 135 + n*6 + (n>=UNLOCK.fast?25:0),
-    patience: Math.max(14, 27 - n*.45),
+    speed: 135 + dn*6 + (n>=UNLOCK.fast?25:0),
+    patience: Math.max(14, 27 - Math.min(n, TOTAL)*.45),
     power: n >= UNLOCK.power, freeze: n >= UNLOCK.freeze,
     wobble: n >= UNLOCK.wobble ? (n < 12 ? .75 : 1) : 0,
     flies: n >= UNLOCK.flies ? Math.min(.15, .05 + (n-UNLOCK.flies)*.007) : 0,
@@ -938,8 +950,7 @@ function finish(won, reason){
   const prevStars = save.stars[n]||0;
   save.stars[n] = Math.max(prevStars, stars);
   save.best[n] = Math.max(save.best[n]||0, S.score);
-  save.unlocked = Math.max(save.unlocked, Math.min(TOTAL, n+1));
-  if(n===TOTAL) save.unlocked = TOTAL;
+  save.unlocked = Math.max(save.unlocked, n+1);
   save.coins += coins; persist();
   for(let i=0;i<4;i++) setTimeout(()=>burst(rnd(W*.2,W*.8), rnd(Hh*.2,Hh*.5), ['#FFD25E','#FF6FA8','#7FD3FF','#3FCB7E','#FFFFFF'], 30, 420), i*180);
   banner('Order complete!'); Sound.play('win');
@@ -957,9 +968,9 @@ function winHtml(n, stars, base, hb, tb, coins){
     <div class="earned">${coin}+${coins}</div>
     <div class="modalBtns">
       <button class="btn ghost" data-act="map">Map</button>
-      ${last?'':`<button class="btn green" data-act="next" data-n="${n+1}">Next level</button>`}
+      <button class="btn green" data-act="next" data-n="${n+1}">Next level</button>
     </div>
-    ${last?'<div class="tip">You finished every level! More worlds are on the way.</div>':''}`;
+    ${last?'<div class="tip">You beat all three worlds! <b>Bonus worlds</b> are open now, and they never end.</div>':''}`;
 }
 function loseHtml(n, reason){
   return `<div class="ribbon lose">${reason}</div>
@@ -1062,7 +1073,7 @@ function showScreen(id){ screen = id; ['home','map','play','shop'].forEach(s => 
 function refreshWallet(){
   const total = Object.values(save.stars).reduce((a,b)=>a+b,0);
   document.querySelectorAll('.walletVal').forEach(e=>e.textContent=save.coins);
-  document.querySelectorAll('.starVal').forEach(e=>e.textContent=total+'/'+TOTAL*3);
+  document.querySelectorAll('.starVal').forEach(e=>e.textContent=total+'/'+mapEnd()*3);
 }
 let toastT=0;
 function toast(msg){ const t=$('toast'); t.textContent=msg; t.hidden=false; t.style.animation='none'; t.offsetHeight; t.style.animation=''; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true,1800); }
@@ -1268,26 +1279,27 @@ $('modalWrap').addEventListener('click', e=>{ if(e.target===$('modalWrap') && $(
 // ================= MAP =================
 function showMap(){
   showScreen('map');
-  const inner=$('mapInner'), gap=104, pad=150;
-  const Hm = pad*2 + (TOTAL-1)*gap; inner.style.height = Hm+'px';
+  const inner=$('mapInner'), gap=104, pad=150, END=mapEnd();
+  const worlds=[]; for(let n=1;n<=END;n+=WSIZE) worlds.push(worldOf(n));
+  const Hm = pad*2 + (END-1)*gap; inner.style.height = Hm+'px';
   const yOf = n => Hm - pad - (n-1)*gap;
   const xOf = n => 50 + 27*Math.sin((n-1)*1.05);
   let html='';
-  WORLDS.forEach((w,i)=>{
-    const top = i===WORLDS.length-1 ? 0 : yOf(w.to) - gap/2;
+  worlds.forEach((w,i)=>{
+    const top = i===worlds.length-1 ? 0 : yOf(w.to) - gap/2;
     const bottom = i===0 ? Hm : yOf(w.from) + gap/2;
     html += `<div class="band ${w.key}" style="top:${top}px;height:${bottom-top}px"></div>`;
   });
   // path
   let d=`M ${xOf(1)} ${yOf(1)}`;
-  for(let n=2;n<=TOTAL;n++){ const my=(yOf(n-1)+yOf(n))/2; d+=` C ${xOf(n-1)} ${my}, ${xOf(n)} ${my}, ${xOf(n)} ${yOf(n)}`; }
+  for(let n=2;n<=END;n++){ const my=(yOf(n-1)+yOf(n))/2; d+=` C ${xOf(n-1)} ${my}, ${xOf(n)} ${my}, ${xOf(n)} ${yOf(n)}`; }
   html += `<svg id="mapPath" viewBox="0 0 100 ${Hm}" preserveAspectRatio="none" style="height:${Hm}px">
     <path d="${d}" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="22" stroke-linecap="round" vector-effect="non-scaling-stroke" transform="translate(0 4)"/>
     <path d="${d}" fill="none" stroke="#FFF8EA" stroke-width="18" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
     <path d="${d}" fill="none" stroke="#F3D9A8" stroke-width="4" stroke-dasharray="2 12" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>`;
-  WORLDS.forEach(w=>{ html += `<div class="worldSign" style="top:${yOf(w.from)+gap*.42}px"><small>World ${WORLDS.indexOf(w)+1}</small>${w.name}</div>`; });
+  worlds.forEach((w,i)=>{ html += `<div class="worldSign" style="top:${yOf(w.from)+gap*.42}px"><small>World ${i+1}${w.lap?' · Bonus':''}</small>${w.name}</div>`; });
   const cur = save.unlocked;
-  for(let n=1;n<=TOTAL;n++){
+  for(let n=1;n<=END;n++){
     const st = save.stars[n]||0, locked = n>cur, done = st>0;
     const cls = locked?'locked':(n===cur && !done)?'current':done?'done':'current';
     html += `<button class="node ${cls}" data-level="${n}" style="left:${xOf(n)}%;top:${yOf(n)}px" ${locked?'aria-disabled="true"':''} aria-label="Level ${n}${locked?', locked':done?', '+st+' stars':''}">

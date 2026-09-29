@@ -1,6 +1,6 @@
 # Crumbstack
 
-A burger-stacking puzzle game for iPhone. Catch falling ingredients in the order each customer asks for, across 24 levels in three worlds.
+A burger-stacking puzzle game for iPhone. Catch falling ingredients in the order each customer asks for, across 24 levels in three worlds, then endless bonus worlds.
 
 ## What's in here
 
