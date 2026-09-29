@@ -98,4 +98,4 @@ Tidy Tides is free with no ads, no accounts and no in-app purchases. No sign-in 
 
 ### Screenshots
 
-`store/tidy-tides/screenshots/`, 1290 × 2796 (the iPhone 6.9" size). Drag them in order into the **iPhone 6.9" Display** box. The app is iPhone-only, so no iPad screenshots are needed.
+`store/tidy-tides/screenshots-6.5/` (1284 × 2778) go in the **iPhone 6.5" Display** box, which is the one App Store Connect shows first. `store/tidy-tides/screenshots/` (1290 × 2796) is the 6.9" size if Apple asks for it. Drag them in order. The app is iPhone-only, so no iPad screenshots are needed.
