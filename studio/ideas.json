@@ -40,6 +40,14 @@
       "stage": "Idea",
       "by": "Claude",
       "notes": "High-score games spread well on TikTok: people post their best runs."
+    },
+    {
+      "id": "island-strategy",
+      "name": "Island strategy (working title)",
+      "pitch": "A long-term island base-building and strategy game in the spirit of Boom Beach, but our own world, characters and rules: build up an island base, gather resources, and take on other islands.",
+      "stage": "Idea",
+      "by": "You",
+      "notes": "UP NEXT after the puzzle game ships. Must be clearly original (no Supercell names, art, units or layouts; Apple rejects lookalikes). Big project: plan it as a single-player first version with a map of islands, then grow."
     }
   ]
 }
