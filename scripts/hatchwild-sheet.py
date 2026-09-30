@@ -22,9 +22,10 @@ from PIL import Image, ImageDraw
 # scale: for a sequence drawn smaller on the sheet, poses of that sequence's area that match the
 #        standing pose, used to bring it back to the same size (game atlas only; exports stay 1:1).
 def S(name, poses, fps, loop=True, reg='lock', **kw): return dict(name=name, poses=list(poses), fps=fps, loop=loop, reg=reg, **kw)
-def standard(fly=False, move='walk'):
+def standard(fly=False, move='walk', counts={}):
   seqs, i = [], 0
   for name, n, fps, loop, reg in [('idle', 6, 5, True, 'lock'), (move, 8, 9, True, 'lock')] + ([('fly', 6, 12, True, 'torso')] if fly else []) + [('attack', 6, 12, False, 'plant'), ('hurt', 4, 10, False, 'plant'), ('sleep', 4, 4, True, 'lock')]:
+    n = counts.get(name, n)
     seqs.append(S(name, range(i, i + n), fps, loop, reg)); i += n
   game = {'idle': 'idle', 'walk': move, 'attack': 'attack', 'hurt': 'hurt', 'nap': 'sleep'}
   if fly: game['fly'] = 'fly'
@@ -79,6 +80,8 @@ SHEETS = {
       S('hurt', range(20, 24), 10, False, 'plant'), S('sleep', range(24, 28), 4)],
     'game': {'idle': 'idle', 'walk': 'walk', 'attack': 'attack', 'hurt': 'hurt', 'nap': 'sleep'}},
   'shellnut': standard(),
+  'flingo': {**standard(fly=True, counts={'idle': 5, 'fly': 5}), 'solo': [27]},
+  'boulderpuff': standard(fly=True, counts={'fly': 5}),
 }
 GAME_H = 190   # a standing critter is this many pixels tall in the game atlas
 SRC, EXP, ATLAS = 'art-src/hatchwild', 'art-src/hatchwild/export', 'prototypes/hatchwild/art'
@@ -134,7 +137,11 @@ def split_touching(comp, seeds):
     grown = cv2.dilate(lab, k); new = (lab == 0) & comp & (grown > 0)
     if not new.any(): break
     lab[new] = grown[new]
-  return [(lab == j + 1) for j in range(len(seeds))]
+  out = []
+  for j in range(len(seeds)):   # keep each pose's own connected part; a stray tip cut off a neighbour goes back to nobody
+    m = (lab == j + 1).astype(np.uint8); n, l2, st, _ = cv2.connectedComponentsWithStats(m)
+    out.append(l2 == 1 + int(np.argmax(st[1:, 4])) if n > 2 else m.astype(bool))
+  return out
 
 def find_labeled(img):
   # rows are marked by text pills at the left edge. Each pose is its own shape on the sheet; where two
@@ -158,11 +165,16 @@ def find_labeled(img):
       cy = cen[sid][1]; row = max([r for r, t in enumerate(tops) if t - 30 <= cy] or [0])
       warn = ['touched the pose next to it on the sheet; split along the narrowest join'] if len(sids) > 1 else []
       poses.append((row, cen[sid][0], m, x, y, warn))
-  out = []
-  for row, cx, m, x, y, warn in sorted(poses, key=lambda p: (p[0], p[1])):
+  out = []; poses = sorted(poses, key=lambda p: (p[0], p[1]))
+  # every loose piece (Zzz, stars, a stray tip) belongs to whichever pose's body is nearest to it
+  owner = np.zeros(a.shape, np.int32)
+  for j, (row, cx, m, x, y, warn) in enumerate(poses): ys, xs = np.where(m); owner[ys + y, xs + x] = j + 1
+  _, near = cv2.distanceTransformWithLabels((owner == 0).astype(np.uint8), cv2.DIST_L2, 5, labelType=cv2.DIST_LABEL_PIXEL)
+  seed_owner = np.zeros(near.max() + 1, np.int32); seed_owner[near[owner > 0]] = owner[owner > 0]; nearest = seed_owner[near]
+  for j, (row, cx, m, x, y, warn) in enumerate(poses):
     full = np.zeros(a.shape, bool); ys, xs = np.where(m); full[ys + y, xs + x] = True
     bx, by_, bx1, by1 = xs.min() + x, ys.min() + y, xs.max() + x + 1, ys.max() + y + 1
-    full, _ = keep_pieces(a & ~(np.isin(lab, list(by_comp)) & ~full), full, (bx, by_, bx1, by1))
+    full, _ = keep_pieces(a & (nearest == j + 1) & ~(np.isin(lab, list(by_comp)) & ~full), full, (bx, by_, bx1, by1))
     ys, xs = np.where(full); bx, by_, bx1, by1 = xs.min(), ys.min(), xs.max() + 1, ys.max() + 1
     out.append(Pose(img[by_:by1, bx:bx1] * full[by_:by1, bx:bx1][..., None], bx, by_, row, warn))
   from collections import Counter
@@ -264,6 +276,13 @@ def gif(cells, path, fps, hold=0, loop=True, bg=(236, 240, 232)):
 def main(cid):
   C = SHEETS[cid]; img = np.array(Image.open(f'{SRC}/{cid}-sheet.png').convert('RGBA'))
   P, notes = find_labeled(img) if C.get('labeled') else find_plain(img, C.get('cut', 40)); notes = C.get('notes', []) + notes
+  for i in C.get('solo', []):   # poses where a stray bit of a neighbour sneaks in: keep the body and what lies over it
+    px = P[i].px; opened = cv2.morphologyEx((px[..., 3] > 40).astype(np.uint8), cv2.MORPH_OPEN, np.ones((13, 13), np.uint8))   # cut thin bridges
+    n, lab, st, _ = cv2.connectedComponentsWithStats(opened); big = 1 + int(np.argmax(st[1:, 4]))
+    x, y, w, h = st[big][:4]; keep = lab == big
+    for j in range(1, n):
+      if j != big and x <= st[j][0] and st[j][0] + st[j][2] <= x + w and y <= st[j][1] and st[j][1] + st[j][3] <= y + h: keep |= lab == j
+    keep = cv2.dilate(keep.astype(np.uint8), np.ones((9, 9), np.uint8)) > 0; P[i].px = px * keep[..., None]
   for p in P: p.px = clean(p.px)
   used = {i for s in C['seqs'] for i in s['poses']}
   for i in range(len(P)):
