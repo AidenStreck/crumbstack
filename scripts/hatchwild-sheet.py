@@ -47,6 +47,11 @@ SHEETS = {
       S('idle', range(0, 10), 5), S('walk', range(10, 20), 9), S('fly', range(20, 28), 12, reg='torso'), S('cheer', range(28, 37), 11, False, 'sheet'),
       S('zap', range(37, 45), 12, False, 'plant'), S('hurt', range(45, 53), 10, False, 'plant'), S('sleep', range(53, 62), 4)],
     'game': {'idle': 'idle', 'walk': 'walk', 'fly': 'fly', 'attack': 'zap', 'hurt': 'hurt', 'nap': 'sleep'}},
+  'squidlet': {'ref': 'idle', 'seqs': [
+      S('idle', range(0, 8), 5), S('walk', range(8, 17), 9), S('squirt', range(17, 23), 12, False, 'plant'),
+      S('laugh', range(24, 32), 8), S('look', range(32, 40), 5)],
+    'skip': {23: 'the ink blob flying on its own (the game draws its own ink shot)'},
+    'game': {'idle': 'idle', 'walk': 'walk', 'attack': 'squirt'}},
 }
 GAME_H = 190   # a standing critter is this many pixels tall in the game atlas
 SRC, EXP, ATLAS = 'art-src/hatchwild', 'art-src/hatchwild/export', 'prototypes/hatchwild/art'
