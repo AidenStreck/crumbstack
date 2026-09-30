@@ -997,6 +997,30 @@ function drawBld(c, k, gx, gy, lv, o = {}){
   c.drawImage(im, bx - w / 2, by - h, w, h); if (o.enemy) c.restore();
   if (o.badge !== false) bldBadge(c, gx, gy, s, lv, o);
 }
+// Rigged critters: the picture cut into body, head and legs (scripts/hatchwild-rig.py) so the legs walk,
+// the head bobs, the body breathes and the eyes blink. Paste each rig line the script prints here.
+const RIGS = {
+  pebblet: {"w":431.1,"h":400.0,"body":[0.0,0.0],"parts":[{"n":"head","at":[226.2,81.0],"pv":[276.9,232.4]},{"n":"leg0","at":[0.0,264.7],"pv":[60.6,275.7],"ph":0},{"n":"leg1","at":[296.2,260.4],"pv":[351.6,275.7],"ph":0},{"n":"leg2","at":[142.4,245.4],"pv":[214.0,265.9],"ph":1}]},
+};
+const RIG_IMG = {};
+for (const k in RIGS) for (const n of ['body', 'blink', ...RIGS[k].parts.map(p => p.n)]) { const im = new Image(); im.src = 'art/rigs/' + k + '/' + n + '.png'; RIG_IMG[k + '/' + n] = im; }
+const rigReady = sp => RIGS[sp] && Object.keys(RIG_IMG).every(k => !k.startsWith(sp + '/') || (RIG_IMG[k].complete && RIG_IMG[k].naturalWidth)) ? RIGS[sp] : null;
+// draws with the feet at (0, 0), s = height in px
+function drawRig(c, sp, R, s, t, moving, blink){
+  const k = s / R.h, w = t * 9, breathe = Math.sin(t * 2.1) * .018, bob = moving ? Math.abs(Math.sin(w)) * 5 : 0;
+  c.save(); c.scale(k, k); c.translate(-R.w / 2, -R.h);
+  const img = n => RIG_IMG[sp + '/' + n];
+  const legs = R.parts.filter(p => p.n !== 'head'), head = R.parts.find(p => p.n === 'head');
+  // body breathes (grows a touch taller from the feet) and bobs while walking
+  c.save(); c.translate(0, R.h); c.scale(1 - breathe * .5, 1 + breathe); c.translate(0, -R.h - bob); c.drawImage(img('body'), R.body[0], R.body[1]); c.restore();
+  for (const L of legs) {
+    const ph = w + (L.ph ? Math.PI : 0), ang = moving ? Math.sin(ph) * .2 : 0, lift = moving ? Math.max(0, -Math.cos(ph)) * 14 : 0;
+    const im = img(L.n); c.save(); c.translate(L.pv[0], L.pv[1] - lift - bob * .6); c.rotate(ang); c.drawImage(im, L.at[0] - L.pv[0], L.at[1] - L.pv[1]); c.restore();
+  }
+  if (head) { const ha = Math.sin(t * 1.3) * .045 + (moving ? Math.sin(w * 2) * .02 : 0), hy = Math.sin(t * 2.1 + .8) * 3 + bob;
+    c.save(); c.translate(head.pv[0], head.pv[1] - hy - breathe * R.h * .6); c.rotate(ha); c.drawImage(img(blink ? 'blink' : 'head'), head.at[0] - head.pv[0], head.at[1] - head.pv[1]); c.restore(); }
+  c.restore();
+}
 // ================= UI ICONS (SVG) =================
 const ICONS = {
   coin: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><radialGradient id="cg" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#FFF4B0"/><stop offset=".45" stop-color="#FFC83D"/><stop offset="1" stop-color="#C47A0A"/></radialGradient><linearGradient id="ce" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E0960E"/><stop offset="1" stop-color="#8A4E00"/></linearGradient></defs>
@@ -1020,14 +1044,14 @@ Object.keys(SPECIES).forEach(k => { critImg(k); critImg(k, true); });
 // draw a critter at (x, y) = feet, size = height in px. Hops, squashes, blinks and faces left/right.
 function drawCritterArt(c, sp, tier, x, y, size, t, o = {}){
   const s = size * (1 + .1 * (tier - 1)), seed = (o.seed || 0) + sp.length * 7;
-  const blink = !o.still && ((t * .9 + seed * .37) % 3.2) < .12, real = artImg('critters/' + sp), im = real || critImg(sp, blink);
+  const blink = !o.still && ((t * .9 + seed * .37) % 3.2) < .12, rig = !reduce && rigReady(sp), real = artImg('critters/' + sp), im = real || critImg(sp, blink);
   if (!im.complete || !im.naturalWidth) return drawCritter(c, sp, tier, x, y, size, t, o);
-  const hopP = o.still || reduce ? 0 : o.moving ? Math.abs(Math.sin(t * 9 + seed)) : (Math.sin(t * 2.2 + seed) * .5 + .5) * .25;
-  const sq = o.still || reduce ? 0 : o.moving ? (hopP < .25 ? .1 * (1 - hopP * 4) : -.04) : Math.sin(t * 2.2 + seed) * .025;
+  const hopP = o.still || reduce || rig ? 0 : o.moving ? Math.abs(Math.sin(t * 9 + seed)) : (Math.sin(t * 2.2 + seed) * .5 + .5) * .25;
+  const sq = o.still || reduce || rig ? 0 : o.moving ? (hopP < .25 ? .1 * (1 - hopP * 4) : -.04) : Math.sin(t * 2.2 + seed) * .025;
   if (!o.noShadow) ell(c, x, y, s * .28 * (1 - hopP * .25), s * .07, 'rgba(10,20,30,.25)');
   c.save(); c.translate(x, y - hopP * s * (o.moving ? .12 : .02)); c.scale((o.face || 1) * (1 + sq), 1 - sq);
   if (o.hurt) c.globalAlpha = .55 + .45 * Math.sin(t * 30);
-  if (real) { const w = s * im.naturalWidth / im.naturalHeight; c.drawImage(im, -w / 2, -s * .95, w, s * .95); } else c.drawImage(im, -s / 2, -s * .925, s, s); c.restore();
+  if (rig) drawRig(c, sp, rig, s * .95, o.still ? 0 : t + seed, o.moving && !o.still, blink); else if (real) { const w = s * im.naturalWidth / im.naturalHeight; c.drawImage(im, -w / 2, -s * .95, w, s * .95); } else c.drawImage(im, -s / 2, -s * .925, s, s); c.restore();
   if (tier >= 2 && o.stars !== false) { c.fillStyle = '#FFC83D'; c.strokeStyle = '#6A4200'; c.lineWidth = 2.5; c.font = `700 ${Math.max(11, s * .16)}px Fredoka, sans-serif`; c.textAlign = 'center'; const st = '★'.repeat(tier); c.strokeText(st, x, y - s * .95); c.fillText(st, x, y - s * .95); }
 }
 
