@@ -201,6 +201,12 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
 .dock button.go::before,.dock button.go::after{content:"";position:absolute;width:22px;height:22px;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><path d='M4 36 C4 16 18 4 36 4 C36 22 24 36 4 36Z' fill='%234FB33A' stroke='%23286B1E' stroke-width='2.5'/><path d='M6 34 L30 10' stroke='%23286B1E' stroke-width='2' fill='none'/><path d='M8 22 C14 10 24 7 32 7' stroke='%23A6E07A' stroke-width='2' fill='none'/></svg>") center/contain no-repeat;pointer-events:none}
 .dock button.go::before{left:-10px;bottom:-6px;transform:rotate(-10deg)}.dock button.go::after{right:-10px;bottom:-6px;transform:scaleX(-1) rotate(-10deg)}
 .lvl::after{content:"";position:absolute;left:-9px;bottom:-7px;width:22px;height:22px;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><path d='M4 36 C4 16 18 4 36 4 C36 22 24 36 4 36Z' fill='%234FB33A' stroke='%23286B1E' stroke-width='2.5'/><path d='M6 34 L30 10' stroke='%23286B1E' stroke-width='2' fill='none'/><path d='M8 22 C14 10 24 7 32 7' stroke='%23A6E07A' stroke-width='2' fill='none'/></svg>") center/contain no-repeat;transform:rotate(-20deg)}
+
+.cdMeta{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:2px 0 6px}
+.cdMeta span{font-size:12px;background:#FFF1D6;border:1px solid #E6D2A8;border-radius:999px;padding:3px 9px;color:#5A3818;font-weight:600}
+#cdArt{position:relative}
+.petHeart{position:absolute;left:50%;top:20%;font-size:26px;pointer-events:none;animation:petUp .9s ease-out forwards}
+@keyframes petUp{from{transform:translate(-50%,0);opacity:1}to{transform:translate(-50%,-50px);opacity:0}}
 </style>
 
 <canvas id="cv" aria-label="Your island"></canvas>
@@ -219,6 +225,7 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
   <button type="button" id="bCritters"><canvas width="68" height="68" data-icon="critters"></canvas>Critters<span class="dot" id="critDot" hidden></span></button>
   <button type="button" id="bNest"><canvas width="68" height="68" data-icon="nest"></canvas>Nest<span class="dot" id="nestDot" hidden></span></button>
   <button type="button" class="go" id="bMap"><canvas width="68" height="68" data-icon="map"></canvas>Sail</button>
+  <button type="button" id="bShop"><canvas width="68" height="68" data-icon="build"></canvas>Shop</button>
 </div>
 <div class="proto">PROTOTYPE</div>
 
@@ -358,10 +365,19 @@ function freshSave(){
       { id: 7, k: 'tower', x: 7, y: 2, lv: 1, last: t },
     ],
     crit: [{ id: 10, s: 'pebblet', t: 1, rest: 0 }, { id: 11, s: 'zippy', t: 1, rest: 0 }, { id: 12, s: 'coconeer', t: 1, rest: 0 }],
-    nest: null, eggs: [], plot: { w: 16, h: 16, n: 0 } };
+    nest: null, eggs: [], plot: { w: 16, h: 16, n: 0 },
+    decor: [{ id: 13, kind: 'palm', x: 1, y: 13 }, { id: 14, kind: 'bush1', x: 14, y: 2 }, { id: 15, kind: 'flowers2', x: 6, y: 9 }, { id: 16, kind: 'rock2', x: 14, y: 13 }] };
 }
+// decorations from the shop: coins only (never real money). Each one you own makes the next of that kind a bit dearer.
+const DECOR_SHOP = [
+  ['flowers1', 'Red hibiscus', 300], ['flowers2', 'White frangipani', 300], ['flowers3', 'Pink lilies', 300], ['flowers4', 'Blue hibiscus', 300],
+  ['bush1', 'Hibiscus bush', 600], ['bush2', 'Frangipani bush', 600], ['bush3', 'Monstera bush', 600],
+  ['rock3', 'Small mossy rock', 450], ['rock2', 'Mossy rock', 700], ['rock1', 'Big mossy boulder', 1100],
+  ['tree', 'Flowering tree', 1800], ['palm', 'Coconut palm', 2200]
+];
+const decorCost = kind => { const base = DECOR_SHOP.find(e => e[0] === kind)[2], n = save.decor.filter(d => d.kind === kind).length; return Math.round(base * (1 + .25 * n) / 10) * 10; };
 let save = freshSave();
-try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.v === 1) { const hadPlot = !!s.plot; save = Object.assign(freshSave(), s); if (!hadPlot) save.bld.forEach(b => { b.x += 3; b.y += 2; }); } } catch (e) {}
+try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.v === 1) { const hadPlot = !!s.plot; save = Object.assign(freshSave(), s); if (!s.decor) save.decor = []; if (!hadPlot) save.bld.forEach(b => { b.x += 3; b.y += 2; }); } } catch (e) {}
 
 const persist = () => { save.lastSeen = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(save)); } catch (e) {} };
 const B = k => save.bld.filter(b => b.k === k);
@@ -767,10 +783,10 @@ function ringDecor(seed, reg){
 const DECOR = { palm: { foot: .726, h: 2.1 }, tree: { foot: .534, h: 1.7 }, blossom: { foot: .534, h: 1.7, src: 'tree' }, bush1: { foot: .5, h: .75 }, bush2: { foot: .5, h: .75 }, bush3: { foot: .5, h: .75 }, rock1: { foot: .5, h: .8 }, rock2: { foot: .5, h: .6 }, rock3: { foot: .5, h: .45 }, flowers1: { foot: .5, h: .5 }, flowers2: { foot: .5, h: .5 }, flowers3: { foot: .5, h: .5 }, flowers4: { foot: .5, h: .5 }, searock1: { foot: .5, h: 2 }, searock2: { foot: .5, h: 1.4 } }, DECOR_IMG = {};
 for (const k in DECOR) { const im = new Image(); im.src = 'art/decor/' + (DECOR[k].src || k) + '.png'; DECOR_IMG[k] = im; }
 function drawDecor(c, d, t, reg){ const [x, y] = iso(d.gx, d.gy), s = IS.tw * d.s;
-  const pick = 1 + Math.floor(Math.abs(d.gx * 5 + d.gy * 11)) % 3, dk = d.kind === 'bush' || d.kind === 'rock' ? d.kind + pick : d.kind === 'flowers' ? 'flowers' + (1 + Math.floor(Math.abs(d.gx * 7 + d.gy * 13)) % 4) : d.kind, D = DECOR[dk], im = D && DECOR_IMG[dk];
+  const pick = 1 + Math.floor(Math.abs(d.gx * 5 + d.gy * 11)) % 3, dk = d.placed ? d.kind : d.kind === 'bush' || d.kind === 'rock' ? d.kind + pick : d.kind === 'flowers' ? 'flowers' + (1 + Math.floor(Math.abs(d.gx * 7 + d.gy * 13)) % 4) : d.kind, D = DECOR[dk], im = D && DECOR_IMG[dk];
   const hsh = Math.abs(Math.sin(d.gx * 12.9898 + d.gy * 78.233) * 43758.5453) % 1;
-  if (d.kind === 'flowers' && hsh < .3) return;   // not every flower spot...
-  const vary = d.kind === 'flowers' ? 1.6 : d.kind === 'palm' || d.kind === 'tree' || d.kind === 'blossom' ? .65 + hsh * .5 : .85 + hsh * .3;   // ...but bigger; trees in mixed sizes
+  if (d.kind === 'flowers' && hsh < .3 && !d.placed) return;   // not every flower spot...
+  const vary = d.placed ? (/^(palm|tree)$/.test(d.kind) ? .9 : /^flowers/.test(d.kind) ? 1.6 : 1) : d.kind === 'flowers' ? 1.6 : d.kind === 'palm' || d.kind === 'tree' || d.kind === 'blossom' ? .65 + hsh * .5 : .85 + hsh * .3;   // ...but bigger; trees in mixed sizes
   if (im && im.complete && im.naturalWidth) {   // a gentle sway from the foot, each one on its own beat; every other one mirrored for variety
     const h = s * D.h * vary, w = h * im.naturalWidth / im.naturalHeight, flip = (Math.floor(d.gx * 7 + d.gy * 3) % 2) ? -1 : 1, sw = reduce ? 0 : Math.sin(t * .9 + d.gx * 1.3 + d.gy) * .018;
     ell(c, x, y, s * .45, s * .14, 'rgba(10,30,15,.22)'); c.save(); c.translate(x, y); c.rotate(sw); c.scale(flip, 1); c.drawImage(im, -w * D.foot, -h * .985, w, h); c.restore(); return; }
@@ -1287,7 +1303,7 @@ let sheetEl = null;
 function sheet(title, sub, body){ closeSheet(); sheetEl = document.createElement('div'); sheetEl.className = 'sheet';
   sheetEl.innerHTML = `<header><h3>${title}${sub ? `<small>${sub}</small>` : ''}</h3><button class="closeX" type="button" aria-label="Close">✕</button></header>${body}`;
   document.body.appendChild(sheetEl); sheetEl.querySelector('.closeX').onclick = () => { SFX.tap(); closeSheet(); }; return sheetEl; }
-let selBld = null, selAt = 0;   // the building whose panel is open: glows on the island with its name above
+let selBld = null, selAt = 0, critSpots = [];   // where each critter stood last frame, for tapping   // the building whose panel is open: glows on the island with its name above
 function closeSheet(){ if (sheetEl) { sheetEl.remove(); sheetEl = null; } selBld = null; }
 const coinH = n => `<span class="ic coin sm"></span>${fmt(n)}`, foodH = n => `<span class="ic food sm"></span>${fmt(n)}`, gemH = n => `<span class="ic gem sm"></span>${fmt(n)}`;
 function critCanvas(sp, tier, size, t0){ const c = document.createElement('canvas'); c.width = c.height = size * 2; const g = c.getContext('2d'); g.scale(2, 2); drawCritterArt(g, sp, tier, size / 2, size * .96, size * .9, t0 || 0, { still: true, stars: false }); return c; }
@@ -1306,6 +1322,7 @@ function updateHud(){
 }
 
 // ================= BUILDINGS: timers, production =================
+const ready = b => (b.k === 'farm' || b.k === 'mill') && b.lv > 0 && stored(b) >= storeCap(b.k, b.lv) * .5;   // half full: the collect bubble pops up
 const stored = b => (b.k === 'farm' || b.k === 'mill') && b.lv ? Math.min(storeCap(b.k, b.lv), (Date.now() - b.last) * SPEED / 3.6e6 * prodRate(b.k, b.lv)) : 0;
 const fx = [];
 function floatText(x, y, text, col){ fx.push({ x, y, text, col, t: 0 }); }
@@ -1423,17 +1440,21 @@ function drawBase(){
         ctx.restore(); ctx.save(); }
       const pop = sel ? Math.max(0, 1 - (performance.now() - selAt) / 260) : 0;   // a little hop when tapped
       if (pop) { const [ax, ay] = iso(b.x + s, b.y + s); ctx.save(); ctx.translate(ax, ay); ctx.scale(1 + pop * .06, 1 + Math.sin(pop * Math.PI) * .08); ctx.translate(-ax, -ay); }
-      if (b.lv) drawBld(ctx, b.k, b.x, b.y, b.lv, { t, egg: nestEgg || 'zippy', egg2: save.eggs[1] || 'pebblet' });
-      if (pop) ctx.restore(); if (sel) { ctx.restore(); b._top = drawBld.top; }
+      if (b.lv) { drawBld(ctx, b.k, b.x, b.y, b.lv, { t, egg: nestEgg || 'zippy', egg2: save.eggs[1] || 'pebblet' }); b._top = drawBld.top; }
+      if (pop) ctx.restore(); if (sel) ctx.restore();
       if (b.build) drawScaffoldIso(ctx, b.x, b.y, s, clamp((Date.now() - b.build.start) / (b.build.end - b.build.start), 0, 1), t); } }); }
+  critSpots = [];
   const den = B('den')[0]; if (den) save.crit.slice(0, 7).forEach((c, i) => { const w = wander(i, t), nap = c.rest > Date.now(), gx = nap ? den.x + 1 + Math.cos(i * .9 + 2) * 2.2 : w.x, gy = nap ? den.y + 2.2 + Math.sin(i * .9 + 2) * 1.4 : w.y;   // napping critters sleep by the den
-    items.push({ k: gx + gy, f: () => { const [px, py] = iso(gx, gy); drawCritterArt(ctx, c.s, c.t, px, py, IS.tw * 1.32, t, { seed: i * 3, moving: !nap && w.moving, nap, face: w.face, rate: w.rate, stars: false }); } }); });
-  if (placing) { const s = BLD[placing.k].size, ok = placeOk(placing); items.push({ k: 999, f: () => { poly(ctx, [iso(placing.x, placing.y), iso(placing.x + s, placing.y), iso(placing.x + s, placing.y + s), iso(placing.x, placing.y + s)], ok ? 'rgba(76,195,138,.5)' : 'rgba(255,90,70,.5)', '#fff', 2);
+    items.push({ k: gx + gy, f: () => { const [px, py] = iso(gx, gy); critSpots.push({ c, x: px, y: py, h: IS.tw * 1.32 }); if (c.fedUntil > Date.now() && !reduce && ((t * .8 + i) % 2.4) < .9) { const hy = py - IS.tw * 1.5 - ((t * .8 + i) % 2.4) * 10; ctx.font = `${IS.tw * .3}px sans-serif`; ctx.textAlign = 'center'; ctx.fillText('💗', px, hy); } drawCritterArt(ctx, c.s, c.t, px, py, IS.tw * 1.32, t, { seed: i * 3, moving: !nap && w.moving, nap, face: w.face, rate: w.rate, stars: false }); } }); });
+  for (const dc of save.decor) { if (placing && placing.decor && dc.id === placing.id) continue; items.push({ k: dc.x + dc.y + 1, f: () => drawDecor(ctx, { gx: dc.x + .5, gy: dc.y + .5, kind: dc.kind, s: .9, placed: true }, t, reg) }); }
+  if (placing && placing.decor) { const ok = placeOk(placing); items.push({ k: 999, f: () => { poly(ctx, [iso(placing.x, placing.y), iso(placing.x + 1, placing.y), iso(placing.x + 1, placing.y + 1), iso(placing.x, placing.y + 1)], ok ? 'rgba(76,195,138,.5)' : 'rgba(255,90,70,.5)', '#fff', 2);
+    ctx.globalAlpha = .9; drawDecor(ctx, { gx: placing.x + .5, gy: placing.y + .5, kind: placing.kind, s: .9, placed: true }, t, reg); ctx.globalAlpha = 1; } }); }
+  else   if (placing) { const s = BLD[placing.k].size, ok = placeOk(placing); items.push({ k: 999, f: () => { poly(ctx, [iso(placing.x, placing.y), iso(placing.x + s, placing.y), iso(placing.x + s, placing.y + s), iso(placing.x, placing.y + s)], ok ? 'rgba(76,195,138,.5)' : 'rgba(255,90,70,.5)', '#fff', 2);
     ctx.globalAlpha = .88; drawBld(ctx, placing.k, placing.x, placing.y, placing.lv || 1, { t, badge: false }); ctx.globalAlpha = 1; } }); }
   items.sort((a, b) => a.k - b.k).forEach(i => i.f());
   // collect bubbles and nest alert on top
   for (const b of save.bld) { const s = BLD[b.k].size, n = stored(b);
-    if (n >= Math.max(5, storeCap(b.k, b.lv) * .08) && !b.build) { const [x, y0] = iso(b.x + s / 2, b.y + s / 2, bldTop(b.k) + .3), bob = reduce ? 0 : Math.sin(t * 3 + b.id) * 3, y = y0 + bob, full = n >= storeCap(b.k, b.lv) * .98;
+    if (ready(b) && !b.build) { const [x, yb] = iso(b.x + s / 2, b.y + s / 2, bldTop(b.k) + .3), y0 = b._top != null ? Math.min(yb, b._top - 8) : yb, bob = reduce ? 0 : Math.sin(t * 3 + b.id) * 3, y = y0 + bob, full = n >= storeCap(b.k, b.lv) * .98;
       ctx.fillStyle = 'rgba(0,0,0,.2)'; rr(ctx, x - 30, y - 12, 62, 28, 14); ctx.fill(); ctx.fillStyle = full ? '#FFE3D6' : '#FFFBF0'; rr(ctx, x - 31, y - 15, 62, 28, 14); ctx.fill(); ctx.strokeStyle = full ? '#FF7A5C' : 'rgba(150,110,60,.4)'; ctx.lineWidth = 2; ctx.stroke();
       ctx.drawImage(ICON_IMG[b.k === 'farm' ? 'food' : 'coin'], x - 29, y - 13, 24, 24);
       ctx.fillStyle = '#3A2A1A'; ctx.font = '700 14px Fredoka, sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(fmt(n), x - 5, y); }
@@ -1442,9 +1463,11 @@ function drawBase(){
   { const b = selBld != null && save.bld.find(x => x.id === selBld); if (b) nameplate(b, t); }   // on top of the evening tint
   for (let i = fx.length - 1; i >= 0; i--) { const f = fx[i]; f.t += 1 / 60; ctx.globalAlpha = Math.max(0, 1 - f.t / 1.2); ctx.fillStyle = f.col; ctx.strokeStyle = '#fff'; ctx.lineWidth = 4; ctx.font = '700 22px Fredoka, sans-serif'; ctx.textAlign = 'center'; ctx.strokeText(f.text, f.x, f.y - f.t * 40); ctx.fillText(f.text, f.x, f.y - f.t * 40); ctx.globalAlpha = 1; if (f.t > 1.2) fx.splice(i, 1); }
 }
-function placeOk(p){ const s = BLD[p.k].size; if (p.x < 0 || p.y < 0 || p.x + s > GRID_W || p.y + s > GRID_H) return false;
-  return !save.bld.some(b => b.id !== p.id && p.x < b.x + BLD[b.k].size && b.x < p.x + s && p.y < b.y + BLD[b.k].size && b.y < p.y + s); }
-function freeSpot(k){ const s = BLD[k].size, c = [camBase.x, camBase.y]; let best = null, bd = 1e9; for (let y = 0; y <= GRID_H - s; y++) for (let x = 0; x <= GRID_W - s; x++) if (placeOk({ k, x, y })) { const d = Math.hypot(x + s / 2 - c[0], y + s / 2 - c[1]); if (d < bd) { bd = d; best = { x, y }; } } return best; }
+const sizeOf = p => p.decor ? 1 : BLD[p.k].size;
+function placeOk(p){ const s = sizeOf(p); if (p.x < 0 || p.y < 0 || p.x + s > GRID_W || p.y + s > GRID_H) return false;
+  if (save.decor.some(d => !(p.decor && d.id === p.id) && p.x < d.x + 1 && d.x < p.x + s && p.y < d.y + 1 && d.y < p.y + s)) return false;
+  return !save.bld.some(b => (p.decor || b.id !== p.id) && p.x < b.x + BLD[b.k].size && b.x < p.x + s && p.y < b.y + BLD[b.k].size && b.y < p.y + s); }
+function freeSpot(k, dec){ const s = dec ? 1 : BLD[k].size, c = [camBase.x, camBase.y]; let best = null, bd = 1e9; for (let y = 0; y <= GRID_H - s; y++) for (let x = 0; x <= GRID_W - s; x++) if (placeOk({ k, x, y, decor: dec })) { const d = Math.hypot(x + s / 2 - c[0], y + s / 2 - c[1]); if (d < bd) { bd = d; best = { x, y }; } } return best; }
 
 // ================= INPUT (all screens) =================
 let down = null, pinch = null; const pointers = new Map();
@@ -1467,17 +1490,22 @@ const endPointer = e => { pointers.delete(e.pointerId); if (pinch) { if (pointer
   baseTap(e.clientX, e.clientY); };
 cv.addEventListener('pointerup', endPointer); cv.addEventListener('pointercancel', e => { pointers.delete(e.pointerId); pinch = null; down = null; });
 cv.addEventListener('wheel', e => { e.preventDefault(); const cam = screen === 'battle' ? camBattle : camBase; cam.z *= e.deltaY < 0 ? 1.1 : .9; clampCam(cam); }, { passive: false });
-function ghostHit(px, py){ applyCam(camBase); const [gx, gy] = unIso(px, py), s = BLD[placing.k].size; return gx > placing.x - .8 && gx < placing.x + s + .8 && gy > placing.y - .8 && gy < placing.y + s + .8; }
-function movePlacing(px, py){ applyCam(camBase); const s = BLD[placing.k].size, [gx, gy] = unIso(px, py + IS.th * .5); placing.x = Math.round(gx - s / 2); placing.y = Math.round(gy - s / 2); }
+function ghostHit(px, py){ applyCam(camBase); const [gx, gy] = unIso(px, py), s = sizeOf(placing); return gx > placing.x - .8 && gx < placing.x + s + .8 && gy > placing.y - .8 && gy < placing.y + s + .8; }
+function movePlacing(px, py){ applyCam(camBase); const s = sizeOf(placing), [gx, gy] = unIso(px, py + IS.th * .5); placing.x = Math.round(gx - s / 2); placing.y = Math.round(gy - s / 2); }
 function bldAt(px, py){ applyCam(camBase); let best = null;
   for (const b of save.bld) { const s = BLD[b.k].size, l = iso(b.x, b.y + s)[0], r = iso(b.x + s, b.y)[0], top = iso(b.x, b.y, bldTop(b.k))[1], bot = iso(b.x + s, b.y + s)[1];
     if (px >= l && px <= r && py >= top && py <= bot) { const [gx, gy] = unIso(px, py); const inFoot = gx >= b.x - .2 && gx <= b.x + s + .2 && gy >= b.y - .2 && gy <= b.y + s + .2; const score = (inFoot ? 100 : 0) + b.x + b.y; if (!best || score > best.score) best = { b, score }; } }
   return best && best.b; }
+function critAt(px, py){ let best = null; for (const p of critSpots) if (Math.abs(px - p.x) < p.h * .4 && py < p.y + 6 && py > p.y - p.h * .95 && (!best || p.y > best.y)) best = p; return best && best.c; }
+function decorAt(px, py){ applyCam(camBase); const [gx, gy] = unIso(px, py + IS.th * .3); return save.decor.find(d => gx >= d.x - .1 && gx <= d.x + 1.1 && gy >= d.y - .1 && gy <= d.y + 1.1); }
 function baseTap(px, py){
   if (placing) { movePlacing(px, py); return; }
-  const hit = bldAt(px, py);
+  const hit = bldAt(px, py), dc = decorAt(px, py);
+  const onFoot = b => { applyCam(camBase); const [gx, gy] = unIso(px, py + IS.th * .3), z = BLD[b.k].size; return gx >= b.x && gx <= b.x + z && gy >= b.y && gy <= b.y + z; };
+  const ct = critAt(px, py); if (ct) { SFX.tap(); return critDetail(ct); }
+  if (dc && (!hit || !onFoot(hit))) { SFX.tap(); return openDecor(dc); }   // a decoration wins unless you tapped the building's own ground
   if (!hit) { closeSheet(); return; }
-  SFX.tap(); if (!hit.build && collect(hit)) return;
+  SFX.tap(); if (!hit.build && ready(hit) && collect(hit)) return;   // the bubble means it's worth collecting; otherwise tapping opens the panel
   if (hit.k === 'nest' && !hit.build && (save.eggs.length || (save.nest && Date.now() >= save.nest.end))) return openNest();
   openBuilding(hit);
 }
@@ -1507,6 +1535,9 @@ function openBuilding(b){
   el.querySelector('.bArt').appendChild(bldCanvas(b.k, b.lv, 96));
   const list = el.querySelector('#bList'), add = html => list.insertAdjacentHTML('beforeend', html);
   if (now.length) add(`<div class="stats">${now.map((st, i) => `<div class="stat">${STAT_ICON[st[0]]}<div><b>${st[1]}${then && then[i] && then[i][1] !== st[1] ? `<em>→ ${then[i][1]}</em>` : ''}</b><small>${st[2]}</small></div></div>`).join('')}</div>`);
+  if ((b.k === 'farm' || b.k === 'mill') && b.lv && !b.build) { const n = Math.floor(stored(b)), cap = storeCap(b.k, b.lv), food = b.k === 'farm';
+    add(`<div class="upCard"><div class="upTop"><b>${food ? 'Berries' : 'Coins'} ready</b><span>${fmt(n)} / ${fmt(cap)}</span></div><div class="bar"><i style="width:${Math.max(2, n / cap * 100)}%;background:linear-gradient(90deg,${food ? '#FF9DB8,#E2517A' : '#FFE08A,#E9A21A'})"></i></div><button class="btn orange" type="button" id="bCollect" ${n < 1 ? 'disabled' : ''}>Collect ${food ? foodH(n) : coinH(n)}</button></div>`);
+    list.querySelector('#bCollect').onclick = () => { collect(b); updateHud(); openBuilding(b); }; }
   if (b.build) { const left = b.build.end - Date.now(), tot = b.build.end - b.build.start, pc = Math.max(3, Math.min(100, 100 - left / tot * 100));
     add(`<div class="upCard"><div class="upTop"><b>Upgrading to level ${b.build.to}</b><span id="bLeft">${fmtT(left)} left</span></div><div class="bar"><i style="width:${pc}%"></i></div><button class="btn gemb" type="button" id="bSpeed">Finish now ${gemH(gemsFor(left))}</button></div>`);
     list.querySelector('#bSpeed').onclick = () => { speedUp(b); }; }
@@ -1542,12 +1573,31 @@ function showPlaceBar(){ $('dock').hidden = true; placeBar = document.createElem
   placeBar.innerHTML = `<button type="button" id="pCancel" style="width:110px">✕ Cancel</button><button type="button" class="go" id="pOk" style="width:130px">✓ Place</button>`; document.body.appendChild(placeBar);
   $('pCancel').onclick = () => { SFX.tap(); endPlacing(); };
   $('pOk').onclick = () => { if (!placeOk(placing)) return toast("It doesn't fit there"); SFX.build();
+    if (placing.decor) { if (placing.isNew) { const c = decorCost(placing.kind); if (save.coins < c) { endPlacing(); return toast('Not enough coins'); } save.coins -= c; save.decor.push({ id: save.nextId++, kind: placing.kind, x: placing.x, y: placing.y }); }
+      else { const dc = save.decor.find(d => d.id === placing.id); dc.x = placing.x; dc.y = placing.y; } persist(); updateHud(); endPlacing(); return; }
     if (placing.isNew) { const c = cost(placing.k, 1); if (save.coins < c || busy() >= BUILDERS) { endPlacing(); return; } save.coins -= c;
       save.bld.push({ id: save.nextId++, k: placing.k, x: placing.x, y: placing.y, lv: 0, last: Date.now(), build: { to: 1, start: Date.now(), end: Date.now() + secs(btime(placing.k, 1)) } }); }
     else { const b = save.bld.find(bb => bb.id === placing.id); b.x = placing.x; b.y = placing.y; }
     persist(); endPlacing(); }; }
 function endPlacing(){ placing = null; if (placeBar) placeBar.remove(); placeBar = null; $('dock').hidden = false; }
 
+const decorName = k => (DECOR_SHOP.find(e => e[0] === k) || [k, 'Decoration'])[1];
+function decorCanvas(kind, size){ const c = document.createElement('canvas'); c.width = c.height = size * 2; const g = c.getContext('2d'); g.scale(2, 2); const keep = { ...IS }; setIso(size * .55, 0, 0); IS.ox = size / 2; IS.oy = size * .9 - IS.th / 2;
+  drawDecor(g, { gx: .5, gy: .5, kind, s: /^(palm|tree)$/.test(kind) ? .5 : 1, placed: true }, 0, REGIONS[0]); Object.assign(IS, keep); return c; }
+function openDecor(dc){
+  const back = Math.round(decorCost(dc.kind) / 1.25 * .5 / 10) * 10;
+  const el = sheet(decorName(dc.kind), 'Decoration', `<div class="list"><div class="btns"><button class="btn orange" type="button" id="dMove">Move</button><button class="btn alt" type="button" id="dSell">Sell for ${coinH(back)}</button></div></div>`);
+  el.querySelector('#dMove').onclick = () => { SFX.tap(); closeSheet(); placing = { k: 'decor', decor: true, kind: dc.kind, id: dc.id, x: dc.x, y: dc.y }; showPlaceBar(); };
+  el.querySelector('#dSell').onclick = e => { const b = e.currentTarget; if (!b.dataset.sure) { b.dataset.sure = 1; b.innerHTML = 'Tap again to sell'; return; }
+    save.decor = save.decor.filter(d => d !== dc); save.coins += back; SFX.coin(); persist(); updateHud(); closeSheet(); };
+}
+function openShop(){
+  const el = sheet('Decor shop', 'Make your island your own. Tap an item, then place it on your land.', '<div class="cards" id="shopList"></div>'), list = el.querySelector('#shopList');
+  for (const [kind, name] of DECOR_SHOP) { const c = decorCost(kind), d = document.createElement('button'); d.type = 'button'; d.className = 'card'; d.disabled = save.coins < c;
+    d.appendChild(decorCanvas(kind, 64)); d.insertAdjacentHTML('beforeend', `${name}<span style="font-size:12px;display:flex;align-items:center;gap:3px;justify-content:center">${coinH(c)}</span>`);
+    d.onclick = () => { if (save.coins < c) return toast('Not enough coins'); const f = freeSpot('farm', true); if (!f) return toast('No free space. Expand your land!'); SFX.tap(); closeSheet(); placing = { k: 'decor', decor: true, kind, isNew: true, x: f.x, y: f.y }; showPlaceBar(); };
+    list.appendChild(d); }
+}
 function openCritters(){
   const room = B('den').reduce((s, b) => s + denCap(b.lv), 0);
   const el = sheet('Critters', `${save.crit.length + save.eggs.length + (save.nest ? 1 : 0)} of ${room} spaces used`, '<div class="cards" id="cList"></div>'), list = el.querySelector('#cList');
@@ -1558,11 +1608,19 @@ function openCritters(){
     d.onclick = () => critDetail(c); list.appendChild(d); }
 }
 function critDetail(c){
-  const S = SPECIES[c.s], m = modal(`<button class="closeX" type="button" data-close aria-label="Close">✕</button><div id="cdArt"></div><h2>${CAST[c.s].nick} ${'★'.repeat(c.t)}</h2><p style="margin-top:-4px;font-size:13px">${S.name} · ${REGIONS[S.region].name}</p><p><i>“${CAST[c.s].mood}”</i></p><p>${S.desc}</p>
+  const S = SPECIES[c.s], fed = c.fedUntil > Date.now(), snack = 15 * c.t * (S.region + 1), napping = c.rest > Date.now();
+  const hatched = c.born ? new Date(c.born).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : null;
+  const m = modal(`<button class="closeX" type="button" data-close aria-label="Close">✕</button><div id="cdArt"></div><h2>${CAST[c.s].nick} ${'★'.repeat(c.t)}</h2>
+    <div class="cdMeta">${napping ? '<span>😴 Napping</span>' : fed ? '<span>💗 Happy and well fed</span>' : '<span>🙂 Content</span>'}${hatched ? `<span>🥚 Hatched ${hatched}</span>` : ''}${c.wins ? `<span>🏆 ${c.wins} ${c.wins === 1 ? 'victory' : 'victories'}</span>` : ''}</div>
+    <div class="btns" style="margin:4px 0 6px"><button class="btn orange" type="button" id="cdFeed" ${fed ? 'disabled' : ''}>${fed ? 'Full up!' : `Feed a treat ${foodH(snack)}`}</button><button class="btn alt" type="button" id="cdPet">Pet</button></div>
+    <p style="font-size:12.5px;margin-top:-2px">${fed ? `Well fed: +10% attack in its next battle.` : `A treat gives +10% attack in its next battle.`}</p><p style="margin-top:-4px;font-size:13px">${S.name} · ${REGIONS[S.region].name}</p><p><i>“${CAST[c.s].mood}”</i></p><p>${S.desc}</p>
     <p><b>Health</b> ${Math.round(stat(c, 'hp'))} · <b>Attack</b> ${Math.round(stat(c, 'dmg'))} · <b>${S.role === 'tank' ? 'Tank' : S.role === 'fast' ? 'Fast' : S.role === 'splash' ? 'Splash' : 'Ranged'}</b></p>
     <p style="font-size:13px">${c.t < MAX_TIER ? `Merge 3 of these at the Merge Pond for a ${'★'.repeat(c.t + 1)} ${S.name}.` : 'Fully grown!'}</p>
     <button class="btn alt" type="button" id="cdFree">Let it go (+${fmt(20 * c.t * (S.region + 1))} berries)</button>`);
   m.el.querySelector('#cdArt').appendChild(critCanvas(c.s, c.t, 110));
+  m.el.querySelector('#cdFeed').onclick = () => { if (save.food < snack) return toast('Not enough berries'); save.food -= snack; c.fedUntil = Date.now() + 6 * 3600e3; if (c.rest) c.rest = 0; SFX.coin(); persist(); updateHud(); m.close(); toast(`${CAST[c.s].nick} loved that! 💗`); critDetail(c); };
+  m.el.querySelector('#cdPet').onclick = e => { SFX.tap(); const art = m.el.querySelector('#cdArt'); art.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.12,.9)' }, { transform: 'scale(.95,1.08)' }, { transform: 'scale(1)' }], { duration: 450 });
+    const h = document.createElement('div'); h.textContent = ['💗', '✨', '💞'][Math.floor(Math.random() * 3)]; h.className = 'petHeart'; art.appendChild(h); setTimeout(() => h.remove(), 900); };
   m.el.querySelector('#cdFree').onclick = e => { if (save.crit.length <= 1) return toast('Keep at least one critter!');
     if (!e.target.dataset.sure) { e.target.dataset.sure = 1; e.target.innerHTML = `Tap again to say goodbye to ${CAST[c.s].nick}`; e.target.style.background = '#FFE3D6'; return; } save.crit = save.crit.filter(x => x !== c); save.food += 20 * c.t * (S.region + 1); persist(); m.close(); if (sheetEl) openCritters(); toast(`${S.name} waddled off happily`); };
 }
@@ -1606,7 +1664,7 @@ function openNest(){
 function nestCollect(){ const n = save.nest; if (!n || Date.now() < n.end) return; save.eggs.push(n.s); save.nest = null; persist(); hatchEgg(); }
 function hatchEgg(){
   if (!save.eggs.length) return openNest(); if (roomLeft() < 0) return toast('Your den is full! Build or upgrade a Critter Den.');
-  const sp = save.eggs.shift(), S = SPECIES[sp], c = { id: save.nextId++, s: sp, t: 1, rest: 0 }; save.crit.push(c); save.stats.hatch++; addXp(6 + 6 * S.region + (S.hybrid ? 15 : 0));
+  const sp = save.eggs.shift(), S = SPECIES[sp], c = { id: save.nextId++, s: sp, t: 1, rest: 0, born: Date.now() }; save.crit.push(c); save.stats.hatch++; addXp(6 + 6 * S.region + (S.hybrid ? 15 : 0));
   const first = S.hybrid && !save.tips['found-' + sp]; if (S.hybrid) save.tips['found-' + sp] = 1; persist(); SFX.hatch(); closeSheet();
   const m = modal(`<div id="hArt" style="height:150px"></div><h2>${first ? 'New hybrid!' : 'Hatched!'}</h2><p>Meet <b>${CAST[sp].nick}</b> the ${S.name}. <i>${CAST[sp].mood}</i></p><button class="btn" type="button" data-close>Welcome!</button>`);
   const cvh = document.createElement('canvas'); cvh.width = 300; cvh.height = 300; cvh.style.width = cvh.style.height = '150px'; m.el.querySelector('#hArt').appendChild(cvh); const g = cvh.getContext('2d'), t0 = performance.now();
@@ -1628,7 +1686,7 @@ function openMerge(){
     const ok = have >= 3 && T < cap && save.food >= cf, why = have < 3 ? `You need ${3 - have} more ${S.name} ${'★'.repeat(T)}` : T >= MAX_TIER ? 'Already fully grown' : T >= cap ? 'Upgrade the Merge Pond to go higher' : save.food < cf ? 'Not enough berries' : '';
     const g = el.querySelector('#mGo'); g.innerHTML = `<button class="btn" type="button" ${ok ? '' : 'disabled'}>Merge into ${S.name} ${'★'.repeat(T + 1)} · ${foodH(cf)}</button>${why ? `<p class="note">${why}</p>` : ''}`;
     g.querySelector('.btn').onclick = () => { if (!ok) return; save.food -= cf; const three = groups[mergePick].sort((a, b) => (a.rest ? 1 : 0) - (b.rest ? 1 : 0)).slice(0, 3); save.crit = save.crit.filter(c => !three.includes(c));
-      const nc = { id: save.nextId++, s: sp, t: T + 1, rest: 0 }; save.crit.push(nc); save.stats.merge++; addXp(10 * T); persist(); SFX.merge(); mergePick = null; closeSheet();
+      const nc = { id: save.nextId++, s: sp, t: T + 1, rest: 0, born: Date.now() }; save.crit.push(nc); save.stats.merge++; addXp(10 * T); persist(); SFX.merge(); mergePick = null; closeSheet();
       const m = modal(`<div id="mArt"></div><h2>Merged!</h2><p>Your <b>${S.name}</b> grew to ${'★'.repeat(T + 1)}. Much stronger now!</p><button class="btn" type="button" data-close>Awesome</button>`); m.el.querySelector('#mArt').appendChild(critCanvas(sp, T + 1, 120)); }; }
 }
 
@@ -1677,6 +1735,7 @@ $('bBuild').onclick = () => { audio(); SFX.tap(); openBuildMenu(); };
 $('bCritters').onclick = () => { audio(); SFX.tap(); openCritters(); };
 $('bNest').onclick = () => { audio(); SFX.tap(); openNest(); };
 $('bMap').onclick = () => { audio(); SFX.tap(); openMap(); };
+$('bShop').onclick = () => { audio(); SFX.tap(); openShop(); };
 
 // ================= SEA MAP =================
 let mapR = 0, mapScroll = 0, mapUi = null, mapDrag = null;
@@ -1766,7 +1825,7 @@ function renderPrep(){
 function endBattleUi(){ document.querySelectorAll('.prep,.bhud,.bbar').forEach(e => e.remove()); }
 function startFight(){
   endBattleUi(); BT.state = 'fight'; battleLayout();
-  BT.squad.forEach((c, k) => { const S = SPECIES[c.s], ang = k * 2.4; BT.units.push({ c, s: c.s, t: c.t, x: LANDS[BT.land] + Math.cos(ang) * .5 * (k > 0), y: coastFrom(100 + BT.r * 20 + BT.i, LANDS[BT.land], GRID_H, 0, 1)[1] - .4 + Math.sin(ang) * .3 * (k > 0), hp: stat(c, 'hp'), max: stat(c, 'hp'), dmg: stat(c, 'dmg'), rng: S.rng, spd: S.spd, cd: .5 + k * .15, role: S.role, face: 1, target: null, wait: k * .25, hurt: 0, dead: false }); });
+  BT.squad.forEach((c, k) => { const S = SPECIES[c.s], ang = k * 2.4; BT.units.push({ c, s: c.s, t: c.t, x: LANDS[BT.land] + Math.cos(ang) * .5 * (k > 0), y: coastFrom(100 + BT.r * 20 + BT.i, LANDS[BT.land], GRID_H, 0, 1)[1] - .4 + Math.sin(ang) * .3 * (k > 0), hp: stat(c, 'hp'), max: stat(c, 'hp'), dmg: stat(c, 'dmg') * (c.fedUntil > Date.now() ? 1.1 : 1), rng: S.rng, spd: S.spd, cd: .5 + k * .15, role: S.role, face: 1, target: null, wait: k * .25, hurt: 0, dead: false }); });
   const hud = document.createElement('div'); hud.className = 'bhud'; hud.innerHTML = `<div class="pill" id="bTime">2:30</div><div class="pill" id="bLoot"><span class="ic coin sm"></span>0</div><button type="button" id="bRetreat">Retreat</button>`; document.body.appendChild(hud);
   $('bRetreat').onclick = () => { SFX.tap(); endBattle(false); };
   const bar = document.createElement('div'); bar.className = 'bbar';
@@ -1885,6 +1944,7 @@ function endBattle(win){
   if (!BT || BT.state === 'end') return; BT.state = 'end'; endBattleUi();
   const sp = BT.spec, now = Date.now(), share = win ? (BT.again ? .15 : 1) : lootShare(), coins = Math.round(sp.reward.coins * share), food = Math.round(sp.reward.food * share), gems = win && !BT.again ? sp.reward.gems : 0;
   save.coins += coins; save.food += food; save.gems += gems;
+  for (const u of BT.units) { if (u.c.fedUntil) u.c.fedUntil = 0; if (win) u.c.wins = (u.c.wins || 0) + 1; }   // the treat is used up; winners remember it
   let napped = 0; for (const u of BT.units) if (u.dead) { u.c.rest = now + restTime(u.c); napped++; }
   if (win) { save.stats.wins++; if (!BT.again) save.cleared[BT.r] = Math.max(save.cleared[BT.r], BT.i + 1); addXp(15 + sp.s * 5); SFX.win(); } else SFX.lose();
   persist();
@@ -1926,6 +1986,6 @@ if (!save.tips.welcome) { save.tips.welcome = 1; persist();
   modal(`<h2>Welcome, Nestkeeper</h2><p>Long ago the <b>Great Roc</b> nested across these islands and left its eggs behind. Critters hatch from them, and this island is now yours to look after.</p><p>Grow berries, hatch and raise a crew, and win back the islands from the <b>Raccoon Rascals</b>. Beyond them lie the Sky Islands, the Undersea Domes and Clockwork Cove, each with its own rival crew.</p><button class="btn" type="button" data-close>Begin</button>`); }
 else raidCheck();
 if (location.hash.includes('test')) window.__hw = { save, get BT(){ return BT; }, get screen(){ return screen; }, openMap, startPrep, startFight, endBattle, openNest, openMerge, openBuildMenu, openBuilding, openCritters, hatchEgg, islandSpec, tickBuildings, persist, B, QUESTS, raidCheck, SPECIES, battleTap, toPx, closeMap, stepBattle, power };
-{ const ART_BTN = { bBuild: 'icons/hammer', bCritters: 'critters/zippy', bNest: 'buildings/nest-1', bMap: 'buildings/dock-1' };
+{ const ART_BTN = { bBuild: 'icons/hammer', bCritters: 'critters/zippy', bNest: 'buildings/nest-1', bMap: 'buildings/dock-1', bShop: 'decor/bush1' };
   for (const id in ART_BTN) { const btn = $(id), cv = btn && btn.querySelector('canvas'); if (!cv) continue; const im = new Image(); im.alt = ''; im.onload = () => cv.replaceWith(im); im.src = 'art/' + ART_BTN[id] + '.png'; } }
 </script>
