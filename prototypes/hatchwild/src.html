@@ -1019,7 +1019,7 @@ function shadeHex(hex, k){ const n = parseInt(hex.slice(1), 16); let r = n >> 16
 //   buildings/<key>-<1|2|3>.png  e.g. buildings/hq-1.png  (1 = levels 1-3, 2 = 4-6, 3 = 7+; the footprint diamond fills the width, its front tip at the bottom edge)
 //   icons/<coin|food|gem|hammer|bolt>.png
 // Anything without a picture keeps the code-drawn look.
-const ART_FILES = ['critters/pebblet.png', 'buildings/hq-1.png', 'buildings/hq-2.png', 'buildings/hq-3.png', 'buildings/farm-1.png', 'buildings/farm-2.png', 'buildings/farm-3.png', 'buildings/mill-1.png', 'buildings/mill-2.png', 'buildings/mill-3.png', 'buildings/nest-1.png', 'buildings/nest-2.png', 'buildings/nest-3.png', 'buildings/nest-e1.png', 'buildings/nest-e2.png', 'buildings/nest-e3.png', 'buildings/den-1.png', 'buildings/den-2.png', 'buildings/den-3.png', 'buildings/pond-1.png', 'buildings/pond-2.png', 'buildings/pond-3.png', 'buildings/dock-1.png', 'buildings/dock-2.png', 'buildings/dock-3.png', 'buildings/tower-1.png', 'buildings/tower-2.png', 'buildings/tower-3.png', 'buildings/tower-f1.png', 'buildings/tower-f2.png', 'buildings/tower-f3.png', 'buildings/cannon-1.png', 'buildings/cannon-2.png', 'buildings/cannon-3.png', 'buildings/cannon-f1.png', 'buildings/cannon-f2.png', 'buildings/cannon-f3.png'];
+const ART_FILES = ['critters/pebblet.png', 'buildings/hq-1.png', 'buildings/hq-2.png', 'buildings/hq-3.png', 'buildings/farm-1.png', 'buildings/farm-2.png', 'buildings/farm-3.png', 'buildings/mill-1.png', 'buildings/mill-2.png', 'buildings/mill-3.png', 'buildings/nest-1.png', 'buildings/nest-2.png', 'buildings/nest-3.png', 'buildings/nest-e1.png', 'buildings/nest-e2.png', 'buildings/nest-e3.png', 'buildings/den-1.png', 'buildings/den-2.png', 'buildings/den-3.png', 'buildings/pond-1.png', 'buildings/pond-2.png', 'buildings/pond-3.png', 'buildings/dock-1.png', 'buildings/dock-2.png', 'buildings/dock-3.png', 'buildings/tower-1.png', 'buildings/tower-2.png', 'buildings/tower-3.png', 'buildings/tower-f1.png', 'buildings/tower-f2.png', 'buildings/tower-f3.png', 'buildings/cannon-1.png', 'buildings/cannon-2.png', 'buildings/cannon-3.png', 'buildings/cannon-f1.png', 'buildings/cannon-f2.png', 'buildings/cannon-f3.png', 'buildings/hut-1.png'];
 // where each building picture's base sits: base = width of its base diamond, tip = its front corner (in picture pixels)
 // scale: how much bigger than its footprint the building is drawn (it can overhang, like a real landmark)
 const BLD_META = { 'hq-1': { base: 508.7, tip: [255.9, 559], scale: 1.35 }, 'hq-2': { base: 493.3, tip: [245.7, 559.1], scale: 1.35 }, 'hq-3': { base: 606.8, tip: [292.7, 599], scale: 1.4 },
@@ -1044,7 +1044,8 @@ const BLD_META = { 'hq-1': { base: 508.7, tip: [255.9, 559], scale: 1.35 }, 'hq-
   'cannon-3': { base: 392.6, tip: [213.1, 557.4], scale: 1.25 },
   'cannon-f1': { base: 352.6, tip: [183.8, 558.8], scale: 1.25 },
   'cannon-f2': { base: 347.2, tip: [195.9, 557.6], scale: 1.25 },
-  'cannon-f3': { base: 352.1, tip: [185.5, 557.7], scale: 1.25 } };
+  'cannon-f3': { base: 352.1, tip: [185.5, 557.7], scale: 1.25 },
+  'hut-1': { base: 417.7, tip: [202.4, 555.8], scale: 1.2 } };
 const ART = {};
 ART_FILES.forEach(f => { const im = new Image(); im.src = 'art/' + f; im.dataset.key = f.replace(/^.*\/|\.\w+$/g, ''); ART[f.replace(/\.\w+$/, '')] = im; });
 const artImg = k => { const im = ART[k]; return im && im.complete && im.naturalWidth ? im : null; };
@@ -1067,7 +1068,7 @@ function drawBld(c, k, gx, gy, lv, o = {}){
     if (o.badge !== false) bldBadge(c, gx, gy, s, lv, o);
     return;
   }
-  const im = !o.enemy && bldArt(k, lv, !reduce && ((o.t || 0) + gx * 1.3 + gy * .7) % 6.5 < .35); if (!im) return drawBldCode(c, k, gx, gy, lv, o);   // rival islands keep their own look (our flags are on this art)
+  const im = (!o.enemy || k === 'hut') && bldArt(k, lv, !reduce && ((o.t || 0) + gx * 1.3 + gy * .7) % 6.5 < .35); if (!im) return drawBldCode(c, k, gx, gy, lv, o);   // rival islands keep their own look (our flags are on this art)
   const s = k === 'hut' ? 1 : BLD[k] ? BLD[k].size : 1, [bx, by] = iso(gx + s, gy + s, 0), M = BLD_META[im.dataset.key];
   const sc = M ? s * IS.tw * .96 * (M.scale || 1) / M.base : s * IS.tw / im.naturalWidth, w = im.naturalWidth * sc, h = im.naturalHeight * sc, ox = M ? M.tip[0] * sc : w / 2, oy = M ? M.tip[1] * sc : h;
   groundShadow(c, gx, gy, s, s);
