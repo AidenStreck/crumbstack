@@ -22,6 +22,13 @@ from PIL import Image, ImageDraw
 # scale: for a sequence drawn smaller on the sheet, poses of that sequence's area that match the
 #        standing pose, used to bring it back to the same size (game atlas only; exports stay 1:1).
 def S(name, poses, fps, loop=True, reg='lock', **kw): return dict(name=name, poses=list(poses), fps=fps, loop=loop, reg=reg, **kw)
+def standard(fly=False, move='walk'):
+  seqs, i = [], 0
+  for name, n, fps, loop, reg in [('idle', 6, 5, True, 'lock'), (move, 8, 9, True, 'lock')] + ([('fly', 6, 12, True, 'torso')] if fly else []) + [('attack', 6, 12, False, 'plant'), ('hurt', 4, 10, False, 'plant'), ('sleep', 4, 4, True, 'lock')]:
+    seqs.append(S(name, range(i, i + n), fps, loop, reg)); i += n
+  game = {'idle': 'idle', 'walk': move, 'attack': 'attack', 'hurt': 'hurt', 'nap': 'sleep'}
+  if fly: game['fly'] = 'fly'
+  return {'labeled': True, 'ref': 'idle', 'seqs': seqs, 'game': game}
 SHEETS = {
   'pebblet': {'ref': 'idle', 'seqs': [
       S('walk', range(0, 8), 9), S('idle', range(8, 16), 5), S('turn', range(16, 27), 8, False, 'plant'),
@@ -71,6 +78,7 @@ SHEETS = {
       S('idle', range(0, 6), 5), S('walk', range(6, 14), 9), S('attack', range(14, 20), 12, False, 'plant'),
       S('hurt', range(20, 24), 10, False, 'plant'), S('sleep', range(24, 28), 4)],
     'game': {'idle': 'idle', 'walk': 'walk', 'attack': 'attack', 'hurt': 'hurt', 'nap': 'sleep'}},
+  'shellnut': standard(),
 }
 GAME_H = 190   # a standing critter is this many pixels tall in the game atlas
 SRC, EXP, ATLAS = 'art-src/hatchwild', 'art-src/hatchwild/export', 'prototypes/hatchwild/art'
