@@ -672,7 +672,10 @@ function drawShoreFoam(c, t, seed){
 function seaRocks(c, t, seed, front){ const R = rng(seed * 13 + 5), [cx, cy] = ISLE_C();
   for (let i = 0; i < 5; i++) { const th = R() * 6.283, r = islandR(seed, th) + 3.2 + R() * 2.5, gx = cx + Math.cos(th) * r, gy = cy + Math.sin(th) * r, sz = .7 + R() * .6;
     if ((gx + gy > cx + cy) !== front) continue; const [px, py] = iso(gx, gy, -CLIFF), rr2 = IS.tw * sz;
-    c.strokeStyle = `rgba(255,255,255,${.45 + .3 * Math.sin(t * 2 + i)})`; c.lineWidth = 2; c.beginPath(); c.ellipse(px, py, rr2 * 1.15 + Math.sin(t * 2 + i) * 2, rr2 * .45, 0, 0, 7); c.stroke();
+    const hasArt = DECOR_IMG.searock1 && DECOR_IMG.searock1.naturalWidth; if (!hasArt) { c.strokeStyle = `rgba(255,255,255,${.45 + .3 * Math.sin(t * 2 + i)})`; c.lineWidth = 2; c.beginPath(); c.ellipse(px, py, rr2 * 1.15 + Math.sin(t * 2 + i) * 2, rr2 * .45, 0, 0, 7); c.stroke(); }
+    const im = DECOR_IMG['searock' + (1 + i % 2)];
+    if (im && im.complete && im.naturalWidth) { const h = rr2 * DECOR['searock' + (1 + i % 2)].h, w = h * im.naturalWidth / im.naturalHeight, fl = i % 3 ? 1 : -1;   // painted rock with its own surf
+      c.save(); c.translate(px, py); c.scale(fl, 1); c.drawImage(im, -w / 2, -h * .82, w, h); c.restore(); continue; }
     rock(c, px, py + rr2 * .12, rr2 * 1.25, '#7A7E82'); } }
 // painted ground textures from art/terrain/ (seamless tiles)
 const TERRAIN_TEX = {}; ['grass', 'sand', 'path', 'shallows', 'cliff'].forEach(k => { const im = new Image(); im.onload = () => { if (typeof terrainCache !== 'undefined') for (const z in terrainCache) delete terrainCache[z]; }; im.src = 'art/terrain/' + k + '.png'; TERRAIN_TEX[k] = im; });
@@ -740,7 +743,7 @@ function ringDecor(seed, reg){
   return out;
 }
 // painted scenery pictures (art/decor/<kind>.png): foot = where the trunk meets the ground, as a fraction of the width
-const DECOR = { palm: { foot: .726, h: 2.1 }, tree: { foot: .534, h: 1.7 }, blossom: { foot: .534, h: 1.7, src: 'tree' }, bush1: { foot: .5, h: .75 }, bush2: { foot: .5, h: .75 }, bush3: { foot: .5, h: .75 }, rock1: { foot: .5, h: .8 }, rock2: { foot: .5, h: .6 }, rock3: { foot: .5, h: .45 }, flowers1: { foot: .5, h: .5 }, flowers2: { foot: .5, h: .5 }, flowers3: { foot: .5, h: .5 }, flowers4: { foot: .5, h: .5 } }, DECOR_IMG = {};
+const DECOR = { palm: { foot: .726, h: 2.1 }, tree: { foot: .534, h: 1.7 }, blossom: { foot: .534, h: 1.7, src: 'tree' }, bush1: { foot: .5, h: .75 }, bush2: { foot: .5, h: .75 }, bush3: { foot: .5, h: .75 }, rock1: { foot: .5, h: .8 }, rock2: { foot: .5, h: .6 }, rock3: { foot: .5, h: .45 }, flowers1: { foot: .5, h: .5 }, flowers2: { foot: .5, h: .5 }, flowers3: { foot: .5, h: .5 }, flowers4: { foot: .5, h: .5 }, searock1: { foot: .5, h: 2 }, searock2: { foot: .5, h: 1.4 } }, DECOR_IMG = {};
 for (const k in DECOR) { const im = new Image(); im.src = 'art/decor/' + (DECOR[k].src || k) + '.png'; DECOR_IMG[k] = im; }
 function drawDecor(c, d, t, reg){ const [x, y] = iso(d.gx, d.gy), s = IS.tw * d.s;
   const pick = 1 + Math.floor(Math.abs(d.gx * 5 + d.gy * 11)) % 3, dk = d.kind === 'bush' || d.kind === 'rock' ? d.kind + pick : d.kind === 'flowers' ? 'flowers' + (1 + Math.floor(Math.abs(d.gx * 7 + d.gy * 13)) % 4) : d.kind, D = DECOR[dk], im = D && DECOR_IMG[dk];
