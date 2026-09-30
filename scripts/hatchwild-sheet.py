@@ -55,6 +55,12 @@ SHEETS = {
   'eelectra': {'cut': 120, 'ref': 'idle', 'seqs': [
       S('idle', range(0, 7), 5), S('swim', range(7, 14), 9), S('laugh', range(14, 21), 8), S('blink', range(21, 28), 8, hold=1.2)],
     'game': {'idle': 'idle', 'walk': 'swim'}},
+  'cogbot': {'cut': 120, 'ref': 'idle', 'seqs': [
+      S('idle', range(0, 8), 5), S('walk', range(8, 16), 9), S('punch', range(16, 20), 12, False, 'plant'),
+      S('knockdown', range(23, 31), 10, False, 'plant'), S('sleep', [35], 4)],
+    'skip': {20: 'a single shield-block pose', 21: 'a single crouch pose', 22: 'a single cheer pose', 31: 'a single expression pose', 32: 'a single wink',
+             33: 'a single laugh', 34: 'a single pointing pose', 36: 'a single happy pose with stars', 37: 'a single sitting pose, eyes closed', 38: 'a single standing pose'},
+    'game': {'idle': 'idle', 'walk': 'walk', 'attack': 'punch', 'hurt': ('knockdown', [1, 1, 1, 1, 0]), 'nap': 'sleep'}},   # the full knockdown is too long for every hit
 }
 GAME_H = 190   # a standing critter is this many pixels tall in the game atlas
 SRC, EXP, ATLAS = 'art-src/hatchwild', 'art-src/hatchwild/export', 'prototypes/hatchwild/art'
