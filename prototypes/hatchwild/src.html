@@ -182,6 +182,25 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
 .upCard.done b{display:block;font-size:16px;color:#3A2410}.upCard.done span{font-size:12.5px;color:#7A5A2E}
 .bar{height:10px;border-radius:999px;background:#E3D2AE;margin-top:8px;overflow:hidden;box-shadow:inset 0 1px 2px rgba(0,0,0,.15)}
 .bar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#63D69B,#2F9E66)}
+
+/* ---- storybook HUD pass ---- */
+.quest{background:linear-gradient(#FFF7E4,#F2DEB2);border:2.5px solid #8A5A2E;border-radius:18px;box-shadow:0 4px 0 #5A3818,0 8px 18px rgba(0,0,0,.3),inset 0 2px 0 #fff;color:#3A2410;font-family:var(--display);padding:8px 12px 9px;max-width:270px;overflow:visible}
+.quest::before,.quest::after{content:"";position:absolute;width:30px;height:30px;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><path d='M4 36 C4 16 18 4 36 4 C36 22 24 36 4 36Z' fill='%234FB33A' stroke='%23286B1E' stroke-width='2.5'/><path d='M6 34 L30 10' stroke='%23286B1E' stroke-width='2' fill='none'/><path d='M8 22 C14 10 24 7 32 7' stroke='%23A6E07A' stroke-width='2' fill='none'/></svg>") center/contain no-repeat;pointer-events:none}
+.quest::before{left:-12px;top:-12px;transform:rotate(-100deg)}.quest::after{right:-10px;bottom:-12px;transform:rotate(80deg)}
+.quest small{color:#6E4A22;font-size:13px;letter-spacing:.3px;text-transform:none;border-bottom:1.5px solid rgba(138,90,46,.3);padding-bottom:3px;margin-bottom:5px}
+.quest .qrow{display:flex;gap:9px;align-items:center}
+.quest .qic{flex:none;width:46px;height:46px;border-radius:12px;background:linear-gradient(#FBEBC7,#E6CB93);box-shadow:inset 0 2px 3px rgba(90,60,30,.25);display:grid;place-items:center}
+.quest .qic img{max-width:40px;max-height:40px}
+.quest .qt{font-size:15px;line-height:1.15;font-weight:600}
+.quest .qbar{background:#E3CFA4;box-shadow:inset 0 1px 2px rgba(90,60,30,.3)}
+.quest div[style]{color:#6E4A22!important;font-size:12.5px!important}
+.dock{gap:6px}
+.dock button{width:70px;height:68px;border-radius:16px;font-size:12.5px;gap:0;padding-top:2px}
+.dock button img{width:44px;height:40px;object-fit:contain;filter:drop-shadow(0 2px 1px rgba(0,0,0,.35));margin-bottom:1px}
+.dock button.go{background:linear-gradient(#C68B55,#95602F 70%,#7A4B24);border:2.5px solid #F2C14E;box-shadow:0 0 0 2px #8A5A10,0 0 16px rgba(255,200,80,.75),0 4px 0 #4A2E14,inset 0 2px 0 rgba(255,220,170,.35)}
+.dock button.go::before,.dock button.go::after{content:"";position:absolute;width:22px;height:22px;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><path d='M4 36 C4 16 18 4 36 4 C36 22 24 36 4 36Z' fill='%234FB33A' stroke='%23286B1E' stroke-width='2.5'/><path d='M6 34 L30 10' stroke='%23286B1E' stroke-width='2' fill='none'/><path d='M8 22 C14 10 24 7 32 7' stroke='%23A6E07A' stroke-width='2' fill='none'/></svg>") center/contain no-repeat;pointer-events:none}
+.dock button.go::before{left:-10px;bottom:-6px;transform:rotate(-10deg)}.dock button.go::after{right:-10px;bottom:-6px;transform:scaleX(-1) rotate(-10deg)}
+.lvl::after{content:"";position:absolute;left:-9px;bottom:-7px;width:22px;height:22px;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><path d='M4 36 C4 16 18 4 36 4 C36 22 24 36 4 36Z' fill='%234FB33A' stroke='%23286B1E' stroke-width='2.5'/><path d='M6 34 L30 10' stroke='%23286B1E' stroke-width='2' fill='none'/><path d='M8 22 C14 10 24 7 32 7' stroke='%23A6E07A' stroke-width='2' fill='none'/></svg>") center/contain no-repeat;transform:rotate(-20deg)}
 </style>
 
 <canvas id="cv" aria-label="Your island"></canvas>
@@ -627,7 +646,7 @@ function drawWater(c, W, H, t, reg, islandAt){
   if (wtex && islandAt == null) {   // painted shallows around the island, fading into the deep sea
     const k = 6 / wtex.w, pat = c.createPattern(wtex.im, 'repeat'), dr = Math.sin(t * .25) * .15, [wx, wy] = iso(dr, dr * .6, -CLIFF - .2);
     pat.setTransform(new DOMMatrix([k * IS.tw / 2, k * IS.th / 2, -k * IS.tw / 2, k * IS.th / 2, wx, wy])); c.fillStyle = pat; c.fillRect(0, 0, W, H);
-    c.save(); c.translate(ix, iy + IS.tw); c.scale(1, .62); const calm = c.createRadialGradient(0, 0, R0 * .2, 0, 0, R0 * .75); calm.addColorStop(0, 'rgba(20,90,110,.38)'); calm.addColorStop(1, 'rgba(20,90,110,0)');
+    c.save(); c.translate(ix, iy + IS.tw); c.scale(1, .62); const calm = c.createRadialGradient(0, 0, R0 * .2, 0, 0, R0 * .75); calm.addColorStop(0, 'rgba(60,215,215,.42)'); calm.addColorStop(.6, 'rgba(40,190,210,.2)'); calm.addColorStop(1, 'rgba(40,190,210,0)');
     c.fillStyle = calm; c.fillRect(-W * 3, -H * 5, W * 6, H * 10); c.restore();
     if (reg.id !== 'tropic') { c.save(); c.globalAlpha = .4; c.fillStyle = reg.sea[0]; c.fillRect(0, 0, W, H); c.restore(); }
     c.save(); c.translate(ix, iy + IS.tw); c.scale(1, .62); const deep = shade(reg.sea[1], -.2), dg = c.createRadialGradient(0, 0, R0 * .55, 0, 0, R0 * 1.25);
@@ -669,7 +688,7 @@ const isoPoly = (pts, z) => pts.map(([x, y]) => iso(x, y, z));
 // animated surf, drawn between the water and the island (plus sea rocks that sit behind the island)
 function drawShoreFoam(c, t, seed){
   const k = reduce ? 0 : Math.sin(t * 1.2) * .2;
-  for (const [pad, a, w] of [[2.1 + k, .2, .55], [1.7 - k * .6, .38, .3]]) { c.save(); c.lineJoin = 'round'; poly(c, isoPoly(coastPts(seed, pad, 90), -CLIFF - .1), `rgba(255,255,255,${a * .45})`, `rgba(255,255,255,${a})`, IS.tw * w); c.restore(); }
+  for (const [pad, a, w] of [[2.1 + k, .3, .6], [1.7 - k * .6, .6, .38], [1.45, .75, .16]]) { c.save(); c.lineJoin = 'round'; poly(c, isoPoly(coastPts(seed, pad, 90), -CLIFF - .1), `rgba(255,255,255,${a * .45})`, `rgba(255,255,255,${a})`, IS.tw * w); c.restore(); }
   seaRocks(c, t, seed, false);
 }
 function seaRocks(c, t, seed, front){ const R = rng(seed * 13 + 5), [cx, cy] = ISLE_C();
@@ -712,7 +731,7 @@ function drawTerrain(c, reg, seed, o = {}){
   const tex = terrainTex('grass');   // painted grass texture, laid flat on the ground so it follows the island's angle
   if (tex) { const N = 5, k = N / tex.w, pat = c.createPattern(tex.im, 'repeat');
     pat.setTransform(new DOMMatrix([k * IS.tw / 2, k * IS.th / 2, -k * IS.tw / 2, k * IS.th / 2, IS.ox, IS.oy]));
-    poly(c, topS, pat); c.save(); c.globalAlpha = reg.id !== 'tropic' ? .55 : .32; poly(c, topS, reg.id !== 'tropic' ? reg.land : '#6DB84C'); c.restore();   // soften it so buildings pop; other regions keep their own tint
+    poly(c, topS, pat); c.save(); c.globalAlpha = reg.id !== 'tropic' ? .55 : .3; poly(c, topS, reg.id !== 'tropic' ? reg.land : '#86D455'); c.restore();   // soften it so buildings pop; other regions keep their own tint
     }
   c.save(); c.beginPath(); topS.forEach((p, i) => i ? c.lineTo(...p) : c.moveTo(...p)); c.closePath(); c.clip();
   const [cx0, cy0] = ISLE_C();
@@ -735,11 +754,11 @@ function drawTerrain(c, reg, seed, o = {}){
 // decor on the wild land around the plot (drawn with depth sorting by the caller)
 function ringDecor(seed, reg){
   const R = rng(seed + 99), out = [], [cx, cy] = ISLE_C();
-  for (let i = 0; i < 400 && out.length < 60; i++) { const gx = cx + (R() - .5) * 36, gy = cy + (R() - .5) * 36;
+  for (let i = 0; i < 900 && out.length < 120; i++) { const gx = cx + (R() - .5) * 36, gy = cy + (R() - .5) * 36;
     if (!onIsland(seed, gx, gy, .7)) continue; if (gx > -.6 && gx < GRID_W + .6 && gy > -.6 && gy < GRID_H + .6) continue;
     if (Math.abs(gx - GRID_W / 2) < 1.3 && gy > GRID_H) continue;   // keep the path to the shore clear
     const k = R(), front = gx > GRID_W + .2 || gy > GRID_H + .2;   // the near side only gets low things so they never hide buildings
-    out.push(front ? { gx, gy, kind: k < .45 ? 'bush' : k < .75 ? 'rock' : 'flowers', s: .6 + R() * .3 } : { gx, gy, kind: k < .3 ? 'palm' : k < .52 ? 'tree' : k < .62 ? 'blossom' : k < .82 ? 'bush' : 'rock', s: .8 + R() * .5 }); }
+    out.push(front ? { gx, gy, kind: k < .6 ? 'bush' : k < .72 ? 'rock' : 'flowers', s: .6 + R() * .3 } : { gx, gy, kind: k < .26 ? 'palm' : k < .42 ? 'tree' : k < .5 ? 'blossom' : k < .82 ? 'bush' : k < .9 ? 'rock' : 'flowers', s: .8 + R() * .5 }); }
   // landmarks from the old Roc days, placed on the widest part of the island
   const p = islandParams(seed), place = (th, inset) => { const r = islandR(seed, th) - inset; return [cx + Math.cos(th) * r, cy + Math.sin(th) * r]; };
   return out;
@@ -750,7 +769,7 @@ for (const k in DECOR) { const im = new Image(); im.src = 'art/decor/' + (DECOR[
 function drawDecor(c, d, t, reg){ const [x, y] = iso(d.gx, d.gy), s = IS.tw * d.s;
   const pick = 1 + Math.floor(Math.abs(d.gx * 5 + d.gy * 11)) % 3, dk = d.kind === 'bush' || d.kind === 'rock' ? d.kind + pick : d.kind === 'flowers' ? 'flowers' + (1 + Math.floor(Math.abs(d.gx * 7 + d.gy * 13)) % 4) : d.kind, D = DECOR[dk], im = D && DECOR_IMG[dk];
   const hsh = Math.abs(Math.sin(d.gx * 12.9898 + d.gy * 78.233) * 43758.5453) % 1;
-  if (d.kind === 'flowers' && hsh < .55) return;   // fewer flower patches...
+  if (d.kind === 'flowers' && hsh < .3) return;   // not every flower spot...
   const vary = d.kind === 'flowers' ? 1.6 : d.kind === 'palm' || d.kind === 'tree' || d.kind === 'blossom' ? .65 + hsh * .5 : .85 + hsh * .3;   // ...but bigger; trees in mixed sizes
   if (im && im.complete && im.naturalWidth) {   // a gentle sway from the foot, each one on its own beat; every other one mirrored for variety
     const h = s * D.h * vary, w = h * im.naturalWidth / im.naturalHeight, flip = (Math.floor(d.gx * 7 + d.gy * 3) % 2) ? -1 : 1, sw = reduce ? 0 : Math.sin(t * .9 + d.gx * 1.3 + d.gy) * .018;
@@ -886,7 +905,7 @@ function drawAmbient(c, W, H, t){
   const tint = dayTint(); if (tint) { c.fillStyle = `rgba(${tint[0]},${tint[1]},${tint[2]},${tint[3]})`; c.fillRect(0, 0, W, H); }
   if (isNight() || (tint && tint[3] > .1)) for (let i = 0; i < 24; i++) { const x = (i * 97 + Math.sin(t * .5 + i) * 30) % W, y = (i * 211 % (H * .8)) + H * .1 + Math.cos(t * .7 + i) * 20, a = .4 + .4 * Math.sin(t * 3 + i * 1.7); c.fillStyle = `rgba(255,240,150,${a})`; c.beginPath(); c.arc(x, y, 2, 0, 7); c.fill(); }
   // soft vignette
-  const v = c.createRadialGradient(W / 2, H / 2, Math.min(W, H) * .35, W / 2, H / 2, Math.max(W, H) * .75); v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(10,25,40,.35)'); c.fillStyle = v; c.fillRect(0, 0, W, H);
+  const v = c.createRadialGradient(W / 2, H / 2, Math.min(W, H) * .35, W / 2, H / 2, Math.max(W, H) * .75); v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(10,25,40,.14)'); c.fillStyle = v; c.fillRect(0, 0, W, H);
 }
 
 // ================= CRITTER ILLUSTRATIONS (SVG) =================
@@ -1317,7 +1336,7 @@ function speedUp(b){ const g = gemsFor(b.build.end - Date.now()); if (save.gems 
 
 // ================= CAMERA =================
 // cam.x/y = grid point at the middle of the screen, cam.z = zoom. Drag to pan, pinch to zoom.
-const camBase = { x: 8, y: 8.5, z: .85 };
+const camBase = { x: 9.2, y: 8.2, z: .92 };   // close enough that the island fills the screen
 let viewTop = 64, viewBot = 96;
 const baseTW = () => Math.min(W, 520) / 9.5;
 function applyCam(cam){ const tw = baseTW() * cam.z, th = tw * .56, cyS = (viewTop + H - viewBot) / 2; setIso(tw, W / 2 - (cam.x - cam.y) * tw / 2, cyS - (cam.x + cam.y) * th / 2); }
@@ -1638,7 +1657,8 @@ function renderQuest(){
   const q = curQuest, [a, n] = q.check(), done = a >= n, el = $('quest'); el.hidden = screen !== 'base' || !!placing;
   const key = q.text + a + done; if (el.dataset.k === key) return; el.dataset.k = key;
   const rw = [q.reward.coins && coinH(q.reward.coins), q.reward.food && foodH(q.reward.food), q.reward.gems && gemH(q.reward.gems)].filter(Boolean).join(' ');
-  el.innerHTML = `<small>Goal</small>${q.text}<div class="qbar"><i style="width:${Math.min(100, a / n * 100)}%"></i></div>${done ? `<button type="button" id="qClaim">Claim ${rw}</button>` : `<div style="font-size:11px;color:var(--ink-2);margin-top:3px">Reward: ${rw}${save.quest >= QUESTS.length ? ' · <a href="#" id="qSkip" style="color:#1E7D72">Skip</a>' : ''}</div>`}`;
+  const tx = q.text.toLowerCase(), qimg = /hatch|egg|nest|pair/.test(tx) ? 'buildings/nest-1' : /berr|farm/.test(tx) ? 'icons/food' : /coin|mill/.test(tx) ? 'icons/coin' : /sail|island|raid|battle|fortress|win|dock/.test(tx) ? 'buildings/dock-1' : /merge|pond/.test(tx) ? 'buildings/pond-1' : /critter|squad/.test(tx) ? 'critters/zippy' : 'icons/hammer';
+  el.innerHTML = `<small>✦ Main Goal</small><div class="qrow"><div class="qic"><img alt="" src="art/${qimg}.png" onerror="this.remove()"></div><div class="qt">${q.text}</div></div><div class="qbar"><i style="width:${Math.min(100, a / n * 100)}%"></i></div>${done ? `<button type="button" id="qClaim">Claim ${rw}</button>` : `<div style="font-size:11px;color:var(--ink-2);margin-top:3px">Reward: ${rw}${save.quest >= QUESTS.length ? ' · <a href="#" id="qSkip" style="color:#1E7D72">Skip</a>' : ''}</div>`}`;
   const sk = $('qSkip'); if (sk) sk.onclick = e => { e.preventDefault(); save.quest++; persist(); el.dataset.k = ''; renderQuest(); };
   if (done) $('qClaim').onclick = () => { SFX.coin(); save.coins += q.reward.coins || 0; save.food += q.reward.food || 0; save.gems += q.reward.gems || 0; save.quest++; persist(); el.dataset.k = ''; renderQuest(); };
 }
@@ -1897,4 +1917,6 @@ if (!save.tips.welcome) { save.tips.welcome = 1; persist();
   modal(`<h2>Welcome, Nestkeeper</h2><p>Long ago the <b>Great Roc</b> nested across these islands and left its eggs behind. Critters hatch from them, and this island is now yours to look after.</p><p>Grow berries, hatch and raise a crew, and win back the islands from the <b>Raccoon Rascals</b>. Beyond them lie the Sky Islands, the Undersea Domes and Clockwork Cove, each with its own rival crew.</p><button class="btn" type="button" data-close>Begin</button>`); }
 else raidCheck();
 if (location.hash.includes('test')) window.__hw = { save, get BT(){ return BT; }, get screen(){ return screen; }, openMap, startPrep, startFight, endBattle, openNest, openMerge, openBuildMenu, openBuilding, openCritters, hatchEgg, islandSpec, tickBuildings, persist, B, QUESTS, raidCheck, SPECIES, battleTap, toPx, closeMap, stepBattle, power };
+{ const ART_BTN = { bBuild: 'icons/hammer', bCritters: 'critters/zippy', bNest: 'buildings/nest-1', bMap: 'buildings/dock-1' };
+  for (const id in ART_BTN) { const btn = $(id), cv = btn && btn.querySelector('canvas'); if (!cv) continue; const im = new Image(); im.alt = ''; im.onload = () => cv.replaceWith(im); im.src = 'art/' + ART_BTN[id] + '.png'; } }
 </script>
