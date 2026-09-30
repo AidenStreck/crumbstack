@@ -67,6 +67,10 @@ SHEETS = {
     'skip': {6: 'a single back view', 18: 'a single standing pose after firing', 19: 'a single happy pose', 31: 'a single standing pose', 32: 'a single standing pose', 33: 'a single back view'},
     'notes': ['The cannonball flying off on its own after the FIRE frames is left out; the game draws its own shot.'],
     'game': {'idle': 'idle', 'walk': 'walk', 'attack': 'fire', 'hurt': ('dizzy', [0, 0, 0, 0, 0]), 'nap': 'sleep'}},
+  'sprocket': {'labeled': True, 'ref': 'idle', 'seqs': [
+      S('idle', range(0, 6), 5), S('walk', range(6, 14), 9), S('attack', range(14, 20), 12, False, 'plant'),
+      S('hurt', range(20, 24), 10, False, 'plant'), S('sleep', range(24, 28), 4)],
+    'game': {'idle': 'idle', 'walk': 'walk', 'attack': 'attack', 'hurt': 'hurt', 'nap': 'sleep'}},
 }
 GAME_H = 190   # a standing critter is this many pixels tall in the game atlas
 SRC, EXP, ATLAS = 'art-src/hatchwild', 'art-src/hatchwild/export', 'prototypes/hatchwild/art'
@@ -128,7 +132,7 @@ def find_labeled(img):
   # rows are marked by text pills at the left edge. Each pose is its own shape on the sheet; where two
   # poses touch, the shared shape is split between their bodies.
   a = img[..., 3] > 40; n, lab, st, _ = cv2.connectedComponentsWithStats(a.astype(np.uint8))
-  labels = [i for i in range(1, n) if st[i][0] < 20 and st[i][2] > 60 and st[i][3] < 45]
+  labels = [i for i in range(1, n) if st[i][0] < 40 and st[i][2] > 60 and st[i][3] < 60 and st[i][2] > st[i][3] * 1.5]
   tops = sorted(int(st[i][1]) for i in labels); a = a & ~np.isin(lab, labels)
   n, lab, st, _ = cv2.connectedComponentsWithStats(a.astype(np.uint8))
   core = cv2.erode(a.astype(np.uint8), np.ones((15, 15), np.uint8))
