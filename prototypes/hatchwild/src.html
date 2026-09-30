@@ -675,7 +675,7 @@ function seaRocks(c, t, seed, front){ const R = rng(seed * 13 + 5), [cx, cy] = I
     c.strokeStyle = `rgba(255,255,255,${.45 + .3 * Math.sin(t * 2 + i)})`; c.lineWidth = 2; c.beginPath(); c.ellipse(px, py, rr2 * 1.15 + Math.sin(t * 2 + i) * 2, rr2 * .45, 0, 0, 7); c.stroke();
     rock(c, px, py + rr2 * .12, rr2 * 1.25, '#7A7E82'); } }
 // painted ground textures from art/terrain/ (seamless tiles)
-const TERRAIN_TEX = {}; ['grass', 'sand', 'path', 'shallows'].forEach(k => { const im = new Image(); im.onload = () => { if (typeof terrainCache !== 'undefined') for (const z in terrainCache) delete terrainCache[z]; }; im.src = 'art/terrain/' + k + '.png'; TERRAIN_TEX[k] = im; });
+const TERRAIN_TEX = {}; ['grass', 'sand', 'path', 'shallows', 'cliff'].forEach(k => { const im = new Image(); im.onload = () => { if (typeof terrainCache !== 'undefined') for (const z in terrainCache) delete terrainCache[z]; }; im.src = 'art/terrain/' + k + '.png'; TERRAIN_TEX[k] = im; });
 const terrainTex = k => { const im = TERRAIN_TEX[k]; return im && im.complete && im.naturalWidth ? { im, w: im.naturalWidth } : null; };
 function drawTerrain(c, reg, seed, o = {}){
   const R = rng(seed), top = coastPts(seed, 0), topS = isoPoly(top, 0);
@@ -688,12 +688,18 @@ function drawTerrain(c, reg, seed, o = {}){
   for (let i = 0; i < (stex ? 0 : 50); i++) { const th = R() * 6.283, [cx, cy] = ISLE_C(), r = islandR(seed, th) + .3 + R() * .9, [px, py] = iso(cx + Math.cos(th) * r, cy + Math.sin(th) * r, -CLIFF); circ(c, px, py, IS.tw * .03, i % 3 ? '#FFF6E0' : '#F2B8C6'); }
   // cliff faces on the sides that face you, back to front
   const faces = []; for (let i = 0; i < top.length; i++) { const A = top[i], Bp = top[(i + 1) % top.length], nx = Bp[1] - A[1], ny = -(Bp[0] - A[0]); if (nx + ny <= 0) continue; faces.push({ A, B: Bp, d: A[0] + A[1] + Bp[0] + Bp[1], lit: nx < ny }); }
+  { let u = 0; for (const f of faces) { f.u0 = u; const a = iso(...f.A, 0), b = iso(...f.B, 0); u += Math.hypot(b[0] - a[0], b[1] - a[1]); } }
   faces.sort((p, q) => p.d - q.d);
+  const ctex = terrainTex('cliff');
   for (const f of faces) { const a0 = iso(...f.A, 0), b0 = iso(...f.B, 0), a1 = iso(...f.A, -CLIFF - .08), b1 = iso(...f.B, -CLIFF - .08); const col = f.lit ? '#A08262' : '#7A5E44';
+    if (ctex) {   // the painted cliff strip wrapped around the island's sides, grass fringe at the top
+      const L = Math.hypot(b0[0] - a0[0], b0[1] - a0[1]) || 1, s = (a1[1] - a0[1]) / (260 - 21), ux = (b0[0] - a0[0]) / L * s, uy = (b0[1] - a0[1]) / L * s, u0 = f.u0 / s;
+      const pat = c.createPattern(ctex.im, 'repeat-x'); pat.setTransform(new DOMMatrix([ux, uy, 0, s, a0[0] - u0 * ux, a0[1] - u0 * uy - 21 * s]));
+      poly(c, [a0, b0, b1, a1], pat, pat, .6); if (!f.lit) poly(c, [a0, b0, b1, a1], 'rgba(20,10,30,.22)'); continue; }
     const g = c.createLinearGradient(0, a0[1], 0, a1[1]); g.addColorStop(0, shade(col, .05)); g.addColorStop(1, shade(col, -.25)); poly(c, [a0, b0, b1, a1], g, g, .8); }
   // rock strata lines across the cliffs
-  c.strokeStyle = 'rgba(50,30,15,.22)'; c.lineWidth = 1; for (const z of [-.35, -.75]) { c.beginPath(); let on = false; for (const f of faces) { const a = iso(...f.A, z), b = iso(...f.B, z); if (!on) { c.moveTo(...a); on = true; } c.lineTo(...b); } c.stroke(); }
-  for (let i = 0; i < 40; i++) { const f = faces[Math.floor(R() * faces.length)]; if (!f) break; const u = R(), [px, py] = iso(f.A[0] + (f.B[0] - f.A[0]) * u, f.A[1] + (f.B[1] - f.A[1]) * u, -CLIFF * (.2 + R() * .6)); c.fillStyle = 'rgba(60,40,20,.25)'; c.fillRect(px, py, IS.tw * .12, IS.tw * .04); }
+  if (!ctex) { c.strokeStyle = 'rgba(50,30,15,.22)'; c.lineWidth = 1; for (const z of [-.35, -.75]) { c.beginPath(); let on = false; for (const f of faces) { const a = iso(...f.A, z), b = iso(...f.B, z); if (!on) { c.moveTo(...a); on = true; } c.lineTo(...b); } c.stroke(); }
+  for (let i = 0; i < 40; i++) { const f = faces[Math.floor(R() * faces.length)]; if (!f) break; const u = R(), [px, py] = iso(f.A[0] + (f.B[0] - f.A[0]) * u, f.A[1] + (f.B[1] - f.A[1]) * u, -CLIFF * (.2 + R() * .6)); c.fillStyle = 'rgba(60,40,20,.25)'; c.fillRect(px, py, IS.tw * .12, IS.tw * .04); } }
   // grass top with light variation (clipped to the island)
   const tg = c.createLinearGradient(topS[0][0], Math.min(...topS.map(p => p[1])), topS[0][0], Math.max(...topS.map(p => p[1]))); tg.addColorStop(0, shade(reg.land, .12)); tg.addColorStop(1, shade(reg.land, -.06)); poly(c, topS, tg);
   const tex = terrainTex('grass');   // painted grass texture, laid flat on the ground so it follows the island's angle
@@ -706,7 +712,7 @@ function drawTerrain(c, reg, seed, o = {}){
   if (!tex) for (let i = 0; i < 140; i++) { const gx = cx0 + (R() - .5) * 34, gy = cy0 + (R() - .5) * 34, [px, py] = iso(gx, gy); c.fillStyle = `rgba(${R() < .5 ? '255,255,200' : '20,60,20'},${.04 + R() * .06})`; c.beginPath(); c.ellipse(px, py, IS.tw * (.5 + R()), IS.th * (.4 + R() * .7), 0, 0, 7); c.fill(); }
   // grass edge highlight and moss drips over the cliff lip
   c.restore(); c.strokeStyle = shade(reg.land, .25); c.lineWidth = 2; c.beginPath(); for (const f of faces) { c.moveTo(...iso(...f.A, 0)); c.lineTo(...iso(...f.B, 0)); } c.stroke();
-  for (const f of faces) if (R() < .45) { const [px, py] = iso(f.A[0], f.A[1], 0); ell(c, px, py + IS.tw * .06, IS.tw * (.12 + R() * .12), IS.tw * (.05 + R() * .06), shade(reg.land2, -.05)); }
+  for (const f of faces) if (R() < .45 && !ctex) { const [px, py] = iso(f.A[0], f.A[1], 0); ell(c, px, py + IS.tw * .06, IS.tw * (.12 + R() * .12), IS.tw * (.05 + R() * .06), shade(reg.land2, -.05)); }
   // the build plot: a slightly lighter meadow
   poly(c, [iso(0, 0), iso(GRID_W, 0), iso(GRID_W, GRID_H), iso(0, GRID_H)], 'rgba(255,255,220,.07)');
   for (let i = 0; i < (tex ? 0 : 220); i++) { const gx = cx0 + (R() - .5) * 30, gy = cy0 + (R() - .5) * 30; if (!onIsland(seed, gx, gy, .3)) continue; const [px, py] = iso(gx, gy);
@@ -733,7 +739,14 @@ function ringDecor(seed, reg){
   const [tx, ty] = place(p.lobe2, 1.2); if (!(tx > -.6 && tx < GRID_W + .6 && ty > -.6 && ty < GRID_H + .6)) out.push({ gx: tx, gy: ty, kind: 'totem', s: 1 });
   return out;
 }
+// painted scenery pictures (art/decor/<kind>.png): foot = where the trunk meets the ground, as a fraction of the width
+const DECOR = { palm: { foot: .726, h: 2.1 } }, DECOR_IMG = {};
+for (const k in DECOR) { const im = new Image(); im.src = 'art/decor/' + k + '.png'; DECOR_IMG[k] = im; }
 function drawDecor(c, d, t, reg){ const [x, y] = iso(d.gx, d.gy), s = IS.tw * d.s;
+  const D = DECOR[d.kind], im = D && DECOR_IMG[d.kind];
+  if (im && im.complete && im.naturalWidth) {   // a gentle sway from the foot, each one on its own beat; every other one mirrored for variety
+    const h = s * D.h, w = h * im.naturalWidth / im.naturalHeight, flip = (Math.floor(d.gx * 7 + d.gy * 3) % 2) ? -1 : 1, sw = reduce ? 0 : Math.sin(t * .9 + d.gx * 1.3 + d.gy) * .018;
+    ell(c, x, y, s * .45, s * .14, 'rgba(10,30,15,.22)'); c.save(); c.translate(x, y); c.rotate(sw); c.scale(flip, 1); c.drawImage(im, -w * D.foot, -h * .985, w, h); c.restore(); return; }
   if (d.kind === 'palm' || d.kind === 'tree' || d.kind === 'blossom') tree(c, x, y, s * (d.kind === 'palm' ? 1.5 : 1.2), t, d.kind);
   else if (d.kind === 'rock') rock(c, x, y, s * .8);
   else if (d.kind === 'bush') bush(c, x, y, s * .8, reg.land2, t);
