@@ -984,17 +984,20 @@ function shadeHex(hex, k){ const n = parseInt(hex.slice(1), 16); let r = n >> 16
 //   buildings/<key>-<1|2|3>.png  e.g. buildings/hq-1.png  (1 = levels 1-3, 2 = 4-6, 3 = 7+; the footprint diamond fills the width, its front tip at the bottom edge)
 //   icons/<coin|food|gem|hammer|bolt>.png
 // Anything without a picture keeps the code-drawn look.
-const ART_FILES = ['critters/pebblet.png'];
+const ART_FILES = ['critters/pebblet.png', 'buildings/hq-1.png'];
+// where each building picture's base sits: base = width of its base diamond, tip = its front corner (in picture pixels)
+const BLD_META = { 'hq-1': { base: 472.4, tip: [237.6, 519] } };
 const ART = {};
-ART_FILES.forEach(f => { const im = new Image(); im.src = 'art/' + f; ART[f.replace(/\.\w+$/, '')] = im; });
+ART_FILES.forEach(f => { const im = new Image(); im.src = 'art/' + f; im.dataset.key = f.replace(/^.*\/|\.\w+$/g, ''); ART[f.replace(/\.\w+$/, '')] = im; });
 const artImg = k => { const im = ART[k]; return im && im.complete && im.naturalWidth ? im : null; };
 const bldArt = (k, lv) => { const tr = lv >= 7 ? 3 : lv >= 4 ? 2 : 1; for (let i = tr; i >= 1; i--) { const im = artImg('buildings/' + k + '-' + i); if (im) return im; } return null; };
 function drawBld(c, k, gx, gy, lv, o = {}){
-  const im = bldArt(k, lv); if (!im) return drawBldCode(c, k, gx, gy, lv, o);
-  const s = k === 'hut' ? 1 : BLD[k] ? BLD[k].size : 1, w = s * IS.tw, h = w * im.naturalHeight / im.naturalWidth, [bx, by] = iso(gx + s, gy + s, 0);
+  const im = !o.enemy && bldArt(k, lv); if (!im) return drawBldCode(c, k, gx, gy, lv, o);   // rival islands keep their own look (our flags are on this art)
+  const s = k === 'hut' ? 1 : BLD[k] ? BLD[k].size : 1, [bx, by] = iso(gx + s, gy + s, 0), M = BLD_META[im.dataset.key];
+  const sc = M ? s * IS.tw * .96 / M.base : s * IS.tw / im.naturalWidth, w = im.naturalWidth * sc, h = im.naturalHeight * sc, ox = M ? M.tip[0] * sc : w / 2, oy = M ? M.tip[1] * sc : h;
   groundShadow(c, gx, gy, s, s);
   if (o.enemy) { c.save(); c.filter = 'saturate(.75) brightness(.92)'; }
-  c.drawImage(im, bx - w / 2, by - h, w, h); if (o.enemy) c.restore();
+  c.drawImage(im, bx - ox, by - oy + s * IS.tw * .012, w, h); if (o.enemy) c.restore();
   if (o.badge !== false) bldBadge(c, gx, gy, s, lv, o);
 }
 // Rigged critters: the picture cut into body, head and legs (scripts/hatchwild-rig.py) so the legs walk,
