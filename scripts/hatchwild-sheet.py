@@ -61,6 +61,12 @@ SHEETS = {
     'skip': {20: 'a single shield-block pose', 21: 'a single crouch pose', 22: 'a single cheer pose', 31: 'a single expression pose', 32: 'a single wink',
              33: 'a single laugh', 34: 'a single pointing pose', 36: 'a single happy pose with stars', 37: 'a single sitting pose, eyes closed', 38: 'a single standing pose'},
     'game': {'idle': 'idle', 'walk': 'walk', 'attack': 'punch', 'hurt': ('knockdown', [1, 1, 1, 1, 0]), 'nap': 'sleep'}},   # the full knockdown is too long for every hit
+  'steamcrab': {'cut': 240, 'ref': 'idle', 'seqs': [
+      S('idle', range(0, 6), 5), S('walk', range(7, 14), 9), S('fire', range(14, 18), 10, False, 'plant'),
+      S('grumble', range(20, 28), 7), S('dizzy', [28, 29], 6, False, 'plant'), S('sleep', [30], 4)],
+    'skip': {6: 'a single back view', 18: 'a single standing pose after firing', 19: 'a single happy pose', 31: 'a single standing pose', 32: 'a single standing pose', 33: 'a single back view'},
+    'notes': ['The cannonball flying off on its own after the FIRE frames is left out; the game draws its own shot.'],
+    'game': {'idle': 'idle', 'walk': 'walk', 'attack': 'fire', 'hurt': ('dizzy', [0, 0, 0, 0, 0]), 'nap': 'sleep'}},
 }
 GAME_H = 190   # a standing critter is this many pixels tall in the game atlas
 SRC, EXP, ATLAS = 'art-src/hatchwild', 'art-src/hatchwild/export', 'prototypes/hatchwild/art'
@@ -89,10 +95,19 @@ def find_plain(img, cut=40):
     for r in rows:
       if b[2] < r['y1'] - 20: r['b'].append(b); r['y1'] = max(r['y1'], b[2] + b[4]); break
     else: rows.append({'b': [b], 'y1': b[2] + b[4]})
-  out = []; loose = img[..., 3] > 40; taken = np.isin(lab, [b[0] for b in bl])
+  # grow every pose's solid body outward through its soft parts (steam, glows, feathers) at the same pace;
+  # where two poses' soft parts meet, each keeps the part nearer its own body
+  loose = img[..., 3] > 110; grow = np.zeros(lab.shape, np.uint16)   # >110 leaves out the faint smudge of ground shadow AI tools paint under feet
+  for i, *_ in bl: grow[lab == i] = i
+  k3 = np.ones((3, 3), np.uint8)
+  for _ in range(300):
+    g2 = cv2.dilate(grow, k3); new = (grow == 0) & loose & (g2 > 0)
+    if not new.any(): break
+    grow[new] = g2[new]
+  out = []
   for r_i, r in enumerate(rows):
     for i, x, y, w, h in sorted(r['b'], key=lambda b: b[1]):
-      m, _ = keep_pieces(loose & (~taken | (lab == i)), lab == i, (x, y, x + w, y + h))
+      m, _ = keep_pieces(loose & (grow == 0), grow == i, (x, y, x + w, y + h))
       ys, xs = np.where(m); x0, y0, x1, y1 = xs.min(), ys.min(), xs.max() + 1, ys.max() + 1
       out.append(Pose(img[y0:y1, x0:x1] * m[y0:y1, x0:x1][..., None], x0, y0, r_i))
   return out, []
