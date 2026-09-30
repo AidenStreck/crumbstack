@@ -29,6 +29,12 @@ SHEETS = {
       'hurt':   {'poses': list(range(48, 54)), 'fps': 12},   # plays once when hit
       'nap':    {'poses': [54, 55, 56, 57, 58, 59, 58, 57, 56, 55], 'fps': 2.5},
   }},
+  'puffling': {'labeled': True, 'ref': range(0, 7), 'anims': {
+      'idle': {'poses': [0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1], 'fps': 5},
+      'walk': {'poses': list(range(7, 15)), 'fps': 11},
+      'run':  {'poses': list(range(15, 23)), 'fps': 14},
+      'nap':  {'poses': [39, 40, 41, 42, 43, 42, 41, 40], 'fps': 2.5},
+  }},
 }
 CELL_H = 240   # pixels per frame in the output
 
@@ -48,8 +54,10 @@ def poses(img):
 
 def poses_labeled(img, label_w=100):
   # rows marked by text labels at the left edge; poses may touch the rows above and below
-  a = img[..., 3] > 40; n, lab, st, _ = cv2.connectedComponentsWithStats(a[:, :label_w].astype(np.uint8))
-  tops = sorted(int(st[i][1]) for i in range(1, n) if st[i][0] < 20 and st[i][2] > 60 and st[i][3] < 45)
+  a = img[..., 3] > 40; n, lab, st, _ = cv2.connectedComponentsWithStats(a.astype(np.uint8))
+  labels = [i for i in range(1, n) if st[i][0] < 20 and st[i][2] > 60 and st[i][3] < 45]
+  tops = sorted(int(st[i][1]) for i in labels)
+  a = a & ~np.isin(lab, labels); label_w = 0   # erase the label pills, keep poses that reach the left edge
   H = img.shape[0]; out = []
   for r, y0 in enumerate(tops):
     y0 = max(0, y0 - 12); y1 = min(H, tops[r + 1] - 12) if r + 1 < len(tops) else H
