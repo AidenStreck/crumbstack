@@ -1000,7 +1000,6 @@ function drawBld(c, k, gx, gy, lv, o = {}){
 // Rigged critters: the picture cut into body, head and legs (scripts/hatchwild-rig.py) so the legs walk,
 // the head bobs, the body breathes and the eyes blink. Paste each rig line the script prints here.
 const RIGS = {
-  pebblet: {"w":431.1,"h":400.0,"body":[0.0,0.0],"parts":[{"n":"head","at":[226.2,81.0],"pv":[276.9,232.4]},{"n":"leg0","at":[0.0,264.7],"pv":[60.6,275.7],"ph":0},{"n":"leg1","at":[296.2,260.4],"pv":[351.6,275.7],"ph":0},{"n":"leg2","at":[142.4,245.4],"pv":[214.0,265.9],"ph":1}]},
 };
 const RIG_IMG = {};
 for (const k in RIGS) for (const n of ['body', 'blink', ...RIGS[k].parts.map(p => p.n)]) { const im = new Image(); im.src = 'art/rigs/' + k + '/' + n + '.png'; RIG_IMG[k + '/' + n] = im; }
@@ -1020,6 +1019,18 @@ function drawRig(c, sp, R, s, t, moving, blink){
   if (head) { const ha = Math.sin(t * 1.3) * .045 + (moving ? Math.sin(w * 2) * .02 : 0), hy = Math.sin(t * 2.1 + .8) * 3 + bob;
     c.save(); c.translate(head.pv[0], head.pv[1] - hy - breathe * R.h * .6); c.rotate(ha); c.drawImage(img(blink ? 'blink' : 'head'), head.at[0] - head.pv[0], head.at[1] - head.pv[1]); c.restore(); }
   c.restore();
+}
+// Sprite-sheet animations made from ChatGPT pose sheets (scripts/hatchwild-sheet.py). One row per
+// animation in art/anims/<species>.png. Paste each line the script prints here. These win over RIGS.
+const ANIMS = {
+  pebblet: {"cell":[318,240],"ref":0.8,"idle":{"row":0,"n":8,"fps":5},"walk":{"row":1,"n":8,"fps":11},"nap":{"row":2,"n":6,"fps":2}},
+};
+const ANIM_IMG = {}; for (const k in ANIMS) { const im = new Image(); im.src = 'art/anims/' + k + '.png'; ANIM_IMG[k] = im; }
+const animReady = sp => { const im = ANIM_IMG[sp]; return im && im.complete && im.naturalWidth ? ANIMS[sp] : null; };
+// feet at (0, 0); s = standing height in px; mode = idle | walk | nap | still
+function drawAnim(c, sp, A, s, t, mode){
+  const a = A[mode] || A.idle, f = mode === 'still' ? 0 : Math.floor(t * a.fps) % a.n, [cw, ch] = A.cell, k = s / (ch * A.ref);
+  c.drawImage(ANIM_IMG[sp], f * cw, a.row * ch, cw, ch, -cw * k / 2, -ch * k, cw * k, ch * k);
 }
 // ================= UI ICONS (SVG) =================
 const ICONS = {
@@ -1044,14 +1055,15 @@ Object.keys(SPECIES).forEach(k => { critImg(k); critImg(k, true); });
 // draw a critter at (x, y) = feet, size = height in px. Hops, squashes, blinks and faces left/right.
 function drawCritterArt(c, sp, tier, x, y, size, t, o = {}){
   const s = size * (1 + .1 * (tier - 1)), seed = (o.seed || 0) + sp.length * 7;
-  const blink = !o.still && ((t * .9 + seed * .37) % 3.2) < .12, rig = !reduce && rigReady(sp), real = artImg('critters/' + sp), im = real || critImg(sp, blink);
+  const blink = !o.still && ((t * .9 + seed * .37) % 3.2) < .12, anim = animReady(sp), rig = !anim && !reduce && rigReady(sp), real = artImg('critters/' + sp), im = real || critImg(sp, blink);
   if (!im.complete || !im.naturalWidth) return drawCritter(c, sp, tier, x, y, size, t, o);
-  const hopP = o.still || reduce || rig ? 0 : o.moving ? Math.abs(Math.sin(t * 9 + seed)) : (Math.sin(t * 2.2 + seed) * .5 + .5) * .25;
-  const sq = o.still || reduce || rig ? 0 : o.moving ? (hopP < .25 ? .1 * (1 - hopP * 4) : -.04) : Math.sin(t * 2.2 + seed) * .025;
+  const hopP = o.still || o.nap || reduce || rig || anim ? 0 : o.moving ? Math.abs(Math.sin(t * 9 + seed)) : (Math.sin(t * 2.2 + seed) * .5 + .5) * .25;
+  const sq = o.still || o.nap || reduce || rig || anim ? 0 : o.moving ? (hopP < .25 ? .1 * (1 - hopP * 4) : -.04) : Math.sin(t * 2.2 + seed) * .025;
   if (!o.noShadow) ell(c, x, y, s * .28 * (1 - hopP * .25), s * .07, 'rgba(10,20,30,.25)');
   c.save(); c.translate(x, y - hopP * s * (o.moving ? .12 : .02)); c.scale((o.face || 1) * (1 + sq), 1 - sq);
   if (o.hurt) c.globalAlpha = .55 + .45 * Math.sin(t * 30);
-  if (rig) drawRig(c, sp, rig, s * .95, o.still ? 0 : t + seed, o.moving && !o.still, blink); else if (real) { const w = s * im.naturalWidth / im.naturalHeight; c.drawImage(im, -w / 2, -s * .95, w, s * .95); } else c.drawImage(im, -s / 2, -s * .925, s, s); c.restore();
+  if (anim) drawAnim(c, sp, anim, s * .95, t + seed, o.still || reduce ? 'still' : o.nap ? 'nap' : o.moving ? 'walk' : 'idle'); else if (rig) drawRig(c, sp, rig, s * .95, o.still ? 0 : t + seed, o.moving && !o.still, blink); else if (real) { const w = s * im.naturalWidth / im.naturalHeight; c.drawImage(im, -w / 2, -s * .95, w, s * .95); } else c.drawImage(im, -s / 2, -s * .925, s, s); c.restore();
+  if (o.nap && !(anim && anim.nap)) { c.fillStyle = '#fff'; c.strokeStyle = 'rgba(40,30,60,.6)'; c.lineWidth = 3; c.font = `700 ${Math.max(11, s * .2)}px Fredoka, sans-serif`; c.textAlign = 'center'; const zy = y - s * (1 + ((t * .6) % 1) * .3); c.strokeText('z', x + s * .3, zy); c.fillText('z', x + s * .3, zy); }
   if (tier >= 2 && o.stars !== false) { c.fillStyle = '#FFC83D'; c.strokeStyle = '#6A4200'; c.lineWidth = 2.5; c.font = `700 ${Math.max(11, s * .16)}px Fredoka, sans-serif`; c.textAlign = 'center'; const st = '★'.repeat(tier); c.strokeText(st, x, y - s * .95); c.fillText(st, x, y - s * .95); }
 }
 
@@ -1179,8 +1191,8 @@ function drawBase(){
     items.push({ k: b.x + b.y + s * 1.5, f: () => {
       if (b.lv) drawBld(ctx, b.k, b.x, b.y, b.lv, { t, egg: nestEgg || 'zippy', egg2: save.eggs[1] || 'pebblet' });
       if (b.build) drawScaffoldIso(ctx, b.x, b.y, s, clamp((Date.now() - b.build.start) / (b.build.end - b.build.start), 0, 1), t); } }); }
-  const den = B('den')[0]; if (den) save.crit.slice(0, 7).forEach((c, i) => { const a = t * .22 + i * .9, gx = den.x + 1 + Math.cos(a) * 2.2, gy = den.y + 1 + Math.sin(a) * 1.4 + 1.2;
-    items.push({ k: gx + gy, f: () => { const [px, py] = iso(gx, gy); drawCritterArt(ctx, c.s, c.t, px, py, IS.tw * 1.1, t, { seed: i * 3, moving: true, face: -Math.sin(a) > 0 ? 1 : -1, stars: false }); } }); });
+  const den = B('den')[0]; if (den) save.crit.slice(0, 7).forEach((c, i) => { const nap = c.rest > Date.now(), a = nap ? i * .9 + 2 : t * .22 + i * .9, gx = den.x + 1 + Math.cos(a) * 2.2, gy = den.y + 1 + Math.sin(a) * 1.4 + 1.2;   // napping critters sleep by the den
+    items.push({ k: gx + gy, f: () => { const [px, py] = iso(gx, gy); drawCritterArt(ctx, c.s, c.t, px, py, IS.tw * 1.1, t, { seed: i * 3, moving: !nap, nap, face: -Math.sin(a) > 0 ? 1 : -1, stars: false }); } }); });
   if (placing) { const s = BLD[placing.k].size, ok = placeOk(placing); items.push({ k: 999, f: () => { poly(ctx, [iso(placing.x, placing.y), iso(placing.x + s, placing.y), iso(placing.x + s, placing.y + s), iso(placing.x, placing.y + s)], ok ? 'rgba(76,195,138,.5)' : 'rgba(255,90,70,.5)', '#fff', 2);
     ctx.globalAlpha = .88; drawBld(ctx, placing.k, placing.x, placing.y, placing.lv || 1, { t, badge: false }); ctx.globalAlpha = 1; } }); }
   items.sort((a, b) => a.k - b.k).forEach(i => i.f());
