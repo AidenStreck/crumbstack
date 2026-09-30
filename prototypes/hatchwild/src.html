@@ -146,6 +146,41 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
 .bhud .pill{color:#FFF1D6}.bhud button{background:linear-gradient(#FFF7E6,#EAD5A8);border:1.5px solid #C9A56A;color:#5A3818}
 .note{color:#6A5438}
 @media (prefers-reduced-motion:reduce){.sheet,.modal,.modalWrap,.toast,.tip{animation:none}}
+
+/* building panel */
+.bSheet header{border:0;padding:0;margin:0;position:absolute;right:12px;top:10px}
+.bSheet header h3{display:none}
+.bHero{display:flex;gap:12px;align-items:center;padding:4px 40px 10px 2px;border-bottom:1.5px dashed rgba(150,110,60,.35);margin-bottom:8px}
+.bArt{flex:none;width:96px;height:96px;border-radius:20px;background:radial-gradient(circle at 50% 60%,#FFF3CF,#E9CD92 70%,#D7B06A);box-shadow:inset 0 2px 0 #fff,inset 0 -3px 0 rgba(120,80,30,.25),0 3px 8px rgba(80,50,20,.2);display:grid;place-items:center}
+.bArt canvas{width:96px;height:96px}
+.bInfo{min-width:0}
+.bInfo h3{margin:0;font-size:22px;color:#3A2410;line-height:1.05}
+.bLv{display:flex;align-items:center;gap:8px;margin:5px 0 4px}
+.bLv b{font-size:12px;background:#5B3FA8;color:#fff;border-radius:999px;padding:2px 9px;box-shadow:0 2px 0 #3B2574}
+.pips{display:flex;gap:3px}
+.pips i{width:9px;height:9px;border-radius:3px;background:#E3D2AE;box-shadow:inset 0 1px 1px rgba(0,0,0,.15)}
+.pips i.on{background:linear-gradient(#FFD865,#E9A21A);box-shadow:0 0 0 1px #B7780B}
+.pips i.lock{background:transparent;box-shadow:inset 0 0 0 1.5px #E3D2AE}
+.pips i.up{background:#8FD9B0;animation:pipPulse 1s ease-in-out infinite alternate}
+@keyframes pipPulse{to{background:#2F9E66}}
+.bInfo p{margin:0;font-size:12.5px;color:#6E5236;line-height:1.3}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.stat{display:flex;align-items:center;gap:8px;background:#FFFDF6;border:1.5px solid #E6D2A8;border-radius:14px;padding:8px 10px}
+.stat .ic{width:26px;height:26px;flex:none;margin:0}
+.stat .si{font-style:normal;font-size:20px;width:26px;text-align:center;color:#C0741A;flex:none}
+.stat b{display:block;font-size:16px;color:#3A2410;font-variant-numeric:tabular-nums}
+.stat b em{font-style:normal;font-size:12px;color:#2F9E66;margin-left:5px}
+.stat small{display:block;font-size:11px;color:#8A6B45;font-weight:600}
+.upCard{background:linear-gradient(#FFFDF6,#F7EACB);border:1.5px solid #D9BD86;border-radius:16px;padding:10px 12px}
+.upCard .upTop{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.upCard .upTop b{font-size:16px;color:#3A2410}
+.upCard .upTop span{font-size:12.5px;color:#7A5A2E;font-weight:600;white-space:nowrap}
+.upCard .btn{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:8px;font-size:18px}
+.upCard .btn .ic{width:22px;height:22px;margin:0 0 0 4px}
+.upCard .warn{margin:6px 0 0;font-size:12.5px;color:#B5451B;font-weight:600}
+.upCard.done b{display:block;font-size:16px;color:#3A2410}.upCard.done span{font-size:12.5px;color:#7A5A2E}
+.bar{height:10px;border-radius:999px;background:#E3D2AE;margin-top:8px;overflow:hidden;box-shadow:inset 0 1px 2px rgba(0,0,0,.15)}
+.bar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#63D69B,#2F9E66)}
 </style>
 
 <canvas id="cv" aria-label="Your island"></canvas>
@@ -1000,6 +1035,7 @@ const BLD_ANIM = {
 };
 const BLD_ANIM_IMG = {}; for (const k in BLD_ANIM) { const im = new Image(); im.src = 'art/buildings/' + k + '-anim.png'; BLD_ANIM_IMG[k] = im; }
 function drawBld(c, k, gx, gy, lv, o = {}){
+  drawBld.top = null;
   const A = !o.enemy && BLD_ANIM[k], AI = A && BLD_ANIM_IMG[k];
   if (A && AI.complete && AI.naturalWidth) {
     const s = BLD[k].size, r = Math.min(A.rows.length - 1, lv >= 7 ? 2 : lv >= 4 ? 1 : 0), R = A.rows[r], [bx, by] = iso(gx + s, gy + s, 0);
@@ -1015,7 +1051,7 @@ function drawBld(c, k, gx, gy, lv, o = {}){
   groundShadow(c, gx, gy, s, s);
   if (o.enemy) { c.save(); c.filter = 'saturate(.75) brightness(.92)'; }
   const t = o.t || 0, ph = gx * 1.7 + gy * 2.3, br = reduce ? 0 : Math.sin(t * 1.4 + ph) * .006;   // a slow breath, well under 1%
-  c.save(); c.translate(bx, by + s * IS.tw * .012); c.scale(1 - br * .5, 1 + br); c.drawImage(im, -ox, -oy, w, h); c.restore(); if (o.enemy) c.restore();
+  c.save(); c.translate(bx, by + s * IS.tw * .012); c.scale(1 - br * .5, 1 + br); c.drawImage(im, -ox, -oy, w, h); c.restore(); if (o.enemy) c.restore(); drawBld.top = by - oy;
   if (!reduce) for (let i = 0; i < 3; i++) {   // a few soft glints drifting up, like sunlight catching dust and gold
     const q = (t * .35 + i / 3 + ph * .1) % 1, gxp = bx + Math.sin(i * 2.4 + ph) * w * .28, gyp = by - h * (.25 + q * .5), al = Math.sin(q * Math.PI) * .55;
     c.fillStyle = `rgba(255,236,170,${al})`; c.beginPath(); c.arc(gxp, gyp, Math.max(1, IS.tw * .025), 0, 7); c.fill(); }
@@ -1076,7 +1112,13 @@ function drawAnim(c, sp, A, s, t, mode, rate = 1){
   const up = a.torso ? s * (.5 + Math.sin(t * 4) * .06) : 0;   // flyers hover above their shadow
   const stepping = mode === 'walk' || mode === 'run', bounce = stepping ? Math.abs(Math.sin(pos / a.n * Math.PI * 2)) * s * .025 : 0;   // a little lift on each step
   const at = (fr, al) => { c.globalAlpha = al; c.drawImage(ANIM_IMG[sp], fr * cw, a.row * ch, cw, ch, -ax * k, -ay * k - up - bounce, cw * k, ch * k); };
-  const g = c.globalAlpha; at(f, g);
+  const g = c.globalAlpha;
+  if (mode === 'idle') {   // standing still: just two frames swapped slowly, and a soft bob up and down
+    const bob = (Math.sin(t * 2.2) * .5 + .5) * s * .018, q = (Math.sin(t * 1.1) * .5 + .5), f2 = a.n > 1 ? 1 : 0;
+    const one = (fr, al) => { c.globalAlpha = al; c.drawImage(ANIM_IMG[sp], fr * cw, a.row * ch, cw, ch, -ax * k, -ay * k - bob, cw * k, ch * k); };
+    one(0, g); if (f2) one(f2, g * q * q * (3 - 2 * q)); c.globalAlpha = g; return;
+  }
+  at(f, g);
   // ease into the next frame at the end of each frame, so loops flow instead of popping
   if (!once && mode !== 'still' && a.n > 1) { const fr = pos - Math.floor(pos), u = Math.max(0, (fr - .45) / .55); if (u > 0) at((f + 1) % a.n, g * u * u * (3 - 2 * u)); }
   c.globalAlpha = g;
@@ -1120,7 +1162,7 @@ function drawCritterArt(c, sp, tier, x, y, size, t, o = {}){
 
 const ICON_IMG = {}; for (const k in ICONS) { const im = new Image(); im.src = iconUrl(k); ICON_IMG[k] = im; }
 { const st = document.createElement('style'); st.textContent = `.ic{background:url("${iconUrl('coin')}") center/contain no-repeat!important;box-shadow:none!important;border-radius:0!important;transform:none!important}
-  .ic.food{background-image:url("${iconUrl('food')}")!important}.ic.gem{background-image:url("${iconUrl('gem')}")!important}.ic.gem.sm{width:15px;height:15px;margin:0}
+  .ic.food{background-image:url("${iconUrl('food')}")!important}.ic.bolt{background-image:url("${iconUrl('bolt')}")!important}.ic.gem{background-image:url("${iconUrl('gem')}")!important}.ic.gem.sm{width:15px;height:15px;margin:0}
   .res .ic{width:30px;height:30px;margin:-6px -1px -6px -8px;filter:drop-shadow(0 2px 1px rgba(0,0,0,.35))} .res .pill{padding-left:4px}
   .builders i{display:inline-block;width:24px;height:24px;background:url("${iconUrl('hammer')}") center/contain no-repeat;font-size:0;margin:-4px 0 -4px -4px}`; document.head.appendChild(st); }
 
@@ -1160,7 +1202,8 @@ let sheetEl = null;
 function sheet(title, sub, body){ closeSheet(); sheetEl = document.createElement('div'); sheetEl.className = 'sheet';
   sheetEl.innerHTML = `<header><h3>${title}${sub ? `<small>${sub}</small>` : ''}</h3><button class="closeX" type="button" aria-label="Close">✕</button></header>${body}`;
   document.body.appendChild(sheetEl); sheetEl.querySelector('.closeX').onclick = () => { SFX.tap(); closeSheet(); }; return sheetEl; }
-function closeSheet(){ if (sheetEl) { sheetEl.remove(); sheetEl = null; } }
+let selBld = null, selAt = 0;   // the building whose panel is open: glows on the island with its name above
+function closeSheet(){ if (sheetEl) { sheetEl.remove(); sheetEl = null; } selBld = null; }
 const coinH = n => `<span class="ic coin sm"></span>${fmt(n)}`, foodH = n => `<span class="ic food sm"></span>${fmt(n)}`, gemH = n => `<span class="ic gem sm"></span>${fmt(n)}`;
 function critCanvas(sp, tier, size, t0){ const c = document.createElement('canvas'); c.width = c.height = size * 2; const g = c.getContext('2d'); g.scale(2, 2); drawCritterArt(g, sp, tier, size / 2, size * .96, size * .9, t0 || 0, { still: true, stars: false }); return c; }
 function bldCanvas(k, lv, size){ const c = document.createElement('canvas'); c.width = c.height = size * 2; const g = c.getContext('2d'); g.scale(2, 2); const s1 = k === 'hut' ? 1 : BLD[k].size, top = bldTop(k), keep = { ...IS };
@@ -1246,6 +1289,18 @@ function wander(i, t){
   const u = p / walkPart, k = u * u * (3 - 2 * u);   // gentle start and stop
   return { x: x0 + (x1 - x0) * k, y: y0 + (y1 - y0) * k, moving: true, face: dirx >= 0 ? 1 : -1, rate: Math.max(.6, Math.min(1.4, dist / (T * walkPart) / .45)) };
 }
+// the floating tag above a selected building: name, then level and state
+function nameplate(b, t){
+  const s = BLD[b.k].size, [x, yb] = iso(b.x + s / 2, b.y + s / 2, bldTop(b.k)), y0 = b._top != null ? b._top : yb, y = y0 - 6 + Math.sin(t * 2.5) * 2;
+  const name = BLD[b.k].name, sub = b.build ? `Upgrading to Lv ${b.build.to}` : `Level ${b.lv}`, g = ctx;
+  g.save(); g.textAlign = 'center'; g.font = '700 15px Fredoka, sans-serif'; const w1 = g.measureText(name).width; g.font = '600 11px Fredoka, sans-serif'; const w = Math.max(w1, g.measureText(sub).width) + 26, h = 40;
+  g.shadowColor = 'rgba(40,20,5,.35)'; g.shadowBlur = 10; g.shadowOffsetY = 3;
+  const grd = g.createLinearGradient(0, y - h, 0, y); grd.addColorStop(0, '#FFF8E8'); grd.addColorStop(1, '#F1DDB4'); g.fillStyle = grd;
+  g.beginPath(); g.roundRect(x - w / 2, y - h, w, h, 12); g.moveTo(x - 7, y); g.lineTo(x, y + 8); g.lineTo(x + 7, y); g.fill(); g.shadowColor = 'transparent';
+  g.strokeStyle = '#C9A56A'; g.lineWidth = 1.5; g.beginPath(); g.roundRect(x - w / 2, y - h, w, h, 12); g.stroke();
+  g.fillStyle = '#3A2410'; g.font = '700 15px Fredoka, sans-serif'; g.fillText(name, x, y - 22);
+  g.fillStyle = b.build ? '#C0741A' : '#7A5A2E'; g.font = '600 11px Fredoka, sans-serif'; g.fillText(sub, x, y - 8); g.restore();
+}
 function drawBase(){
   const reg = REGIONS[0]; applyCam(camBase); drawWater(ctx, W, H, t, reg); drawShoreFoam(ctx, t, 11); blitTerrain(ctx, terrainFor('base-' + GRID_W + 'x' + GRID_H, reg, 11)); seaRocks(ctx, t, 11, true);
   if (!decorBase || decorBase.key !== GRID_W + 'x' + GRID_H) { decorBase = ringDecor(11, reg); decorBase.key = GRID_W + 'x' + GRID_H; }
@@ -1254,7 +1309,16 @@ function drawBase(){
   for (const d of decorBase) items.push({ k: d.gx + d.gy, f: () => drawDecor(ctx, d, t, reg) });
   for (const b of save.bld) { if (placing && b.id === placing.id) continue; const s = BLD[b.k].size;
     items.push({ k: b.x + b.y + s * 1.5, f: () => {
+      const sel = b.id === selBld, pulse = .5 + .5 * Math.sin(t * 4);
+      if (sel) { const q = [iso(b.x - .08, b.y - .08), iso(b.x + s + .08, b.y - .08), iso(b.x + s + .08, b.y + s + .08), iso(b.x - .08, b.y + s + .08)];
+        poly(ctx, q, `rgba(255,214,90,${.18 + .12 * pulse})`); ctx.save(); ctx.strokeStyle = `rgba(255,230,140,${.7 + .3 * pulse})`; ctx.lineWidth = 3; ctx.setLineDash([10, 6]); ctx.lineDashOffset = -t * 20; ctx.beginPath(); q.forEach((p, i) => i ? ctx.lineTo(...p) : ctx.moveTo(...p)); ctx.closePath(); ctx.stroke(); ctx.restore();
+        ctx.save(); ctx.shadowColor = `rgba(255,215,90,1)`; ctx.shadowBlur = 22 + 14 * pulse;
+        for (let i = 0; i < 2; i++) drawBld(ctx, b.k, b.x, b.y, b.lv || 1, { t, badge: false });   // a bright golden halo around its outline
+        ctx.restore(); ctx.save(); }
+      const pop = sel ? Math.max(0, 1 - (performance.now() - selAt) / 260) : 0;   // a little hop when tapped
+      if (pop) { const [ax, ay] = iso(b.x + s, b.y + s); ctx.save(); ctx.translate(ax, ay); ctx.scale(1 + pop * .06, 1 + Math.sin(pop * Math.PI) * .08); ctx.translate(-ax, -ay); }
       if (b.lv) drawBld(ctx, b.k, b.x, b.y, b.lv, { t, egg: nestEgg || 'zippy', egg2: save.eggs[1] || 'pebblet' });
+      if (pop) ctx.restore(); if (sel) { ctx.restore(); b._top = drawBld.top; }
       if (b.build) drawScaffoldIso(ctx, b.x, b.y, s, clamp((Date.now() - b.build.start) / (b.build.end - b.build.start), 0, 1), t); } }); }
   const den = B('den')[0]; if (den) save.crit.slice(0, 7).forEach((c, i) => { const w = wander(i, t), nap = c.rest > Date.now(), gx = nap ? den.x + 1 + Math.cos(i * .9 + 2) * 2.2 : w.x, gy = nap ? den.y + 2.2 + Math.sin(i * .9 + 2) * 1.4 : w.y;   // napping critters sleep by the den
     items.push({ k: gx + gy, f: () => { const [px, py] = iso(gx, gy); drawCritterArt(ctx, c.s, c.t, px, py, IS.tw * 1.1, t, { seed: i * 3, moving: !nap && w.moving, nap, face: w.face, rate: w.rate, stars: false }); } }); });
@@ -1269,6 +1333,7 @@ function drawBase(){
       ctx.fillStyle = '#3A2A1A'; ctx.font = '700 14px Fredoka, sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(fmt(n), x - 5, y); }
     if (b.k === 'nest' && (save.eggs.length || (save.nest && Date.now() >= save.nest.end))) { const [x, y] = iso(b.x + s / 2, b.y + s / 2, bldTop(b.k) + .8), bob = reduce ? 0 : Math.sin(t * 4) * 3; circ(ctx, x, y + bob, 13, '#FF7A5C'); ctx.fillStyle = '#fff'; ctx.font = '700 17px Fredoka, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('!', x, y + bob + 1); } }
   drawAmbient(ctx, W, H, t);
+  { const b = selBld != null && save.bld.find(x => x.id === selBld); if (b) nameplate(b, t); }   // on top of the evening tint
   for (let i = fx.length - 1; i >= 0; i--) { const f = fx[i]; f.t += 1 / 60; ctx.globalAlpha = Math.max(0, 1 - f.t / 1.2); ctx.fillStyle = f.col; ctx.strokeStyle = '#fff'; ctx.lineWidth = 4; ctx.font = '700 22px Fredoka, sans-serif'; ctx.textAlign = 'center'; ctx.strokeText(f.text, f.x, f.y - f.t * 40); ctx.fillText(f.text, f.x, f.y - f.t * 40); ctx.globalAlpha = 1; if (f.t > 1.2) fx.splice(i, 1); }
 }
 function placeOk(p){ const s = BLD[p.k].size; if (p.x < 0 || p.y < 0 || p.x + s > GRID_W || p.y + s > GRID_H) return false;
@@ -1312,29 +1377,42 @@ function baseTap(px, py){
 }
 
 // ================= BASE: sheets =================
+// what a building does at a level, as small stat tiles: [icon, value, label]
+function bldStats(k, L){
+  if (k === 'farm') return [['food', fmt(prodRate(k, L)) + '/hr', 'Berries'], ['food', fmt(storeCap(k, L)), 'Holds']];
+  if (k === 'mill') return [['coin', fmt(prodRate(k, L)) + '/hr', 'Coins'], ['coin', fmt(storeCap(k, L)), 'Holds']];
+  if (k === 'den') return [['paw', denCap(L), 'Critter room']];
+  if (k === 'dock') return [['paw', squadSize(L), 'Squad size'], ['bolt', 5 + L, 'Energy']];
+  if (k === 'pond') return [['star', pondTier(L) + '★', 'Merge up to']];
+  if (k === 'nest') return [['egg', nestRegion(L) + 1, nestRegion(L) ? 'Regions of eggs' : 'Region of eggs']];
+  if (k === 'hq') return [['lvl', L, 'Level cap']];
+  if (DEF[k]) return [['sword', fmt(Math.round(defDmg(k, L))), 'Damage'], ['heart', fmt(Math.round(bhp(k, L))), 'Health']];
+  return [];
+}
+const STAT_ICON = { food: '<span class="ic food"></span>', coin: '<span class="ic"></span>', bolt: '<span class="ic bolt"></span>',
+  paw: '<i class="si">🐾</i>', star: '<i class="si">★</i>', egg: '<i class="si">🥚</i>', lvl: '<i class="si">⬆</i>', sword: '<i class="si">⚔</i>', heart: '<i class="si">❤</i>' };
 function openBuilding(b){
-  const D = BLD[b.k], hq = hqLv(), max = maxLevel(b.k, hq), next = b.lv + 1;
-  let info = '';
-  if (b.k === 'farm' || b.k === 'mill') info = `Makes ${fmt(prodRate(b.k, b.lv))} ${b.k === 'farm' ? 'berries' : 'coins'} an hour, holds ${fmt(storeCap(b.k, b.lv))}.`;
-  if (b.k === 'den') info = `Room for ${denCap(b.lv)} critters or eggs.`;
-  if (b.k === 'dock') info = `Squads of ${squadSize(b.lv)} critters, ${5 + b.lv} battle energy, stronger fireworks.`;
-  if (b.k === 'pond') info = `Can merge up to ${pondTier(b.lv)}-star critters.`;
-  if (b.k === 'nest') info = `Hatches eggs from ${REGIONS.slice(0, nestRegion(b.lv) + 1).map(r => r.name).join(', ')}.`;
-  if (b.k === 'hq') info = `Buildings can reach level ${hq}. Upgrade for more buildings and higher levels.`;
-  if (DEF[b.k]) info = `Hits for ${Math.round(defDmg(b.k, b.lv))} when raiders come.`;
-  const el = sheet(D.name, `Level ${b.lv}${b.build ? ' · upgrading' : ''}`, `<p class="note">${D.desc} ${info}</p><div class="list" id="bList"></div>`); el.dataset.bid = b.id;
+  const D = BLD[b.k], hq = hqLv(), max = maxLevel(b.k, hq), next = b.lv + 1, cap = b.k === 'hq' ? 10 : Math.max(max, b.lv);
+  const now = bldStats(b.k, b.lv), then = b.lv < max ? bldStats(b.k, next) : null;
+  const pips = Array.from({ length: 10 }, (_, i) => `<i class="${i < b.lv ? 'on' : i >= cap ? 'lock' : ''}${b.build && i === b.lv ? ' up' : ''}"></i>`).join('');
+  const el = sheet('', '', `<div class="bHero"><div class="bArt"></div><div class="bInfo"><h3>${D.name}</h3><div class="bLv"><b>Level ${b.lv}</b><span class="pips">${pips}</span></div><p>${D.desc}</p></div></div>
+    <div class="list" id="bList"></div>`);
+  el.classList.add('bSheet'); el.dataset.bid = b.id; selBld = b.id; selAt = performance.now();
+  el.querySelector('.bArt').appendChild(bldCanvas(b.k, b.lv, 96));
   const list = el.querySelector('#bList'), add = html => list.insertAdjacentHTML('beforeend', html);
-  if (b.build) { const left = b.build.end - Date.now(); add(`<div class="row"><canvas></canvas><b>Upgrading to level ${b.build.to}</b><button class="buy gemb" type="button" id="bSpeed">${gemH(gemsFor(left))}<br>Finish</button><span id="bLeft">${fmtT(left)} left</span></div>`);
-    list.querySelector('canvas').replaceWith(bldCanvas(b.k, b.build.to, 52)); list.querySelector('#bSpeed').onclick = () => { speedUp(b); }; }
-  else if (b.lv < max) { const c = cost(b.k, next);
-    add(`<div class="row"><canvas></canvas><b>Upgrade to level ${next}</b><button class="buy" type="button" id="bUp" ${save.coins < c || busy() >= BUILDERS ? 'disabled' : ''}>${coinH(c)}</button><span>Takes ${fmtT(secs(btime(b.k, next)))}${busy() >= BUILDERS ? ' · builders busy' : ''}</span></div>`);
-    list.querySelector('canvas').replaceWith(bldCanvas(b.k, next, 52)); list.querySelector('#bUp').onclick = () => { startUpgrade(b); openBuilding(b); }; }
-  else add(`<p class="note">${b.lv >= 10 ? 'Fully upgraded!' : `Upgrade your Keeper's Lodge to raise this higher.`}</p>`);
+  if (now.length) add(`<div class="stats">${now.map((st, i) => `<div class="stat">${STAT_ICON[st[0]]}<div><b>${st[1]}${then && then[i] && then[i][1] !== st[1] ? `<em>→ ${then[i][1]}</em>` : ''}</b><small>${st[2]}</small></div></div>`).join('')}</div>`);
+  if (b.build) { const left = b.build.end - Date.now(), tot = b.build.end - b.build.start, pc = Math.max(3, Math.min(100, 100 - left / tot * 100));
+    add(`<div class="upCard"><div class="upTop"><b>Upgrading to level ${b.build.to}</b><span id="bLeft">${fmtT(left)} left</span></div><div class="bar"><i style="width:${pc}%"></i></div><button class="btn gemb" type="button" id="bSpeed">Finish now ${gemH(gemsFor(left))}</button></div>`);
+    list.querySelector('#bSpeed').onclick = () => { speedUp(b); }; }
+  else if (b.lv < max) { const c = cost(b.k, next), busyAll = busy() >= BUILDERS, poor = save.coins < c;
+    add(`<div class="upCard"><div class="upTop"><b>Upgrade to level ${next}</b><span>⏱ ${fmtT(secs(btime(b.k, next)))}</span></div>${busyAll ? '<p class="warn">All builders are busy.</p>' : poor ? `<p class="warn">You need ${fmt(c - save.coins)} more coins.</p>` : ''}<button class="btn" type="button" id="bUp" ${poor || busyAll ? 'disabled' : ''}>Upgrade ${coinH(c)}</button></div>`);
+    list.querySelector('#bUp').onclick = () => { startUpgrade(b); openBuilding(b); }; }
+  else add(`<div class="upCard done"><b>${b.lv >= 10 ? 'Fully upgraded!' : 'Max level for now'}</b><span>${b.lv >= 10 ? 'This building is as grand as it gets.' : `Upgrade your Keeper's Lodge to raise this higher.`}</span></div>`);
   const acts = [];
   if (b.k === 'nest') acts.push(['Open nest', openNest]); if (b.k === 'pond' && b.lv) acts.push(['Merge critters', openMerge]);
   if (b.k === 'dock') acts.push(['Set sail', openMap]); if (b.k === 'den') acts.push(['See critters', openCritters]);
   acts.push(['Move', () => { closeSheet(); placing = { k: b.k, x: b.x, y: b.y, id: b.id, lv: b.lv }; showPlaceBar(); }]);
-  list.insertAdjacentHTML('beforeend', `<div class="btns">${acts.map((a, i) => `<button class="btn ${i < acts.length - 1 ? '' : 'alt'}" type="button" data-a="${i}">${a[0]}</button>`).join('')}</div>`);
+  list.insertAdjacentHTML('beforeend', `<div class="btns">${acts.map((a, i) => `<button class="btn ${i < acts.length - 1 ? 'orange' : 'alt'}" type="button" data-a="${i}">${a[0]}</button>`).join('')}</div>`);
   list.querySelectorAll('[data-a]').forEach(bt => bt.onclick = () => { SFX.tap(); acts[+bt.dataset.a][1](); });
 }
 function openBuildMenu(){
