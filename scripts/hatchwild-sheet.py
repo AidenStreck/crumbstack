@@ -83,39 +83,50 @@ def find_plain(img, cut=40):
       out.append(Pose(img[y0:y1, x0:x1] * m[y0:y1, x0:x1][..., None], x0, y0, r_i))
   return out, []
 
+def split_touching(comp, seeds):
+  # grow each seed outward through the shape only (never across empty space), so a pose keeps its own
+  # tail or ear even when it touches the pose next to it
+  lab = np.zeros(comp.shape, np.uint16)
+  for j, sd in enumerate(seeds): lab[sd] = j + 1
+  k = np.ones((3, 3), np.uint8)
+  for _ in range(400):
+    grown = cv2.dilate(lab, k); new = (lab == 0) & comp & (grown > 0)
+    if not new.any(): break
+    lab[new] = grown[new]
+  return [(lab == j + 1) for j in range(len(seeds))]
+
 def find_labeled(img):
-  # rows are marked by text pills at the left edge; poses may touch their neighbours
+  # rows are marked by text pills at the left edge. Each pose is its own shape on the sheet; where two
+  # poses touch, the shared shape is split between their bodies.
   a = img[..., 3] > 40; n, lab, st, _ = cv2.connectedComponentsWithStats(a.astype(np.uint8))
   labels = [i for i in range(1, n) if st[i][0] < 20 and st[i][2] > 60 and st[i][3] < 45]
   tops = sorted(int(st[i][1]) for i in labels); a = a & ~np.isin(lab, labels)
-  H = img.shape[0]; out, dropped = [], 0
-  for r, y0 in enumerate(tops):
-    y0 = max(0, y0 - 12); y1 = min(H, tops[r + 1] - 12) if r + 1 < len(tops) else H
-    band = a[y0:y1]; rgb = np.ascontiguousarray(img[y0:y1, :, :3])
-    core = cv2.erode(band.astype(np.uint8), np.ones((15, 15), np.uint8))
-    k, seeds, s2, _ = cv2.connectedComponentsWithStats(core)
-    ids = [i for i in range(1, k) if s2[i][4] > 1500]; markers = np.zeros(band.shape, np.int32)
-    for j, i in enumerate(ids): markers[seeds == i] = j + 2
-    markers[~cv2.dilate(band.astype(np.uint8), np.ones((3, 3), np.uint8)).astype(bool)] = 1
-    cv2.watershed(cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR), markers)
-    regions = [(markers == j + 2) & band for j in range(len(ids))]
-    row = []
-    for j, m in enumerate(regions):
+  n, lab, st, _ = cv2.connectedComponentsWithStats(a.astype(np.uint8))
+  core = cv2.erode(a.astype(np.uint8), np.ones((15, 15), np.uint8))
+  k, sl, s2, cen = cv2.connectedComponentsWithStats(core)
+  seeds = [i for i in range(1, k) if s2[i][4] > 1500]
+  by_comp = {}
+  for i in seeds:
+    ys, xs = np.where(sl == i); by_comp.setdefault(int(lab[ys[0], xs[0]]), []).append(i)
+  poses = []
+  for c, sids in by_comp.items():
+    x, y, w, h, _ = st[c]; comp = lab[y:y + h, x:x + w] == c
+    parts = [comp] if len(sids) == 1 else split_touching(comp, [sl[y:y + h, x:x + w] == i for i in sids])
+    for sid, m in zip(sids, parts):
       if m.sum() < 5000: continue
-      ys, xs = np.where(m); box = (xs.min(), ys.min(), xs.max() + 1, ys.max() + 1)
-      others = np.zeros_like(m)
-      for jj, mm in enumerate(regions):
-        if jj != j: others |= mm
-      warn = []
-      if (cv2.dilate(m.astype(np.uint8), np.ones((5, 5), np.uint8)).astype(bool) & others).sum() > 40: warn.append('touched the pose next to it on the sheet; its edge there may be slightly cut')
-      if m[0].any() or m[-1].any(): warn.append('reaches into the row above or below; may be cut at the top or bottom')
-      m, d = keep_pieces(band & ~others, m, box); dropped += d
-      ys, xs = np.where(m); bx, by, bx1, by1 = xs.min(), ys.min(), xs.max() + 1, ys.max() + 1
-      px = img[y0 + by:y0 + by1, bx:bx1] * m[by:by1, bx:bx1][..., None]
-      row.append(Pose(px, bx, y0 + by, r, warn))
-    out += sorted(row, key=lambda p: p.X)
-  notes = []
-  return out, notes
+      cy = cen[sid][1]; row = max([r for r, t in enumerate(tops) if t - 30 <= cy] or [0])
+      warn = ['touched the pose next to it on the sheet; split along the narrowest join'] if len(sids) > 1 else []
+      poses.append((row, cen[sid][0], m, x, y, warn))
+  out = []
+  for row, cx, m, x, y, warn in sorted(poses, key=lambda p: (p[0], p[1])):
+    full = np.zeros(a.shape, bool); ys, xs = np.where(m); full[ys + y, xs + x] = True
+    bx, by_, bx1, by1 = xs.min() + x, ys.min() + y, xs.max() + x + 1, ys.max() + y + 1
+    full, _ = keep_pieces(a & ~(np.isin(lab, list(by_comp)) & ~full), full, (bx, by_, bx1, by1))
+    ys, xs = np.where(full); bx, by_, bx1, by1 = xs.min(), ys.min(), xs.max() + 1, ys.max() + 1
+    out.append(Pose(img[by_:by1, bx:bx1] * full[by_:by1, bx:bx1][..., None], bx, by_, row, warn))
+  from collections import Counter
+  print('rows:', [c for _, c in sorted(Counter(p.row for p in out).items())], file=sys.stderr)
+  return out, []
 
 def clean(px):
   # the artwork stays as drawn, glows included. Only the outer 2px rim, where AI tools leave a coloured

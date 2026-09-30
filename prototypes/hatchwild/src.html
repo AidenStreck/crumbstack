@@ -1026,8 +1026,8 @@ const ANIMS = {
   sparkfinch: {"cell":[313,296],"anchor":[157,204],"h":190,"idle":{"row":0,"n":10,"fps":5},"walk":{"row":1,"n":10,"fps":9},"fly":{"row":2,"n":8,"fps":12,"torso":1},"attack":{"row":3,"n":8,"fps":12},"hurt":{"row":4,"n":8,"fps":10},"nap":{"row":5,"n":9,"fps":4}},
 pebblet: {"cell":[333,213],"anchor":[174,207],"h":190,"idle":{"row":0,"n":8,"fps":5},"walk":{"row":1,"n":8,"fps":9},"nap":{"row":2,"n":4,"fps":4}},
   zippy: {"cell":[296,307],"anchor":[151,204],"h":190,"idle":{"row":0,"n":7,"fps":5},"walk":{"row":1,"n":8,"fps":9},"fly":{"row":2,"n":6,"fps":12,"torso":1},"nap":{"row":3,"n":1,"fps":4}},
-  coconeer: {"cell":[240,210],"anchor":[105,203],"h":190,"idle":{"row":0,"n":6,"fps":5},"walk":{"row":1,"n":10,"fps":9},"run":{"row":2,"n":10,"fps":12},"attack":{"row":3,"n":8,"fps":12},"hurt":{"row":4,"n":6,"fps":10},"nap":{"row":5,"n":6,"fps":4}},
-  puffling: {"cell":[245,201],"anchor":[130,195],"h":190,"idle":{"row":0,"n":7,"fps":5},"walk":{"row":1,"n":8,"fps":9},"run":{"row":2,"n":8,"fps":12},"nap":{"row":3,"n":5,"fps":4}},
+  coconeer: {"cell":[262,205],"anchor":[141,197],"h":190,"idle":{"row":0,"n":6,"fps":5},"walk":{"row":1,"n":10,"fps":9},"run":{"row":2,"n":10,"fps":12},"attack":{"row":3,"n":8,"fps":12},"hurt":{"row":4,"n":6,"fps":10},"nap":{"row":5,"n":6,"fps":4}},
+  puffling: {"cell":[241,203],"anchor":[130,196],"h":190,"idle":{"row":0,"n":7,"fps":5},"walk":{"row":1,"n":8,"fps":9},"run":{"row":2,"n":8,"fps":12},"nap":{"row":3,"n":5,"fps":4}},
 };
 const ANIM_IMG = {}; for (const k in ANIMS) { const im = new Image(); im.src = 'art/anims/' + k + '.png'; ANIM_IMG[k] = im; }
 const animReady = sp => { const im = ANIM_IMG[sp]; return im && im.complete && im.naturalWidth ? ANIMS[sp] : null; };
