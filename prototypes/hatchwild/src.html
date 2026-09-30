@@ -1386,16 +1386,25 @@ function nameplate(b, t){
   g.fillStyle = '#3A2410'; g.font = '700 15px Fredoka, sans-serif'; g.fillText(name, x, y - 22);
   g.fillStyle = b.build ? '#C0741A' : '#7A5A2E'; g.font = '600 11px Fredoka, sans-serif'; g.fillText(sub, x, y - 8); g.restore();
 }
-// dirt paths: shore -> Keeper's Lodge, then the Lodge out to the nest, dock and production buildings
+// dirt paths, laid out like a village: one main road from the shore up to the Keeper's Lodge door, and short
+// side paths that leave the road at the nearest point and follow the grid lines to each building's front door,
+// picking the turn that crosses the fewest other buildings. Side paths skip buildings already beside the road.
 function drawPaths(){
   const tex = terrainTex('path'), hq = B('hq')[0]; if (!tex || !hq) return;
-  const door = b => { const z = BLD[b.k].size; return [b.x + z / 2, b.y + z + .25]; }, H = door(hq), seed = 11, [ex, ey] = coastFrom(seed, GRID_W / 2, GRID_H, 0, 1);
+  const blds = save.bld.filter(b => b.lv || b.build), door = b => { const z = BLD[b.k].size; return [b.x + z / 2, b.y + z + .35]; };
+  const [ex, ey] = coastFrom(11, GRID_W / 2, GRID_H, 0, 1), H = door(hq);
+  const inside = ([x, y], skip) => blds.some(b => b !== skip && b !== hq && x > b.x - .05 && x < b.x + BLD[b.k].size + .05 && y > b.y - .05 && y < b.y + BLD[b.k].size + .05);
+  const hits = (pts, skip) => { let n = 0; for (let i = 1; i < pts.length; i++) for (let u = 0; u < 1; u += .1) { const q = [pts[i - 1][0] + (pts[i][0] - pts[i - 1][0]) * u, pts[i - 1][1] + (pts[i][1] - pts[i - 1][1]) * u]; if (inside(q, skip)) n++; } return n; };
+  // main road: up the y axis from the shore, then across to the lodge (or the other way round), whichever is clearer
+  const s0 = [ex, ey - .2], r1 = [s0, [s0[0], H[1]], H], r2 = [s0, [H[0], s0[1]], H], road = hits(r1) <= hits(r2) ? r1 : r2, lanes = [road];
+  const nearest = p => { let best = null, bd = 1e9; for (let i = 1; i < road.length; i++) { const A = road[i - 1], Bp = road[i], dx = Bp[0] - A[0], dy = Bp[1] - A[1], L = dx * dx + dy * dy || 1, u = Math.max(0, Math.min(1, ((p[0] - A[0]) * dx + (p[1] - A[1]) * dy) / L)), q = [A[0] + dx * u, A[1] + dy * u], d = Math.hypot(q[0] - p[0], q[1] - p[1]); if (d < bd) { bd = d; best = q; } } return [best, bd]; };
+  for (const b of blds) { if (b === hq || b.k === 'tower' || b.k === 'cannon') continue;
+    const D = door(b), [q, d] = nearest(D); if (d < .8) continue;
+    const l1 = [q, [q[0], D[1]], D], l2 = [q, [D[0], q[1]], D]; lanes.push(hits(l1, b) <= hits(l2, b) ? l1 : l2); }
   const k = 2.5 / tex.w, pat = ctx.createPattern(tex.im, 'repeat'); pat.setTransform(new DOMMatrix([k * IS.tw / 2, k * IS.th / 2, -k * IS.tw / 2, k * IS.th / 2, IS.ox, IS.oy]));
-  const legs = [[[ex, ey - .3], H]]; for (const kk of ['nest', 'dock', 'farm', 'mill', 'den', 'pond']) for (const b of B(kk)) if (b.lv || b.build) legs.push([H, door(b)]);
   ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-  const route = ([a, b]) => { const p0 = iso(...a), p1 = iso(...b), m = iso((a[0] + b[0]) / 2 + (b[1] - a[1]) * .12, (a[1] + b[1]) / 2 - (b[0] - a[0]) * .12); ctx.moveTo(...p0); ctx.quadraticCurveTo(...m, ...p1); };
-  ctx.beginPath(); legs.forEach(route); ctx.strokeStyle = 'rgba(70,50,20,.22)'; ctx.lineWidth = IS.tw * .66; ctx.stroke();
-  ctx.beginPath(); legs.forEach(route); ctx.strokeStyle = pat; ctx.lineWidth = IS.tw * .54; ctx.stroke(); ctx.restore();
+  const trace = (w) => { ctx.beginPath(); for (const L of lanes) { ctx.moveTo(...iso(...L[0])); for (let i = 1; i < L.length; i++) ctx.lineTo(...iso(...L[i])); } ctx.lineWidth = w; ctx.stroke(); };
+  ctx.strokeStyle = 'rgba(70,50,20,.2)'; trace(IS.tw * .62); ctx.strokeStyle = pat; trace(IS.tw * .5); ctx.restore();
 }
 function drawBase(){
   const reg = REGIONS[0]; applyCam(camBase); drawWater(ctx, W, H, t, reg); drawShoreFoam(ctx, t, 11); blitTerrain(ctx, terrainFor('base-' + GRID_W + 'x' + GRID_H, reg, 11, { path: false })); seaRocks(ctx, t, 11, true);
