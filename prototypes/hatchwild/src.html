@@ -668,7 +668,7 @@ function seaRocks(c, t, seed, front){ const R = rng(seed * 13 + 5), [cx, cy] = I
     c.strokeStyle = `rgba(255,255,255,${.45 + .3 * Math.sin(t * 2 + i)})`; c.lineWidth = 2; c.beginPath(); c.ellipse(px, py, rr2 * 1.15 + Math.sin(t * 2 + i) * 2, rr2 * .45, 0, 0, 7); c.stroke();
     rock(c, px, py + rr2 * .12, rr2 * 1.25, '#7A7E82'); } }
 // painted ground textures from art/terrain/ (seamless tiles)
-const TERRAIN_TEX = {}; ['grass', 'sand'].forEach(k => { const im = new Image(); im.onload = () => { if (typeof terrainCache !== 'undefined') for (const z in terrainCache) delete terrainCache[z]; }; im.src = 'art/terrain/' + k + '.png'; TERRAIN_TEX[k] = im; });
+const TERRAIN_TEX = {}; ['grass', 'sand', 'path'].forEach(k => { const im = new Image(); im.onload = () => { if (typeof terrainCache !== 'undefined') for (const z in terrainCache) delete terrainCache[z]; }; im.src = 'art/terrain/' + k + '.png'; TERRAIN_TEX[k] = im; });
 const terrainTex = k => { const im = TERRAIN_TEX[k]; return im && im.complete && im.naturalWidth ? { im, w: im.naturalWidth } : null; };
 function drawTerrain(c, reg, seed, o = {}){
   const R = rng(seed), top = coastPts(seed, 0), topS = isoPoly(top, 0);
@@ -705,8 +705,11 @@ function drawTerrain(c, reg, seed, o = {}){
   for (let i = 0; i < (tex ? 0 : 220); i++) { const gx = cx0 + (R() - .5) * 30, gy = cy0 + (R() - .5) * 30; if (!onIsland(seed, gx, gy, .3)) continue; const [px, py] = iso(gx, gy);
     if (R() < .12) circ(c, px, py, IS.tw * .035, ['#FFF1A8', '#FF9DB8', '#FFFFFF', '#B9A8FF'][i % 4]); else { c.strokeStyle = shade(reg.land, -.25); c.lineWidth = 1; c.beginPath(); c.moveTo(px, py); c.lineTo(px - 1, py - IS.tw * .08); c.moveTo(px + 2, py); c.lineTo(px + 3, py - IS.tw * .06); c.stroke(); } }
   // a worn path from the shore to the middle of the plot
-  if (o.path !== false) { const [ex, ey] = coastFrom(seed, GRID_W / 2, GRID_H, 0, 1); c.strokeStyle = 'rgba(210,180,120,.55)'; c.lineWidth = IS.tw * .38; c.lineCap = 'round'; c.beginPath(); const p0 = iso(ex, ey - .3), p1 = iso(GRID_W / 2 + .5, GRID_H * .55), p2 = iso(GRID_W / 2, GRID_H * .3); c.moveTo(...p0); c.quadraticCurveTo(p1[0] + IS.tw, p1[1], ...p2); c.stroke();
-    c.strokeStyle = 'rgba(160,125,80,.35)'; c.setLineDash([IS.tw * .12, IS.tw * .2]); c.lineWidth = IS.tw * .3; c.stroke(); c.setLineDash([]); }
+  if (o.path !== false) { const [ex, ey] = coastFrom(seed, GRID_W / 2, GRID_H, 0, 1); c.strokeStyle = 'rgba(210,180,120,.55)'; c.lineWidth = IS.tw * .38; c.lineCap = 'round'; c.beginPath(); const p0 = iso(ex, ey - .3), p1 = iso(GRID_W / 2 + .5, GRID_H * .55), p2 = iso(GRID_W / 2, GRID_H * .3); c.moveTo(...p0); c.quadraticCurveTo(p1[0] + IS.tw, p1[1], ...p2);
+    const ptex = terrainTex('path');
+    if (ptex) { const k = 2.5 / ptex.w, pat = c.createPattern(ptex.im, 'repeat'); pat.setTransform(new DOMMatrix([k * IS.tw / 2, k * IS.th / 2, -k * IS.tw / 2, k * IS.th / 2, IS.ox, IS.oy]));   // painted dirt, with a soft grassy edge
+      c.save(); c.strokeStyle = 'rgba(70,50,20,.25)'; c.lineWidth = IS.tw * .5; c.filter = 'blur(2px)'; c.stroke(); c.restore(); c.strokeStyle = pat; c.lineWidth = IS.tw * .42; c.stroke(); }
+    else { c.stroke(); c.strokeStyle = 'rgba(160,125,80,.35)'; c.setLineDash([IS.tw * .12, IS.tw * .2]); c.lineWidth = IS.tw * .3; c.stroke(); c.setLineDash([]); } }
   return R;
 }
 // decor on the wild land around the plot (drawn with depth sorting by the caller)
