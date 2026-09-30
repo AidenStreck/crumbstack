@@ -692,7 +692,7 @@ function drawDecor(c, d, t, reg){ const [x, y] = iso(d.gx, d.gy), s = IS.tw * d.
 
 // ---------- buildings ----------
 // k at grid (gx, gy) with its footprint size; lv changes materials. o.enemy for rival crews.
-function drawBld(c, k, gx, gy, lv, o = {}){
+function drawBldCode(c, k, gx, gy, lv, o = {}){
   const size = k === 'hut' ? 1 : BLD[k] ? BLD[k].size : 1, t = o.t || 0, stone = lv >= 4, gold = lv >= 7, s = size, cx = gx + s / 2, cy = gy + s / 2, H1 = HU();
   const flag = o.enemy ? (o.crewCol || '#7A6A5E') : '#2FA89A', wood = '#9A6337', thatch = o.enemy ? '#B89A6A' : '#D8A64A', stoneC = o.enemy ? '#8C857C' : '#A8A092';
   groundShadow(c, gx, gy, s, s);
@@ -779,9 +779,11 @@ function drawBld(c, k, gx, gy, lv, o = {}){
     const [bx, by] = iso(cx, cy + .3, 0), w = IS.tw * .5, h = IS.tw * .95; poly(c, [[bx - w, by], [bx, by - h], [bx + w * .2, by + IS.tw * .12]], shade(o.crewCol || '#7A6A5E', .25)); poly(c, [[bx + w * .2, by + IS.tw * .12], [bx, by - h], [bx + w, by - IS.tw * .1]], shade(o.crewCol || '#7A6A5E', -.1));
     poly(c, [[bx - w * .3, by + IS.tw * .04], [bx - w * .05, by - h * .45], [bx + w * .1, by + IS.tw * .08]], '#2A1A10'); c.fillStyle = 'rgba(255,255,255,.35)'; c.fillRect(bx - w * .7, by - h * .5, w * .25, w * .2);
   }
-  if (o.badge !== false) { const [bx, by] = iso(gx + s, gy + s * .5, .2), r = Math.max(7, IS.tw * .16); circ(c, bx, by, r + 1.5, 'rgba(0,0,0,.25)'); const g = c.createLinearGradient(0, by - r, 0, by + r); g.addColorStop(0, o.enemy ? '#E0664A' : '#8E7CF0'); g.addColorStop(1, o.enemy ? '#A8321E' : '#5B3FA8'); c.fillStyle = g; c.beginPath(); c.arc(bx, by, r, 0, 7); c.fill();
-    c.fillStyle = '#fff'; c.font = `700 ${r * 1.2}px Fredoka, sans-serif`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(Math.floor(lv), bx, by + 1); }
+  if (o.badge !== false) bldBadge(c, gx, gy, s, lv, o);
 }
+// the little level number on a building
+function bldBadge(c, gx, gy, s, lv, o){ const [bx, by] = iso(gx + s, gy + s * .5, .2), r = Math.max(7, IS.tw * .16); circ(c, bx, by, r + 1.5, 'rgba(0,0,0,.25)'); const g = c.createLinearGradient(0, by - r, 0, by + r); g.addColorStop(0, o.enemy ? '#E0664A' : '#8E7CF0'); g.addColorStop(1, o.enemy ? '#A8321E' : '#5B3FA8'); c.fillStyle = g; c.beginPath(); c.arc(bx, by, r, 0, 7); c.fill();
+    c.fillStyle = '#fff'; c.font = `700 ${r * 1.2}px Fredoka, sans-serif`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(Math.floor(lv), bx, by + 1); }
 // the tallest point of a building, for tap targets and floating text
 const bldTop = k => ({ hq: 5.5, farm: 1, mill: 3.4, nest: 2, den: 2.4, pond: 2, dock: 4.4, tower: 3.4, cannon: 1.2, hut: 2 })[k] || 2;
 function drawScaffoldIso(c, gx, gy, s, frac, t){
@@ -976,6 +978,25 @@ function shadeHex(hex, k){ const n = parseInt(hex.slice(1), 16); let r = n >> 16
   if (k < 0) { r *= 1 + k; g *= 1 + k; b *= 1 + k; } else { r += (255 - r) * k; g += (255 - g) * k; b += (255 - b) * k; }
   return '#' + [r, g, b].map(v => Math.round(v).toString(16).padStart(2, '0')).join(''); }
 
+// ================= REAL ARTWORK =================
+// Pictures in prototypes/hatchwild/art/ replace the code-drawn art. List each file here when it's added:
+//   critters/<species>.png   e.g. critters/pebblet.png  (feet at the bottom edge, facing right)
+//   buildings/<key>-<1|2|3>.png  e.g. buildings/hq-1.png  (1 = levels 1-3, 2 = 4-6, 3 = 7+; the footprint diamond fills the width, its front tip at the bottom edge)
+//   icons/<coin|food|gem|hammer|bolt>.png
+// Anything without a picture keeps the code-drawn look.
+const ART_FILES = [];
+const ART = {};
+ART_FILES.forEach(f => { const im = new Image(); im.src = 'art/' + f; ART[f.replace(/\.\w+$/, '')] = im; });
+const artImg = k => { const im = ART[k]; return im && im.complete && im.naturalWidth ? im : null; };
+const bldArt = (k, lv) => { const tr = lv >= 7 ? 3 : lv >= 4 ? 2 : 1; for (let i = tr; i >= 1; i--) { const im = artImg('buildings/' + k + '-' + i); if (im) return im; } return null; };
+function drawBld(c, k, gx, gy, lv, o = {}){
+  const im = bldArt(k, lv); if (!im) return drawBldCode(c, k, gx, gy, lv, o);
+  const s = k === 'hut' ? 1 : BLD[k] ? BLD[k].size : 1, w = s * IS.tw, h = w * im.naturalHeight / im.naturalWidth, [bx, by] = iso(gx + s, gy + s, 0);
+  groundShadow(c, gx, gy, s, s);
+  if (o.enemy) { c.save(); c.filter = 'saturate(.75) brightness(.92)'; }
+  c.drawImage(im, bx - w / 2, by - h, w, h); if (o.enemy) c.restore();
+  if (o.badge !== false) bldBadge(c, gx, gy, s, lv, o);
+}
 // ================= UI ICONS (SVG) =================
 const ICONS = {
   coin: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><radialGradient id="cg" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#FFF4B0"/><stop offset=".45" stop-color="#FFC83D"/><stop offset="1" stop-color="#C47A0A"/></radialGradient><linearGradient id="ce" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E0960E"/><stop offset="1" stop-color="#8A4E00"/></linearGradient></defs>
@@ -991,7 +1012,7 @@ const ICONS = {
   hammer: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><g transform="rotate(40 32 32)"><rect x="28" y="22" width="9" height="38" rx="4" fill="#C58A52" stroke="#5A3418" stroke-width="2.5"/><rect x="12" y="8" width="40" height="17" rx="5" fill="#A8B4BE" stroke="#3E4A54" stroke-width="2.5"/><path d="M16 12 H46" stroke="#E8F0F6" stroke-width="3" stroke-linecap="round"/></g></svg>`,
   bolt: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M38 4 L14 36 H30 L24 60 L50 26 H34Z" fill="#FFD84A" stroke="#8A5A00" stroke-width="3" stroke-linejoin="round"/><path d="M34 12 L22 30" stroke="#FFF4B0" stroke-width="3" stroke-linecap="round"/></svg>`,
 };
-const iconUrl = k => 'data:image/svg+xml;utf8,' + encodeURIComponent(ICONS[k]);
+const iconUrl = k => ART_FILES.includes('icons/' + k + '.png') ? 'art/icons/' + k + '.png' : 'data:image/svg+xml;utf8,' + encodeURIComponent(ICONS[k]);
 // critter images, made once per species/tier/blink
 const CRIT_IMG = {};
 function critImg(sp, blink){ const k = sp + (blink ? 'b' : ''); if (!CRIT_IMG[k]) { const im = new Image(); im.src = 'data:image/svg+xml;utf8,' + encodeURIComponent(svgArt(sp, { blink, noShadow: true })); CRIT_IMG[k] = im; } return CRIT_IMG[k]; }
@@ -999,14 +1020,14 @@ Object.keys(SPECIES).forEach(k => { critImg(k); critImg(k, true); });
 // draw a critter at (x, y) = feet, size = height in px. Hops, squashes, blinks and faces left/right.
 function drawCritterArt(c, sp, tier, x, y, size, t, o = {}){
   const s = size * (1 + .1 * (tier - 1)), seed = (o.seed || 0) + sp.length * 7;
-  const blink = !o.still && ((t * .9 + seed * .37) % 3.2) < .12, im = critImg(sp, blink);
+  const blink = !o.still && ((t * .9 + seed * .37) % 3.2) < .12, real = artImg('critters/' + sp), im = real || critImg(sp, blink);
   if (!im.complete || !im.naturalWidth) return drawCritter(c, sp, tier, x, y, size, t, o);
   const hopP = o.still || reduce ? 0 : o.moving ? Math.abs(Math.sin(t * 9 + seed)) : (Math.sin(t * 2.2 + seed) * .5 + .5) * .25;
   const sq = o.still || reduce ? 0 : o.moving ? (hopP < .25 ? .1 * (1 - hopP * 4) : -.04) : Math.sin(t * 2.2 + seed) * .025;
   if (!o.noShadow) ell(c, x, y, s * .28 * (1 - hopP * .25), s * .07, 'rgba(10,20,30,.25)');
   c.save(); c.translate(x, y - hopP * s * (o.moving ? .12 : .02)); c.scale((o.face || 1) * (1 + sq), 1 - sq);
   if (o.hurt) c.globalAlpha = .55 + .45 * Math.sin(t * 30);
-  c.drawImage(im, -s / 2, -s * .925, s, s); c.restore();
+  if (real) { const w = s * im.naturalWidth / im.naturalHeight; c.drawImage(im, -w / 2, -s * .95, w, s * .95); } else c.drawImage(im, -s / 2, -s * .925, s, s); c.restore();
   if (tier >= 2 && o.stars !== false) { c.fillStyle = '#FFC83D'; c.strokeStyle = '#6A4200'; c.lineWidth = 2.5; c.font = `700 ${Math.max(11, s * .16)}px Fredoka, sans-serif`; c.textAlign = 'center'; const st = '★'.repeat(tier); c.strokeText(st, x, y - s * .95); c.fillText(st, x, y - s * .95); }
 }
 
