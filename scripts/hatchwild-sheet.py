@@ -84,6 +84,7 @@ SHEETS = {
   'boulderpuff': standard(fly=True, counts={'fly': 5}),
   'zipzap': standard(fly=True, counts={'idle': 5, 'fly': 5}),
   'stormnut': standard(fly=True, counts={'fly': 5}),
+  'tidecog': standard(),
 }
 GAME_H = 190   # a standing critter is this many pixels tall in the game atlas
 SRC, EXP, ATLAS = 'art-src/hatchwild', 'art-src/hatchwild/export', 'prototypes/hatchwild/art'
