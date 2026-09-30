@@ -220,16 +220,19 @@ const BASIC = Object.keys(SPECIES).filter(k => !SPECIES[k].hybrid);
 const HYBRIDS = { 'coconeer+pebblet': 'shellnut', 'coconeer+zippy': 'flingo', 'pebblet+puffling': 'boulderpuff', 'eelectra+zippy': 'zipzap', 'coconeer+sparkfinch': 'stormnut', 'bubbleclam+cogbot': 'tidecog' };
 const hybridOf = (a, b) => HYBRIDS[[a, b].sort().join('+')] || null;
 const TIER_MULT = t => Math.pow(1.7, t - 1);
-const MAX_TIER = 4;
-const EGG_FOOD = [60, 500, 3000, 12000], EGG_TIME = [20, 300, 1800, 7200];   // berries and seconds, by region
+const MAX_TIER = 6;
+const EGG_FOOD = [150, 4000, 25000, 120000], EGG_TIME = [90, 1200, 5400, 14400];   // berries and seconds, by region
 const stat = (c, k) => SPECIES[c.s][k] * (k === 'hp' || k === 'dmg' ? TIER_MULT(c.t) : 1);
 const power = c => Math.round(stat(c, 'hp') / 8 + stat(c, 'dmg') / SPECIES[c.s].cd * 2.2);
-const restTime = c => secs(60 * 5 * c.t);   // knocked-out critters nap before they can fight again
+const restTime = c => secs(60 * 15 * c.t);
+// berries can hurry things along: warm an egg, or give a napping critter a snack
+const warmCost = (sp, ms) => Math.max(10, Math.ceil(ms * SPEED / 60000) * Math.round(25 * Math.pow(SPECIES[sp].region + 1, 1.6)));
+const snackCost = (c, ms) => Math.max(10, Math.ceil(ms * SPEED / 60000) * 12 * c.t * (SPECIES[c.s].region + 1));   // knocked-out critters nap before they can fight again
 
 // ================= BUILDINGS =================
 // Costs are coins. Build times grow ~2.3x per level (capped at 4 days), so the late game takes weeks.
 const BLD = {
-  hq:     { name: "Keeper's Lodge",     size: 2, cost: 250, time: 60, desc: 'Raises every other building\'s level cap and unlocks more buildings.' },
+  hq:     { name: "Keeper's Lodge",     size: 2, cost: 250, time: 90, desc: 'Raises every other building\'s level cap and unlocks more buildings.' },
   farm:   { name: 'Berry Farm',      size: 2, cost: 60,  time: 10, desc: 'Grows berries for eggs and merging.' },
   mill:   { name: 'Coin Mill',       size: 2, cost: 80,  time: 12, desc: 'Makes coins for building.' },
   nest:   { name: 'Hatchery Nest',   size: 2, cost: 120, time: 20, desc: 'Hatch eggs and pair critters for hybrids.' },
@@ -240,10 +243,10 @@ const BLD = {
   cannon: { name: 'Coconut Cannon',  size: 1, cost: 320, time: 40, desc: 'Slow but hits a whole group.' },
 };
 const BLD_ORDER = ['farm', 'mill', 'tower', 'den', 'cannon', 'pond', 'nest', 'dock', 'hq'];
-const cost = (k, L) => Math.round(BLD[k].cost * Math.pow(1.85, L - 1) / 10) * 10;
-const btime = (k, L) => Math.min(4 * 86400, BLD[k].time * Math.pow(2.3, L - 1));
-const prodRate = (k, L) => (k === 'farm' ? 110 : k === 'mill' ? 90 : 0) * Math.pow(1.45, L - 1);   // per hour
-const storeCap = (k, L) => Math.round(prodRate(k, L) * (3 + L * .5));
+const cost = (k, L) => Math.round(BLD[k].cost * Math.pow(2.4, L - 1) / 10) * 10;   // grows faster than income, so coins stay precious
+const btime = (k, L) => Math.min(4 * 86400, BLD[k].time * Math.pow(2.75, L - 1));   // L2 ~minutes, L5 ~hours, L8+ ~days
+const prodRate = (k, L) => k === 'farm' ? 120 * Math.pow(1.3, L - 1) : k === 'mill' ? 90 * Math.pow(1.45, L - 1) : 0;   // per hour
+const storeCap = (k, L) => Math.round(prodRate(k, L) * (6 + L * .8));   // enough to cover a night's sleep
 const denCap = L => 4 + 2 * (L - 1);
 const squadSize = L => 3 + L;
 const pondTier = L => Math.min(MAX_TIER, 1 + L);
@@ -251,9 +254,9 @@ const nestRegion = L => L >= 9 ? 3 : L >= 6 ? 2 : L >= 3 ? 1 : 0;   // which reg
 const bhp = (k, L) => ({ hq: 900, tower: 320, cannon: 420, farm: 300, mill: 300, den: 260, nest: 280, pond: 240, dock: 320, hut: 160 })[k] * Math.pow(1.45, L - 1);
 const DEF = { tower: { rng: 3.6, dmg: 13, cd: .9 }, cannon: { rng: 4.2, dmg: 34, cd: 2.4, splash: 1 } };
 const defDmg = (k, L) => DEF[k].dmg * Math.pow(1.42, L - 1);
-const maxCount = (k, hq) => ({ hq: 1, nest: 1, pond: hq >= 2 ? 1 : 0, dock: 1, farm: Math.min(4, 1 + Math.ceil(hq / 3)), mill: Math.min(4, 1 + Math.ceil(hq / 3)),
+const maxCount = (k, hq) => ({ hq: 1, nest: 1, pond: hq >= 2 ? 1 : 0, dock: 1, farm: Math.min(3, 1 + Math.ceil(hq / 4)), mill: Math.min(4, 1 + Math.ceil(hq / 3)),
   den: Math.min(3, 1 + Math.floor(hq / 4)), tower: Math.min(6, 1 + Math.ceil(hq / 2)), cannon: hq >= 3 ? Math.min(4, Math.floor((hq - 1) / 2)) : 0 })[k];
-const maxLevel = (k, hq) => k === 'hq' ? 10 : k === 'pond' ? Math.min(3, hq) : hq;
+const maxLevel = (k, hq) => k === 'hq' ? 10 : k === 'pond' ? Math.min(5, hq) : hq;
 // the build grid: rival islands are always 10x12; your home plot starts at 16x16 and can be expanded
 const EN_W = 10, EN_H = 12;
 let GRID_W = 10, GRID_H = 12;
@@ -261,15 +264,15 @@ const useGrid = (w, h) => { GRID_W = w; GRID_H = h; };
 const PLOT_MAX = 26, expandCost = n => Math.round(800 * Math.pow(2.1, n) / 50) * 50, expandHq = n => Math.min(10, n + 2);
 
 // ================= PLAYER LEVEL =================
-const xpNeed = L => Math.round(40 * Math.pow(L, 1.6));
+const xpNeed = L => Math.round(70 * Math.pow(L, 1.9));
 const gemsFor = ms => Math.max(1, Math.ceil(ms * SPEED / 60000 / 6));   // 1 gem per 6 minutes left
 
 // ================= RIVAL ISLANDS =================
 function islandSpec(r, i){
   const s = r * ISLANDS_PER_REGION + i, R = rng(hashStr('hatchwild-' + r + '-' + i)), boss = i === ISLANDS_PER_REGION - 1;
-  const L = clamp(1 + Math.floor(s / 4.5) + (boss ? 1 : 0), 1, 10);
+  const L = clamp(1 + s / 4.5 + (boss ? .4 : 0), 1, 10.5);   // strength rises smoothly island by island
   const blds = [{ k: 'hq', x: 4, y: 1, lv: clamp(L, 1, 10) }];
-  const nT = Math.min(6, 1 + Math.floor(s / 5) + (boss ? 1 : 0)), nC = Math.min(4, Math.max(0, Math.floor((s - 1) / 6)) + (boss ? 1 : 0));
+  const nT = Math.min(6, 1 + Math.floor(s / 5) + (boss ? 1 : 0)), nC = Math.min(4, Math.max(0, Math.floor((s - 1) / 6)));
   const used = new Set(), key = (x, y) => x + ',' + y;
   const mark = (x, y, sz) => { for (let a = 0; a < sz; a++) for (let b = 0; b < sz; b++) used.add(key(x + a, y + b)); };
   const free = (x, y, sz) => { if (x < 0 || y < 0 || x + sz > EN_W || y + sz > EN_H - 3) return false; for (let a = -1; a <= sz; a++) for (let b = -1; b <= sz; b++) if (used.has(key(x + a, y + b)) && a >= 0 && b >= 0 && a < sz && b < sz) return false; return true; };
@@ -279,7 +282,7 @@ function islandSpec(r, i){
   for (let n = 0; n < nC; n++) { const p = place('cannon', 1, 6); if (p) blds.push({ k: 'cannon', ...p, lv: clamp(L - 1, 1, 10) }); }
   for (const k of ['farm', 'mill', R() < .5 ? 'farm' : 'mill']) { const p = place(k, 2, 8); if (p) blds.push({ k, ...p, lv: clamp(L - 1, 1, 10) }); }
   for (let n = 0; n < 2 + Math.floor(R() * 3); n++) { const p = place('hut', 1, 9); if (p) blds.push({ k: 'hut', ...p, lv: clamp(L - 1, 1, 10) }); }
-  const reward = { coins: Math.round(140 * Math.pow(1.33, s) / 10) * 10, food: Math.round(90 * Math.pow(1.33, s) / 10) * 10, gems: 2 + r * 2 + (boss ? 10 : 0) };
+  const reward = { coins: Math.round(180 * Math.pow(1.2, s) / 10) * 10, food: Math.round(120 * Math.pow(1.2, s) / 10) * 10, gems: 2 + r * 2 + (boss ? 10 : 0) };
   let pw = 0; for (const b of blds) pw += bhp(b.k, b.lv) / 25 + (DEF[b.k] ? defDmg(b.k, b.lv) / DEF[b.k].cd * 4 : 0);
   return { r, i, s, boss, blds, reward, power: Math.round(pw), name: boss ? `${REGIONS[r].crew} Fortress` : `${REGIONS[r].crew} Isle ${i + 1}` };
 }
@@ -312,7 +315,8 @@ const hqLv = () => lvOf('hq');
 const busy = () => save.bld.filter(b => b.build).length;
 const BUILDERS = 2;
 const roomLeft = () => B('den').reduce((s, b) => s + denCap(b.lv), 0) - save.crit.length - save.eggs.length - (save.nest ? 1 : 0);
-const regionOpen = r => { const n = REGIONS[r].need; return save.lvl >= n.lv && hqLv() >= n.hq && lvOf('dock') >= n.dock; };
+// a region opens once the previous region's fortress falls and your Lodge and Dock are high enough
+const regionOpen = r => { const n = REGIONS[r].need; return (r === 0 || save.cleared[r - 1] >= ISLANDS_PER_REGION) && hqLv() >= n.hq && lvOf('dock') >= n.dock; };
 function addXp(n){
   save.xp += n; let up = false;
   while (save.xp >= xpNeed(save.lvl)) { save.xp -= xpNeed(save.lvl); save.lvl++; save.gems += 5; up = true; }
@@ -776,7 +780,7 @@ function drawBld(c, k, gx, gy, lv, o = {}){
     poly(c, [[bx - w * .3, by + IS.tw * .04], [bx - w * .05, by - h * .45], [bx + w * .1, by + IS.tw * .08]], '#2A1A10'); c.fillStyle = 'rgba(255,255,255,.35)'; c.fillRect(bx - w * .7, by - h * .5, w * .25, w * .2);
   }
   if (o.badge !== false) { const [bx, by] = iso(gx + s, gy + s * .5, .2), r = Math.max(7, IS.tw * .16); circ(c, bx, by, r + 1.5, 'rgba(0,0,0,.25)'); const g = c.createLinearGradient(0, by - r, 0, by + r); g.addColorStop(0, o.enemy ? '#E0664A' : '#8E7CF0'); g.addColorStop(1, o.enemy ? '#A8321E' : '#5B3FA8'); c.fillStyle = g; c.beginPath(); c.arc(bx, by, r, 0, 7); c.fill();
-    c.fillStyle = '#fff'; c.font = `700 ${r * 1.2}px Fredoka, sans-serif`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(lv, bx, by + 1); }
+    c.fillStyle = '#fff'; c.font = `700 ${r * 1.2}px Fredoka, sans-serif`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(Math.floor(lv), bx, by + 1); }
 }
 // the tallest point of a building, for tap targets and floating text
 const bldTop = k => ({ hq: 5.5, farm: 1, mill: 3.4, nest: 2, den: 2.4, pond: 2, dock: 4.4, tower: 3.4, cannon: 1.2, hut: 2 })[k] || 2;
@@ -1192,7 +1196,7 @@ function openBuilding(b){
   if (b.k === 'farm' || b.k === 'mill') info = `Makes ${fmt(prodRate(b.k, b.lv))} ${b.k === 'farm' ? 'berries' : 'coins'} an hour, holds ${fmt(storeCap(b.k, b.lv))}.`;
   if (b.k === 'den') info = `Room for ${denCap(b.lv)} critters or eggs.`;
   if (b.k === 'dock') info = `Squads of ${squadSize(b.lv)} critters, ${5 + b.lv} battle energy, stronger fireworks.`;
-  if (b.k === 'pond') info = `Can merge up to ${'★'.repeat(pondTier(b.lv))} critters.`;
+  if (b.k === 'pond') info = `Can merge up to ${pondTier(b.lv)}-star critters.`;
   if (b.k === 'nest') info = `Hatches eggs from ${REGIONS.slice(0, nestRegion(b.lv) + 1).map(r => r.name).join(', ')}.`;
   if (b.k === 'hq') info = `Buildings can reach level ${hq}. Upgrade for more buildings and higher levels.`;
   if (DEF[b.k]) info = `Hits for ${Math.round(defDmg(b.k, b.lv))} when raiders come.`;
@@ -1253,7 +1257,8 @@ function critDetail(c){
     <p style="font-size:13px">${c.t < MAX_TIER ? `Merge 3 of these at the Merge Pond for a ${'★'.repeat(c.t + 1)} ${S.name}.` : 'Fully grown!'}</p>
     <button class="btn alt" type="button" id="cdFree">Let it go (+${fmt(20 * c.t * (S.region + 1))} berries)</button>`);
   m.el.querySelector('#cdArt').appendChild(critCanvas(c.s, c.t, 110));
-  m.el.querySelector('#cdFree').onclick = () => { if (save.crit.length <= 1) return toast('Keep at least one critter!'); save.crit = save.crit.filter(x => x !== c); save.food += 20 * c.t * (S.region + 1); persist(); m.close(); if (sheetEl) openCritters(); toast(`${S.name} waddled off happily`); };
+  m.el.querySelector('#cdFree').onclick = e => { if (save.crit.length <= 1) return toast('Keep at least one critter!');
+    if (!e.target.dataset.sure) { e.target.dataset.sure = 1; e.target.innerHTML = `Tap again to say goodbye to ${CAST[c.s].nick}`; e.target.style.background = '#FFE3D6'; return; } save.crit = save.crit.filter(x => x !== c); save.food += 20 * c.t * (S.region + 1); persist(); m.close(); if (sheetEl) openCritters(); toast(`${S.name} waddled off happily`); };
 }
 
 // ================= NEST: hatch & pair =================
@@ -1270,12 +1275,14 @@ function openNest(){
   if (save.nest) { const n = save.nest, left = n.end - Date.now(), row = document.createElement('div'); row.className = 'row'; row.style.marginBottom = '8px'; row.appendChild(eggCanvas(n.s, 52));
     row.insertAdjacentHTML('beforeend', left > 0 ? `<b>${n.pair ? 'Pairing' : 'Warming an egg'}…</b><button class="buy gemb" type="button">${gemH(gemsFor(left))}<br>Finish</button><span>${fmtT(left)} left</span>` : `<b>The egg is ready!</b><button class="buy" type="button">Collect</button><span>${n.pair ? 'What came out of the pairing?' : ''}</span>`);
     row.querySelector('.buy').onclick = () => { if (left > 0) { const g = gemsFor(left); if (save.gems < g) return toast(`You need ${g} gems`); save.gems -= g; n.end = Date.now(); } nestCollect(); };
-    top.appendChild(row); }
+    top.appendChild(row);
+    if (left > 0) { const wc = warmCost(n.s, left), bt = document.createElement('button'); bt.type = 'button'; bt.className = 'btn alt'; bt.style.cssText = 'margin:-2px 0 10px;font-size:15px;padding:8px'; bt.innerHTML = `Warm it with berries · ${foodH(wc)}`; bt.disabled = save.food < wc;
+      bt.onclick = () => { if (save.food < wc) return toast('Not enough berries'); save.food -= wc; n.end = Date.now(); SFX.hatch(); nestCollect(); }; top.appendChild(bt); } }
   if (nestTab === 'hatch') {
     for (const sp of BASIC) { const S = SPECIES[sp], R = S.region, open = regionOpen(R) && nestRegion(NL) >= R, cf = EGG_FOOD[R], can = open && !save.nest && save.food >= cf && roomLeft() > 0;
       const row = document.createElement('div'); row.className = 'row' + (open ? '' : ' off'); row.appendChild(open ? critCanvas(sp, 1, 52) : eggCanvas(sp, 52));
       row.insertAdjacentHTML('beforeend', `<b>${open ? S.name : '???'}</b><button class="buy" type="button" ${can ? '' : 'disabled'}>${foodH(cf)}</button><span>${open ? `${S.desc} ${fmtT(secs(EGG_TIME[R]))}` : !regionOpen(R) ? `From the ${REGIONS[R].name}` : `Needs Nest level ${[0, 3, 6, 9][R]}`}</span>`);
-      row.querySelector('.buy').onclick = () => { if (!can) return toast(save.nest ? 'The nest is busy' : roomLeft() <= 0 ? 'Your den is full' : 'Not enough berries'); save.food -= cf; save.nest = { s: sp, start: Date.now(), end: Date.now() + secs(EGG_TIME[R] * (1 - .05 * (NL - 1))) }; SFX.hatch(); persist(); openNest(); };
+      row.querySelector('.buy').onclick = () => { if (!can) return toast(save.nest ? 'The nest is busy' : roomLeft() <= 0 ? 'Your den is full' : 'Not enough berries'); save.food -= cf; save.nest = { s: sp, start: Date.now(), end: Date.now() + secs(EGG_TIME[R] * (1 - .07 * (NL - 1))) }; SFX.hatch(); persist(); openNest(); };
       list.appendChild(row); }
   } else {
     list.insertAdjacentHTML('beforeend', `<p class="note">Pick two <b>different</b> critters. They come back after, and sometimes you get a rare <b>hybrid</b> egg! Try different pairs to discover them all (${Object.values(HYBRIDS).filter(h => save.tips['found-' + h]).length}/${Object.keys(HYBRIDS).length} found).</p><div class="slots two" id="pSlots"></div><div class="cards" id="pCards"></div><div id="pGo"></div>`);
@@ -1306,12 +1313,12 @@ function hatchEgg(){
 let mergePick = null;
 function openMerge(){
   const pond = B('pond')[0]; if (!pond || !pond.lv) return toast('Build a Merge Pond first (Build menu)');
-  const cap = pondTier(pond.lv), el = sheet('Merge Pond', `Merges up to ${'★'.repeat(cap)}`, `<p class="note">Three of the same critter at the same stars make one stronger critter.</p><div class="cards" id="mCards"></div><div id="mGo"></div>`);
+  const cap = pondTier(pond.lv), el = sheet('Merge Pond', `Merges up to ${cap} stars`, `<p class="note">Three of the same critter at the same stars make one stronger critter.</p><div class="cards" id="mCards"></div><div id="mGo"></div>`);
   const groups = {}; for (const c of save.crit) { const k = c.s + ':' + c.t; (groups[k] = groups[k] || []).push(c); }
   const keys = Object.keys(groups).sort((a, b) => groups[b].length - groups[a].length), cards = el.querySelector('#mCards');
   for (const k of keys) { const [sp, tier] = k.split(':'), n = groups[k].length, d = document.createElement('button'); d.type = 'button'; d.className = 'card' + (mergePick === k ? ' pick' : ''); d.appendChild(critCanvas(sp, +tier, 64));
     d.insertAdjacentHTML('beforeend', `${SPECIES[sp].name}<span class="st">${'★'.repeat(+tier)}</span><span class="n">${n}/3</span>`); d.onclick = () => { SFX.tap(); mergePick = k; openMerge(); }; cards.appendChild(d); }
-  if (mergePick && groups[mergePick]) { const [sp, tier] = mergePick.split(':'), T = +tier, S = SPECIES[sp], cf = Math.round(40 * T * Math.pow(S.region + 1, 1.6) / 10) * 10, have = groups[mergePick].length;
+  if (mergePick && groups[mergePick]) { const [sp, tier] = mergePick.split(':'), T = +tier, S = SPECIES[sp], cf = Math.round(250 * Math.pow(T, 1.6) * Math.pow(S.region + 1, 2.2) / 10) * 10, have = groups[mergePick].length;
     const ok = have >= 3 && T < cap && save.food >= cf, why = have < 3 ? `You need ${3 - have} more ${S.name} ${'★'.repeat(T)}` : T >= MAX_TIER ? 'Already fully grown' : T >= cap ? 'Upgrade the Merge Pond to go higher' : save.food < cf ? 'Not enough berries' : '';
     const g = el.querySelector('#mGo'); g.innerHTML = `<button class="btn" type="button" ${ok ? '' : 'disabled'}>Merge into ${S.name} ${'★'.repeat(T + 1)} · ${foodH(cf)}</button>${why ? `<p class="note">${why}</p>` : ''}`;
     g.querySelector('.btn').onclick = () => { if (!ok) return; save.food -= cf; const three = groups[mergePick].sort((a, b) => (a.rest ? 1 : 0) - (b.rest ? 1 : 0)).slice(0, 3); save.crit = save.crit.filter(c => !three.includes(c));
@@ -1353,7 +1360,8 @@ function renderQuest(){
   const q = curQuest, [a, n] = q.check(), done = a >= n, el = $('quest'); el.hidden = screen !== 'base' || !!placing;
   const key = q.text + a + done; if (el.dataset.k === key) return; el.dataset.k = key;
   const rw = [q.reward.coins && coinH(q.reward.coins), q.reward.food && foodH(q.reward.food), q.reward.gems && gemH(q.reward.gems)].filter(Boolean).join(' ');
-  el.innerHTML = `<small>Goal</small>${q.text}<div class="qbar"><i style="width:${Math.min(100, a / n * 100)}%"></i></div>${done ? `<button type="button" id="qClaim">Claim ${rw}</button>` : `<div style="font-size:11px;color:var(--ink-2);margin-top:3px">Reward: ${rw}</div>`}`;
+  el.innerHTML = `<small>Goal</small>${q.text}<div class="qbar"><i style="width:${Math.min(100, a / n * 100)}%"></i></div>${done ? `<button type="button" id="qClaim">Claim ${rw}</button>` : `<div style="font-size:11px;color:var(--ink-2);margin-top:3px">Reward: ${rw}${save.quest >= QUESTS.length ? ' · <a href="#" id="qSkip" style="color:#1E7D72">Skip</a>' : ''}</div>`}`;
+  const sk = $('qSkip'); if (sk) sk.onclick = e => { e.preventDefault(); save.quest++; persist(); el.dataset.k = ''; renderQuest(); };
   if (done) $('qClaim').onclick = () => { SFX.coin(); save.coins += q.reward.coins || 0; save.food += q.reward.food || 0; save.gems += q.reward.gems || 0; save.quest++; persist(); el.dataset.k = ''; renderQuest(); };
 }
 function tipOnce(k, html){ if (save.tips[k]) return; save.tips[k] = 1; persist(); document.querySelectorAll('.tip').forEach(e => e.remove()); const el = document.createElement('div'); el.className = 'tip'; el.innerHTML = `${html}<br><button type="button">Got it</button>`; document.body.appendChild(el); el.querySelector('button').onclick = () => el.remove(); setTimeout(() => el.remove(), 9000); }
@@ -1375,7 +1383,7 @@ function openMap(){
   drawIcon(mapUi.querySelector('canvas').getContext('2d'), 'nest', 68); $('mHome').onclick = () => { SFX.tap(); closeMap(); };
   const tabs = document.createElement('div'); tabs.className = 'tabs'; tabs.id = 'mTabs'; tabs.style.cssText = `position:fixed;left:8px;right:8px;top:calc(var(--hudb,64px) + 6px);z-index:4;justify-content:flex-start`;
   REGIONS.forEach((R, r) => { const b = document.createElement('button'); b.type = 'button'; b.setAttribute('aria-selected', r === mapR); b.textContent = (regionOpen(r) ? '' : '🔒 ') + R.name;
-    b.onclick = () => { SFX.tap(); if (!regionOpen(r)) { const n = R.need; return modal(`<button class="closeX" type="button" data-close aria-label="Close">✕</button><h2>🔒 ${R.name}</h2><p>Home of the <b>${R.crew}</b>, with new critters to hatch.</p><p style="text-align:left">${save.lvl >= n.lv ? '✅' : '⬜'} Player level ${n.lv}<br>${hqLv() >= n.hq ? '✅' : '⬜'} Keeper's Lodge level ${n.hq}<br>${lvOf('dock') >= n.dock ? '✅' : '⬜'} Airship Dock level ${n.dock}</p><button class="btn" type="button" data-close>OK</button>`); }
+    b.onclick = () => { SFX.tap(); if (!regionOpen(r)) { const n = R.need; return modal(`<button class="closeX" type="button" data-close aria-label="Close">✕</button><h2>🔒 ${R.name}</h2><p>Home of the <b>${R.crew}</b>, with new critters to hatch.</p><p style="text-align:left">${save.cleared[r - 1] >= ISLANDS_PER_REGION ? '✅' : '⬜'} Beat the ${REGIONS[r - 1].crew} Fortress<br>${hqLv() >= n.hq ? '✅' : '⬜'} Keeper's Lodge level ${n.hq}<br>${lvOf('dock') >= n.dock ? '✅' : '⬜'} Airship Dock level ${n.dock}</p><button class="btn" type="button" data-close>OK</button>`); }
       mapR = r; save.region = r; persist(); mapScroll = Math.max(0, save.cleared[r] - 1) * MAP_STEP; tabs.querySelectorAll('button').forEach((x, i) => x.setAttribute('aria-selected', i === r)); };
     tabs.appendChild(b); });
   document.body.appendChild(tabs);
@@ -1442,7 +1450,8 @@ function renderPrep(){
   if (!avail.length) cards.innerHTML = '<p class="note">No critters! Hatch some at the Nest.</p>';
   for (const c of avail) { const d = document.createElement('button'); d.type = 'button'; d.className = 'card' + (BT.squad.includes(c) ? ' sel' : ''); d.appendChild(critCanvas(c.s, c.t, 56));
     d.insertAdjacentHTML('beforeend', `${SPECIES[c.s].name}<span class="st">${'★'.repeat(c.t)}</span><span style="font-size:10px;color:var(--ink-2)">${power(c)}</span>${c.rest ? `<span class="rest">Resting<br>${fmtT(c.rest - Date.now())}</span>` : ''}`);
-    d.onclick = () => { if (c.rest) { const g = gemsFor(c.rest - Date.now()); return modal(`<button class="closeX" type="button" data-close aria-label="Close">✕</button><h2>Resting</h2><p>${SPECIES[c.s].name} is napping after the last battle. Ready in ${fmtT(c.rest - Date.now())}.</p><button class="btn gemb" type="button" id="wake">Wake up now · ${gemH(g)}</button>`).el.querySelector('#wake').onclick = e => { if (save.gems < g) return toast(`You need ${g} gems`); save.gems -= g; c.rest = 0; persist(); e.target.closest('.modalWrap').remove(); renderPrep(); }; }
+    d.onclick = () => { if (c.rest) { const g = gemsFor(c.rest - Date.now()); const m = modal(`<button class="closeX" type="button" data-close aria-label="Close">✕</button><h2>Resting</h2><p>${SPECIES[c.s].name} is napping after the last battle. Ready in ${fmtT(c.rest - Date.now())}.</p><button class="btn" type="button" id="snack">Give a snack · ${foodH(snackCost(c, c.rest - Date.now()))}</button><button class="btn gemb" type="button" id="wake">Wake up now · ${gemH(g)}</button>`).el; m.querySelector('#wake').onclick = e => { if (save.gems < g) return toast(`You need ${g} gems`); save.gems -= g; c.rest = 0; persist(); m.remove(); renderPrep(); };
+      m.querySelector('#snack').onclick = () => { const sc = snackCost(c, c.rest - Date.now()); if (save.food < sc) return toast('Not enough berries'); save.food -= sc; c.rest = 0; SFX.coin(); persist(); m.remove(); renderPrep(); }; return; }
       SFX.tap(); if (BT.squad.includes(c)) BT.squad = BT.squad.filter(x => x !== c); else if (BT.squad.length < max) BT.squad.push(c); else return toast(`Your airship holds ${max}. Upgrade the Airship Dock for more.`); renderPrep(); };
     cards.appendChild(d); }
   $('goBtn').onclick = () => { if (!BT.squad.length) return; SFX.tap(); startFight(); };
@@ -1531,7 +1540,7 @@ function stepBattle(dt){
   const lootNow = Math.round(BT.spec.reward.coins * lootShare()), le = $('bLoot'); if (le && le.dataset.v != lootNow) { le.dataset.v = lootNow; le.innerHTML = coinH(lootNow); }
   if (left <= 0 || !alive.length) endBattle(false);
 }
-const lootShare = () => (BT.again ? .3 : 1) * .6 * BT.destroyed / BT.blds.length;
+const lootShare = () => (BT.again ? .15 : 1) * .6 * BT.destroyed / BT.blds.length;
 function drawBattle(){
   useGrid(EN_W, EN_H); const R = REGIONS[BT.r], seed = 100 + BT.r * 20 + BT.i; battleCam(); ctx.save(); if (BT.shake) ctx.translate(rnd(-BT.shake, BT.shake), rnd(-BT.shake, BT.shake));
   drawWater(ctx, W, H, t, R); drawShoreFoam(ctx, t, seed); blitTerrain(ctx, terrainFor('battle-' + seed, R, seed, { path: false })); seaRocks(ctx, t, seed, true);
@@ -1567,7 +1576,7 @@ function drawBattle(){
 }
 function endBattle(win){
   if (!BT || BT.state === 'end') return; BT.state = 'end'; endBattleUi();
-  const sp = BT.spec, now = Date.now(), share = win ? (BT.again ? .3 : 1) : lootShare(), coins = Math.round(sp.reward.coins * share), food = Math.round(sp.reward.food * share), gems = win && !BT.again ? sp.reward.gems : 0;
+  const sp = BT.spec, now = Date.now(), share = win ? (BT.again ? .15 : 1) : lootShare(), coins = Math.round(sp.reward.coins * share), food = Math.round(sp.reward.food * share), gems = win && !BT.again ? sp.reward.gems : 0;
   save.coins += coins; save.food += food; save.gems += gems;
   let napped = 0; for (const u of BT.units) if (u.dead) { u.c.rest = now + restTime(u.c); napped++; }
   if (win) { save.stats.wins++; if (!BT.again) save.cleared[BT.r] = Math.max(save.cleared[BT.r], BT.i + 1); addXp(15 + sp.s * 5); SFX.win(); } else SFX.lose();
