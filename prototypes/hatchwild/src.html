@@ -43,8 +43,8 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
 
 /* bottom bar */
 .dock{position:fixed;left:0;right:0;bottom:0;z-index:3;display:flex;justify-content:center;gap:8px;padding:0 8px calc(10px + env(safe-area-inset-bottom,0px));pointer-events:none}
-.dock button{pointer-events:auto;position:relative;width:72px;height:66px;border-radius:18px;background:var(--paper);box-shadow:0 4px 0 var(--line),0 8px 16px rgba(0,0,0,.2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-weight:700;font-size:12.5px;color:var(--ink)}
-.dock button canvas{width:34px;height:34px}
+.dock button{pointer-events:auto;position:relative;width:64px;height:58px;border-radius:18px;background:var(--paper);box-shadow:0 4px 0 var(--line),0 8px 16px rgba(0,0,0,.2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-weight:700;font-size:11.5px;color:var(--ink)}
+.dock button canvas{width:30px;height:30px}
 .dock button .dot,.dotB{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;border-radius:999px;background:var(--warn);color:#fff;font-size:11px;display:grid;place-items:center;padding:0 4px;box-shadow:0 2px 0 rgba(0,0,0,.2)}
 .dock button.go{background:linear-gradient(#FFB347,#FF7A3C);color:#fff;box-shadow:0 4px 0 #C4521E,0 8px 16px rgba(0,0,0,.2)}
 
@@ -124,8 +124,9 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
 /* ---- Nestkeeper theme: parchment, carved wood, brass ---- */
 .pill,.builders{background:linear-gradient(#4A3322,#2E1F14);color:#FFF1D6;box-shadow:0 3px 0 rgba(0,0,0,.35),inset 0 1px 0 rgba(255,220,160,.25);border:1.5px solid #8A6238}
 .lvl{background:radial-gradient(circle at 35% 30%,#3FC7B4,#1E7D72);box-shadow:0 3px 0 rgba(0,0,0,.3),inset 0 0 0 3px #D9B25A}
-.quest{background:linear-gradient(#FFF6E2,#F3E0B8);border:1.5px solid #C9A56A;box-shadow:0 4px 0 rgba(90,60,30,.35);color:#3A2A1A}
-.quest small{color:#1E7D72}.quest .qbar{background:#E3CFA4}.quest .qbar i{background:linear-gradient(90deg,#6FD6C4,#1E9A8A)}
+.quest{background:linear-gradient(#4A3322,#2E1F14);border:1.5px solid #8A6238;border-radius:16px;box-shadow:0 3px 0 rgba(0,0,0,.35),inset 0 1px 0 rgba(255,220,160,.25);color:#FFF1D6;font-family:var(--display);padding:7px 12px 8px}
+.quest small{color:#F2C14E;letter-spacing:1px}.quest .qbar{background:rgba(0,0,0,.35);box-shadow:inset 0 1px 2px rgba(0,0,0,.4)}.quest .qbar i{background:linear-gradient(90deg,#6FD6C4,#1E9A8A)}
+.quest div[style]{color:#D9C3A0!important}.quest button{background:linear-gradient(#3FC7B4,#1E8F80);box-shadow:0 3px 0 #0B3A34;border:1.5px solid #0E4A42}
 .dock button{background:linear-gradient(#C68B55,#95602F 70%,#7A4B24);color:#FFF1D6;border:2px solid #5A3818;box-shadow:0 4px 0 #4A2E14,0 8px 18px rgba(0,0,0,.35),inset 0 2px 0 rgba(255,220,170,.35);text-shadow:0 1px 0 rgba(0,0,0,.4)}
 .dock button.go{background:linear-gradient(#3FC7B4,#1E8F80 70%,#15695E);border-color:#0E4A42;box-shadow:0 4px 0 #0B3A34,0 8px 18px rgba(0,0,0,.35),inset 0 2px 0 rgba(200,255,245,.35)}
 .sheet,.prep{background:linear-gradient(#FFF7E6,#F4E4C2);border-top:3px solid #C9A56A;box-shadow:0 -10px 30px rgba(0,0,0,.35),inset 0 1px 0 #fff}
@@ -626,6 +627,8 @@ function drawWater(c, W, H, t, reg, islandAt){
   if (wtex && islandAt == null) {   // painted shallows around the island, fading into the deep sea
     const k = 6 / wtex.w, pat = c.createPattern(wtex.im, 'repeat'), dr = Math.sin(t * .25) * .15, [wx, wy] = iso(dr, dr * .6, -CLIFF - .2);
     pat.setTransform(new DOMMatrix([k * IS.tw / 2, k * IS.th / 2, -k * IS.tw / 2, k * IS.th / 2, wx, wy])); c.fillStyle = pat; c.fillRect(0, 0, W, H);
+    c.save(); c.translate(ix, iy + IS.tw); c.scale(1, .62); const calm = c.createRadialGradient(0, 0, R0 * .2, 0, 0, R0 * .75); calm.addColorStop(0, 'rgba(20,90,110,.38)'); calm.addColorStop(1, 'rgba(20,90,110,0)');
+    c.fillStyle = calm; c.fillRect(-W * 3, -H * 5, W * 6, H * 10); c.restore();
     if (reg.id !== 'tropic') { c.save(); c.globalAlpha = .4; c.fillStyle = reg.sea[0]; c.fillRect(0, 0, W, H); c.restore(); }
     c.save(); c.translate(ix, iy + IS.tw); c.scale(1, .62); const deep = shade(reg.sea[1], -.2), dg = c.createRadialGradient(0, 0, R0 * .55, 0, 0, R0 * 1.25);
     dg.addColorStop(0, 'rgba(0,0,0,0)'); dg.addColorStop(1, deep); c.fillStyle = dg; c.fillRect(-W * 3, -H * 5, W * 6, H * 10); c.restore();
@@ -698,7 +701,8 @@ function drawTerrain(c, reg, seed, o = {}){
     if (ctex) {   // the painted cliff strip wrapped around the island's sides, grass fringe at the top
       const L = Math.hypot(b0[0] - a0[0], b0[1] - a0[1]) || 1, s = (a1[1] - a0[1]) / (260 - 21), ux = (b0[0] - a0[0]) / L * s, uy = (b0[1] - a0[1]) / L * s, u0 = f.u0 / s;
       const pat = c.createPattern(ctex.im, 'repeat-x'); pat.setTransform(new DOMMatrix([ux, uy, 0, s, a0[0] - u0 * ux, a0[1] - u0 * uy - 21 * s]));
-      poly(c, [a0, b0, b1, a1], pat, pat, .6); if (!f.lit) poly(c, [a0, b0, b1, a1], 'rgba(20,10,30,.22)'); continue; }
+      poly(c, [a0, b0, b1, a1], pat, pat, .6); if (!f.lit) poly(c, [a0, b0, b1, a1], 'rgba(20,10,30,.22)');
+      const wg = c.createLinearGradient(0, a0[1] + (a1[1] - a0[1]) * .55, 0, a1[1]); wg.addColorStop(0, 'rgba(15,20,30,0)'); wg.addColorStop(1, 'rgba(15,20,30,.45)'); poly(c, [a0, b0, b1, a1], wg); continue; }
     const g = c.createLinearGradient(0, a0[1], 0, a1[1]); g.addColorStop(0, shade(col, .05)); g.addColorStop(1, shade(col, -.25)); poly(c, [a0, b0, b1, a1], g, g, .8); }
   // rock strata lines across the cliffs
   if (!ctex) { c.strokeStyle = 'rgba(50,30,15,.22)'; c.lineWidth = 1; for (const z of [-.35, -.75]) { c.beginPath(); let on = false; for (const f of faces) { const a = iso(...f.A, z), b = iso(...f.B, z); if (!on) { c.moveTo(...a); on = true; } c.lineTo(...b); } c.stroke(); }
@@ -708,7 +712,7 @@ function drawTerrain(c, reg, seed, o = {}){
   const tex = terrainTex('grass');   // painted grass texture, laid flat on the ground so it follows the island's angle
   if (tex) { const N = 5, k = N / tex.w, pat = c.createPattern(tex.im, 'repeat');
     pat.setTransform(new DOMMatrix([k * IS.tw / 2, k * IS.th / 2, -k * IS.tw / 2, k * IS.th / 2, IS.ox, IS.oy]));
-    poly(c, topS, pat); if (reg.id !== 'tropic') { c.save(); c.globalAlpha = .45; poly(c, topS, reg.land); c.restore(); }   // other regions keep their own tint
+    poly(c, topS, pat); c.save(); c.globalAlpha = reg.id !== 'tropic' ? .55 : .32; poly(c, topS, reg.id !== 'tropic' ? reg.land : '#6DB84C'); c.restore();   // soften it so buildings pop; other regions keep their own tint
     }
   c.save(); c.beginPath(); topS.forEach((p, i) => i ? c.lineTo(...p) : c.moveTo(...p)); c.closePath(); c.clip();
   const [cx0, cy0] = ISLE_C();
@@ -735,11 +739,9 @@ function ringDecor(seed, reg){
     if (!onIsland(seed, gx, gy, .7)) continue; if (gx > -.6 && gx < GRID_W + .6 && gy > -.6 && gy < GRID_H + .6) continue;
     if (Math.abs(gx - GRID_W / 2) < 1.3 && gy > GRID_H) continue;   // keep the path to the shore clear
     const k = R(), front = gx > GRID_W + .2 || gy > GRID_H + .2;   // the near side only gets low things so they never hide buildings
-    out.push(front ? { gx, gy, kind: k < .4 ? 'bush' : k < .7 ? 'rock' : k < .85 ? 'lantern' : 'flowers', s: .6 + R() * .3 } : { gx, gy, kind: k < .35 ? 'palm' : k < .65 ? 'tree' : k < .78 ? 'blossom' : k < .9 ? 'rock' : 'lantern', s: .8 + R() * .5 }); }
+    out.push(front ? { gx, gy, kind: k < .45 ? 'bush' : k < .75 ? 'rock' : 'flowers', s: .6 + R() * .3 } : { gx, gy, kind: k < .3 ? 'palm' : k < .52 ? 'tree' : k < .62 ? 'blossom' : k < .82 ? 'bush' : 'rock', s: .8 + R() * .5 }); }
   // landmarks from the old Roc days, placed on the widest part of the island
   const p = islandParams(seed), place = (th, inset) => { const r = islandR(seed, th) - inset; return [cx + Math.cos(th) * r, cy + Math.sin(th) * r]; };
-  const [rx, ry] = place(p.lobe, 1.8); if (!(rx > -.6 && rx < GRID_W + .6 && ry > -.6 && ry < GRID_H + .6)) out.push({ gx: rx, gy: ry, kind: 'ruin', s: 1 });
-  const [tx, ty] = place(p.lobe2, 1.2); if (!(tx > -.6 && tx < GRID_W + .6 && ty > -.6 && ty < GRID_H + .6)) out.push({ gx: tx, gy: ty, kind: 'totem', s: 1 });
   return out;
 }
 // painted scenery pictures (art/decor/<kind>.png): foot = where the trunk meets the ground, as a fraction of the width
@@ -747,8 +749,11 @@ const DECOR = { palm: { foot: .726, h: 2.1 }, tree: { foot: .534, h: 1.7 }, blos
 for (const k in DECOR) { const im = new Image(); im.src = 'art/decor/' + (DECOR[k].src || k) + '.png'; DECOR_IMG[k] = im; }
 function drawDecor(c, d, t, reg){ const [x, y] = iso(d.gx, d.gy), s = IS.tw * d.s;
   const pick = 1 + Math.floor(Math.abs(d.gx * 5 + d.gy * 11)) % 3, dk = d.kind === 'bush' || d.kind === 'rock' ? d.kind + pick : d.kind === 'flowers' ? 'flowers' + (1 + Math.floor(Math.abs(d.gx * 7 + d.gy * 13)) % 4) : d.kind, D = DECOR[dk], im = D && DECOR_IMG[dk];
+  const hsh = Math.abs(Math.sin(d.gx * 12.9898 + d.gy * 78.233) * 43758.5453) % 1;
+  if (d.kind === 'flowers' && hsh < .55) return;   // fewer flower patches...
+  const vary = d.kind === 'flowers' ? 1.6 : d.kind === 'palm' || d.kind === 'tree' || d.kind === 'blossom' ? .65 + hsh * .5 : .85 + hsh * .3;   // ...but bigger; trees in mixed sizes
   if (im && im.complete && im.naturalWidth) {   // a gentle sway from the foot, each one on its own beat; every other one mirrored for variety
-    const h = s * D.h, w = h * im.naturalWidth / im.naturalHeight, flip = (Math.floor(d.gx * 7 + d.gy * 3) % 2) ? -1 : 1, sw = reduce ? 0 : Math.sin(t * .9 + d.gx * 1.3 + d.gy) * .018;
+    const h = s * D.h * vary, w = h * im.naturalWidth / im.naturalHeight, flip = (Math.floor(d.gx * 7 + d.gy * 3) % 2) ? -1 : 1, sw = reduce ? 0 : Math.sin(t * .9 + d.gx * 1.3 + d.gy) * .018;
     ell(c, x, y, s * .45, s * .14, 'rgba(10,30,15,.22)'); c.save(); c.translate(x, y); c.rotate(sw); c.scale(flip, 1); c.drawImage(im, -w * D.foot, -h * .985, w, h); c.restore(); return; }
   if (d.kind === 'palm' || d.kind === 'tree' || d.kind === 'blossom') tree(c, x, y, s * (d.kind === 'palm' ? 1.5 : 1.2), t, d.kind);
   else if (d.kind === 'rock') rock(c, x, y, s * .8);
@@ -873,7 +878,7 @@ function drawRubbleIso(c, gx, gy, s){ groundShadow(c, gx, gy, s, s, .2); const R
 
 // ---------- sky, light and life ----------
 function dayTint(){ const h = new Date().getHours() + new Date().getMinutes() / 60; // warm dusk, cool night, clear day
-  if (h >= 7 && h < 17) return null; if (h >= 17 && h < 20) return [255, 140, 60, (h - 17) / 3 * .16]; if (h >= 5 && h < 7) return [255, 170, 110, (7 - h) / 2 * .14]; return [30, 40, 110, .3]; }
+  if (h >= 7 && h < 17) return null; if (h >= 17 && h < 20) return [255, 140, 60, (h - 17) / 3 * .16]; if (h >= 5 && h < 7) return [255, 170, 110, (7 - h) / 2 * .14]; return [30, 40, 110, .16]; }
 const isNight = () => { const h = new Date().getHours(); return h >= 20 || h < 5; };
 function drawAmbient(c, W, H, t){
   // two gulls circling out over the water (fixed to the world, well away from the buildings)
@@ -1107,7 +1112,8 @@ function drawBld(c, k, gx, gy, lv, o = {}){
   }
   const im = (!o.enemy || k === 'hut') && bldArt(k, lv, !reduce && ((o.t || 0) + gx * 1.3 + gy * .7) % 6.5 < .35); if (!im) return drawBldCode(c, k, gx, gy, lv, o);   // rival islands keep their own look (our flags are on this art)
   const s = k === 'hut' ? 1 : BLD[k] ? BLD[k].size : 1, [bx, by] = iso(gx + s, gy + s, 0), M = BLD_META[im.dataset.key];
-  const sc = M ? s * IS.tw * .96 * (M.scale || 1) / M.base : s * IS.tw / im.naturalWidth, w = im.naturalWidth * sc, h = im.naturalHeight * sc, ox = M ? M.tip[0] * sc : w / 2, oy = M ? M.tip[1] * sc : h;
+  const big = k === 'hq' ? 1.3 : 1.2;   // drawn bigger than their squares so the detail reads at game size; the lodge most of all
+  const sc = M ? s * IS.tw * .96 * (M.scale || 1) * big / M.base : s * IS.tw / im.naturalWidth, w = im.naturalWidth * sc, h = im.naturalHeight * sc, ox = M ? M.tip[0] * sc : w / 2, oy = M ? M.tip[1] * sc : h;
   groundShadow(c, gx, gy, s, s);
   if (o.enemy) { c.save(); c.filter = 'saturate(.75) brightness(.92)'; }
   const t = o.t || 0, ph = gx * 1.7 + gy * 2.3, br = reduce ? 0 : Math.sin(t * 1.4 + ph) * .006;   // a slow breath, well under 1%
@@ -1361,8 +1367,20 @@ function nameplate(b, t){
   g.fillStyle = '#3A2410'; g.font = '700 15px Fredoka, sans-serif'; g.fillText(name, x, y - 22);
   g.fillStyle = b.build ? '#C0741A' : '#7A5A2E'; g.font = '600 11px Fredoka, sans-serif'; g.fillText(sub, x, y - 8); g.restore();
 }
+// dirt paths: shore -> Keeper's Lodge, then the Lodge out to the nest, dock and production buildings
+function drawPaths(){
+  const tex = terrainTex('path'), hq = B('hq')[0]; if (!tex || !hq) return;
+  const door = b => { const z = BLD[b.k].size; return [b.x + z / 2, b.y + z + .25]; }, H = door(hq), seed = 11, [ex, ey] = coastFrom(seed, GRID_W / 2, GRID_H, 0, 1);
+  const k = 2.5 / tex.w, pat = ctx.createPattern(tex.im, 'repeat'); pat.setTransform(new DOMMatrix([k * IS.tw / 2, k * IS.th / 2, -k * IS.tw / 2, k * IS.th / 2, IS.ox, IS.oy]));
+  const legs = [[[ex, ey - .3], H]]; for (const kk of ['nest', 'dock', 'farm', 'mill', 'den', 'pond']) for (const b of B(kk)) if (b.lv || b.build) legs.push([H, door(b)]);
+  ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  const route = ([a, b]) => { const p0 = iso(...a), p1 = iso(...b), m = iso((a[0] + b[0]) / 2 + (b[1] - a[1]) * .12, (a[1] + b[1]) / 2 - (b[0] - a[0]) * .12); ctx.moveTo(...p0); ctx.quadraticCurveTo(...m, ...p1); };
+  ctx.beginPath(); legs.forEach(route); ctx.strokeStyle = 'rgba(70,50,20,.22)'; ctx.lineWidth = IS.tw * .66; ctx.stroke();
+  ctx.beginPath(); legs.forEach(route); ctx.strokeStyle = pat; ctx.lineWidth = IS.tw * .54; ctx.stroke(); ctx.restore();
+}
 function drawBase(){
-  const reg = REGIONS[0]; applyCam(camBase); drawWater(ctx, W, H, t, reg); drawShoreFoam(ctx, t, 11); blitTerrain(ctx, terrainFor('base-' + GRID_W + 'x' + GRID_H, reg, 11)); seaRocks(ctx, t, 11, true);
+  const reg = REGIONS[0]; applyCam(camBase); drawWater(ctx, W, H, t, reg); drawShoreFoam(ctx, t, 11); blitTerrain(ctx, terrainFor('base-' + GRID_W + 'x' + GRID_H, reg, 11, { path: false })); seaRocks(ctx, t, 11, true);
+  drawPaths(t);
   if (!decorBase || decorBase.key !== GRID_W + 'x' + GRID_H) { decorBase = ringDecor(11, reg); decorBase.key = GRID_W + 'x' + GRID_H; }
   if (placing) { ctx.strokeStyle = 'rgba(255,255,255,.3)'; ctx.lineWidth = 1; for (let i = 0; i <= GRID_W; i++) { ctx.beginPath(); ctx.moveTo(...iso(i, 0)); ctx.lineTo(...iso(i, GRID_H)); ctx.stroke(); } for (let j = 0; j <= GRID_H; j++) { ctx.beginPath(); ctx.moveTo(...iso(0, j)); ctx.lineTo(...iso(GRID_W, j)); ctx.stroke(); } }
   const items = [], nestEgg = save.nest ? save.nest.s : save.eggs[0];
@@ -1381,7 +1399,7 @@ function drawBase(){
       if (pop) ctx.restore(); if (sel) { ctx.restore(); b._top = drawBld.top; }
       if (b.build) drawScaffoldIso(ctx, b.x, b.y, s, clamp((Date.now() - b.build.start) / (b.build.end - b.build.start), 0, 1), t); } }); }
   const den = B('den')[0]; if (den) save.crit.slice(0, 7).forEach((c, i) => { const w = wander(i, t), nap = c.rest > Date.now(), gx = nap ? den.x + 1 + Math.cos(i * .9 + 2) * 2.2 : w.x, gy = nap ? den.y + 2.2 + Math.sin(i * .9 + 2) * 1.4 : w.y;   // napping critters sleep by the den
-    items.push({ k: gx + gy, f: () => { const [px, py] = iso(gx, gy); drawCritterArt(ctx, c.s, c.t, px, py, IS.tw * 1.1, t, { seed: i * 3, moving: !nap && w.moving, nap, face: w.face, rate: w.rate, stars: false }); } }); });
+    items.push({ k: gx + gy, f: () => { const [px, py] = iso(gx, gy); drawCritterArt(ctx, c.s, c.t, px, py, IS.tw * 1.32, t, { seed: i * 3, moving: !nap && w.moving, nap, face: w.face, rate: w.rate, stars: false }); } }); });
   if (placing) { const s = BLD[placing.k].size, ok = placeOk(placing); items.push({ k: 999, f: () => { poly(ctx, [iso(placing.x, placing.y), iso(placing.x + s, placing.y), iso(placing.x + s, placing.y + s), iso(placing.x, placing.y + s)], ok ? 'rgba(76,195,138,.5)' : 'rgba(255,90,70,.5)', '#fff', 2);
     ctx.globalAlpha = .88; drawBld(ctx, placing.k, placing.x, placing.y, placing.lv || 1, { t, badge: false }); ctx.globalAlpha = 1; } }); }
   items.sort((a, b) => a.k - b.k).forEach(i => i.f());
@@ -1822,7 +1840,7 @@ function drawBattle(){
   for (const u of BT.units) items.push({ k: u.x + u.y, f: () => { const [px, py] = iso(u.x, u.y);
     if (u.dead) { if (u.ko < 1.5) { ctx.globalAlpha = 1 - u.ko / 1.5; const up = u.ko * T * 1.5; circ(ctx, px, py - up - T * .9, T * .25, '#FF9DB8'); ctx.strokeStyle = '#fff'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(px, py - up - T * .65); ctx.lineTo(px, py - up - T * .3); ctx.stroke(); drawCritterArt(ctx, u.s, u.t, px, py - up, T * .9, t, { still: true, stars: false, noShadow: true }); ctx.globalAlpha = 1; } return; }
     if (u.wait > 0) return;
-    const lunge = u.bump ? u.face * T * .12 : 0; drawCritterArt(ctx, u.s, u.t, px + lunge, py, T * 1.25, t + u.x, { battle: true, rate: Math.max(.7, Math.min(1.6, u.spd)), atkT: u.atkAt != null ? BT.time - u.atkAt : null, hurtT: u.hurtAt != null ? BT.time - u.hurtAt : null, moving: u.moving, face: u.face, hurt: u.hurt > 0, stars: false });
+    const lunge = u.bump ? u.face * T * .12 : 0; drawCritterArt(ctx, u.s, u.t, px + lunge, py, T * 1.45, t + u.x, { battle: true, rate: Math.max(.7, Math.min(1.6, u.spd)), atkT: u.atkAt != null ? BT.time - u.atkAt : null, hurtT: u.hurtAt != null ? BT.time - u.hurtAt : null, moving: u.moving, face: u.face, hurt: u.hurt > 0, stars: false });
     if (u.hp < u.max) { const w = T * .6; ctx.fillStyle = 'rgba(0,0,0,.45)'; rr(ctx, px - w / 2, py - T * 1.05, w, 5, 2.5); ctx.fill(); ctx.fillStyle = '#4CC38A'; rr(ctx, px - w / 2 + 1, py - T * 1.05 + 1, (w - 2) * u.hp / u.max, 3, 1.5); ctx.fill(); } } });
   items.sort((a, b) => a.k - b.k).forEach(i => i.f());
   if (BT.flare) { const [px, py] = iso(BT.flare.x, BT.flare.y); ctx.strokeStyle = 'rgba(255,92,60,.7)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(px, py, T * .6, T * .33, 0, 0, 7); ctx.stroke(); ctx.strokeStyle = '#8A5A34'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px, py - T * .8); ctx.stroke(); circ(ctx, px, py - T * .85, T * .15, '#FF5C3C');
