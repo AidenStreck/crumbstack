@@ -45,12 +45,24 @@ if len(sys.argv) > 2 and sys.argv[2] == '--anim':
 # mill-1.png, mill-2.png, mill-3.png, then prepares each one.
 if len(sys.argv) > 2 and sys.argv[2] == '--sheet':
   key = sys.argv[1]; img = np.array(Image.open(f'art-src/hatchwild/{key}-sheet.png').convert('RGBA'))
-  m = cv2.morphologyEx((img[..., 3] > 60).astype(np.uint8), cv2.MORPH_CLOSE, np.ones((15, 15), np.uint8))
-  n, lab, st, _ = cv2.connectedComponentsWithStats(m)
-  big = sorted([i for i in range(1, n) if st[i][4] > 20000], key=lambda i: -st[i][4])[:3]
-  for j, i in enumerate(sorted(big, key=lambda i: st[i][0])):
-    x, y, w, h = st[i][:4]; part = img[y:y + h, x:x + w] * (lab[y:y + h, x:x + w] == i)[..., None]
-    Image.fromarray(part.astype(np.uint8)).save(f'art-src/hatchwild/{key}-{j + 1}.png')
+  col = (img[..., 3] > 40).any(0); spans, x = [], 0   # buildings are separated by empty columns
+  while x < len(col):
+    if col[x]:
+      x1 = x
+      while x1 < len(col) and (col[x1] or (x1 + 12 < len(col) and col[x1:x1 + 12].any())): x1 += 1
+      if x1 - x > 120: spans.append((x, x1))
+      x = x1
+    else: x += 1
+  def run(r):
+    best = cur = 0
+    for v in r: cur = cur + 1 if v else 0; best = max(best, cur)
+    return best
+  for j, (x0, x1) in enumerate(spans[:3]):
+    cell = img[:, x0:x1].copy(); h = cell.shape[0]; ys = np.where((cell[..., 3] > 40).any(1))[0]; bot = ys[-1]
+    for y in range(max(0, bot - 140), bot + 1):   # the dark label pill under the building: cut it off
+      row = cell[y]
+      if run((row[:, :3].max(1) < 70) & (row[:, 3] > 200)) > 60: cell[y - 1:] = 0; break
+    a2 = Image.fromarray(cell); a2.crop(a2.getchannel('A').getbbox()).save(f'art-src/hatchwild/{key}-{j + 1}.png')
   import subprocess
   for j in range(3): subprocess.run([sys.executable, __file__, f'{key}-{j + 1}'] + sys.argv[3:4])
   sys.exit()

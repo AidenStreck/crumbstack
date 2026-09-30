@@ -1019,13 +1019,14 @@ function shadeHex(hex, k){ const n = parseInt(hex.slice(1), 16); let r = n >> 16
 //   buildings/<key>-<1|2|3>.png  e.g. buildings/hq-1.png  (1 = levels 1-3, 2 = 4-6, 3 = 7+; the footprint diamond fills the width, its front tip at the bottom edge)
 //   icons/<coin|food|gem|hammer|bolt>.png
 // Anything without a picture keeps the code-drawn look.
-const ART_FILES = ['critters/pebblet.png', 'buildings/hq-1.png', 'buildings/hq-2.png', 'buildings/hq-3.png', 'buildings/farm-1.png', 'buildings/farm-2.png', 'buildings/farm-3.png', 'buildings/mill-1.png', 'buildings/mill-2.png', 'buildings/mill-3.png', 'buildings/nest-1.png', 'buildings/nest-2.png', 'buildings/nest-3.png', 'buildings/nest-e1.png', 'buildings/nest-e2.png', 'buildings/nest-e3.png'];
+const ART_FILES = ['critters/pebblet.png', 'buildings/hq-1.png', 'buildings/hq-2.png', 'buildings/hq-3.png', 'buildings/farm-1.png', 'buildings/farm-2.png', 'buildings/farm-3.png', 'buildings/mill-1.png', 'buildings/mill-2.png', 'buildings/mill-3.png', 'buildings/nest-1.png', 'buildings/nest-2.png', 'buildings/nest-3.png', 'buildings/nest-e1.png', 'buildings/nest-e2.png', 'buildings/nest-e3.png', 'buildings/den-1.png', 'buildings/den-2.png', 'buildings/den-3.png'];
 // where each building picture's base sits: base = width of its base diamond, tip = its front corner (in picture pixels)
 // scale: how much bigger than its footprint the building is drawn (it can overhang, like a real landmark)
 const BLD_META = { 'hq-1': { base: 508.7, tip: [255.9, 559], scale: 1.35 }, 'hq-2': { base: 493.3, tip: [245.7, 559.1], scale: 1.35 }, 'hq-3': { base: 606.8, tip: [292.7, 599], scale: 1.4 },
   'farm-1': { base: 655.4, tip: [339, 559], scale: 1.15 }, 'farm-2': { base: 587.5, tip: [300.6, 565.4], scale: 1.15 }, 'farm-3': { base: 601.3, tip: [287.8, 561.9], scale: 1.2 },
   'mill-1': { base: 435.5, tip: [203.5, 554.4], scale: 1.15 }, 'mill-2': { base: 441, tip: [204.8, 558.1], scale: 1.15 }, 'mill-3': { base: 456.2, tip: [212.9, 558.1], scale: 1.15 },
-  'nest-1': { base: 593.4, tip: [270.6, 558.5], scale: 1.15 }, 'nest-2': { base: 607.6, tip: [286.5, 558.6], scale: 1.15 }, 'nest-3': { base: 596.9, tip: [292.1, 558.6], scale: 1.15 }, 'nest-e1': { base: 614.0, tip: [283.8, 558.5], scale: 1.15 }, 'nest-e2': { base: 634.9, tip: [301.0, 558.5], scale: 1.15 }, 'nest-e3': { base: 618.6, tip: [302.7, 558.5], scale: 1.15 } };
+  'nest-1': { base: 593.4, tip: [270.6, 558.5], scale: 1.15 }, 'nest-2': { base: 607.6, tip: [286.5, 558.6], scale: 1.15 }, 'nest-3': { base: 596.9, tip: [292.1, 558.6], scale: 1.15 }, 'nest-e1': { base: 614.0, tip: [283.8, 558.5], scale: 1.15 }, 'nest-e2': { base: 634.9, tip: [301.0, 558.5], scale: 1.15 }, 'nest-e3': { base: 618.6, tip: [302.7, 558.5], scale: 1.15 },
+  'den-1': { base: 566.3, tip: [266.6, 559.1], scale: 1.15 }, 'den-2': { base: 572.4, tip: [275.6, 559.1], scale: 1.15 }, 'den-3': { base: 595.6, tip: [279.6, 559.1], scale: 1.15 } };
 const ART = {};
 ART_FILES.forEach(f => { const im = new Image(); im.src = 'art/' + f; im.dataset.key = f.replace(/^.*\/|\.\w+$/g, ''); ART[f.replace(/\.\w+$/, '')] = im; });
 const artImg = k => { const im = ART[k]; return im && im.complete && im.naturalWidth ? im : null; };
