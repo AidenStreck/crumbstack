@@ -1036,12 +1036,18 @@ const ANIM_IMG = {}; for (const k in ANIMS) { const im = new Image(); im.src = '
 const animReady = sp => { const im = ANIM_IMG[sp]; return im && im.complete && im.naturalWidth ? ANIMS[sp] : null; };
 // feet at (0, 0); s = standing height in px; mode = idle | walk | nap | still
 // attack and hurt play once: t is the time since they started
-function drawAnim(c, sp, A, s, t, mode){
+function drawAnim(c, sp, A, s, t, mode, rate = 1){
   // frames are registered to one anchor (feet on the ground, or the torso for flying), so each frame is
   // drawn with that anchor on the critter's spot; s = standing height in px
-  const a = A[mode] || A.idle, once = mode === 'attack' || mode === 'hurt', f = mode === 'still' ? 0 : once ? Math.min(a.n - 1, Math.floor(t * a.fps)) : Math.floor(t * a.fps) % a.n;
-  const [cw, ch] = A.cell, [ax, ay] = A.anchor, k = s / A.h, up = a.torso ? s * (.5 + Math.sin(t * 4) * .06) : 0;   // flyers hover above their shadow
-  c.drawImage(ANIM_IMG[sp], f * cw, a.row * ch, cw, ch, -ax * k, -ay * k - up, cw * k, ch * k);
+  const a = A[mode] || A.idle, once = mode === 'attack' || mode === 'hurt', [cw, ch] = A.cell, [ax, ay] = A.anchor, k = s / A.h;
+  const pos = mode === 'still' ? 0 : t * a.fps * (once ? 1 : rate), f = once ? Math.min(a.n - 1, Math.floor(pos)) : Math.floor(pos) % a.n;
+  const up = a.torso ? s * (.5 + Math.sin(t * 4) * .06) : 0;   // flyers hover above their shadow
+  const stepping = mode === 'walk' || mode === 'run', bounce = stepping ? Math.abs(Math.sin(pos / a.n * Math.PI * 2)) * s * .025 : 0;   // a little lift on each step
+  const at = (fr, al) => { c.globalAlpha = al; c.drawImage(ANIM_IMG[sp], fr * cw, a.row * ch, cw, ch, -ax * k, -ay * k - up - bounce, cw * k, ch * k); };
+  const g = c.globalAlpha; at(f, g);
+  // ease into the next frame at the end of each frame, so loops flow instead of popping
+  if (!once && mode !== 'still' && a.n > 1) { const fr = pos - Math.floor(pos), u = Math.max(0, (fr - .45) / .55); if (u > 0) at((f + 1) % a.n, g * u * u * (3 - 2 * u)); }
+  c.globalAlpha = g;
 }
 // ================= UI ICONS (SVG) =================
 const ICONS = {
@@ -1075,7 +1081,7 @@ function drawCritterArt(c, sp, tier, x, y, size, t, o = {}){
   if (o.hurt) c.globalAlpha = .55 + .45 * Math.sin(t * 30);
   if (anim) { const run = anim.attack && o.atkT != null && o.atkT < anim.attack.n / anim.attack.fps ? ['attack', o.atkT] : anim.hurt && o.hurtT != null && o.hurtT < anim.hurt.n / anim.hurt.fps ? ['hurt', o.hurtT] : null;
     if (run && !reduce) drawAnim(c, sp, anim, s * .95, run[1], run[0]);
-    else drawAnim(c, sp, anim, s * .95, t + seed, o.still || reduce ? 'still' : o.nap ? (anim.nap ? 'nap' : 'still') : o.moving ? (o.battle && anim.fly ? 'fly' : o.battle && anim.run ? 'run' : 'walk') : 'idle'); } else if (rig) drawRig(c, sp, rig, s * .95, o.still ? 0 : t + seed, o.moving && !o.still, blink); else if (real) { const w = s * im.naturalWidth / im.naturalHeight; c.drawImage(im, -w / 2, -s * .95, w, s * .95); } else c.drawImage(im, -s / 2, -s * .925, s, s); c.restore();
+    else drawAnim(c, sp, anim, s * .95, t + seed + (o.phase || 0), o.still || reduce ? 'still' : o.nap ? (anim.nap ? 'nap' : 'still') : o.moving ? (o.battle && anim.fly ? 'fly' : o.battle && anim.run ? 'run' : 'walk') : 'idle', o.rate || 1); } else if (rig) drawRig(c, sp, rig, s * .95, o.still ? 0 : t + seed, o.moving && !o.still, blink); else if (real) { const w = s * im.naturalWidth / im.naturalHeight; c.drawImage(im, -w / 2, -s * .95, w, s * .95); } else c.drawImage(im, -s / 2, -s * .925, s, s); c.restore();
   if (o.nap && !(anim && anim.nap)) { c.fillStyle = '#fff'; c.strokeStyle = 'rgba(40,30,60,.6)'; c.lineWidth = 3; c.font = `700 ${Math.max(11, s * .2)}px Fredoka, sans-serif`; c.textAlign = 'center'; const zy = y - s * (1 + ((t * .6) % 1) * .3); c.strokeText('z', x + s * .3, zy); c.fillText('z', x + s * .3, zy); }
   if (tier >= 2 && o.stars !== false) { c.fillStyle = '#FFC83D'; c.strokeStyle = '#6A4200'; c.lineWidth = 2.5; c.font = `700 ${Math.max(11, s * .16)}px Fredoka, sans-serif`; c.textAlign = 'center'; const st = '★'.repeat(tier); c.strokeText(st, x, y - s * .95); c.fillText(st, x, y - s * .95); }
 }
@@ -1194,6 +1200,20 @@ function blitTerrain(c, T){ const k = IS.tw / T.tw; c.drawImage(T.cv, IS.ox - T.
 let placing = null;   // { k, x, y, id? }
 let decorBase = null;
 const bCenter = b => { const s = BLD[b.k].size; return iso(b.x + s / 2, b.y + s / 2, bldTop(b.k) * .7); };
+// critters on the island stroll to a random spot near the den, stand around a while, then stroll on
+function wander(i, t){
+  const den = B('den')[0], cx = den.x + 1, cy = den.y + 1;
+  const pt = n => { const r = rng(hashStr('w' + i + ':' + n));   // a free spot of grass within a few steps of the den
+    for (let k = 0; k < 10; k++) { const a = r() * 6.283, d = 1.9 + r() * 2.4, x = cx + Math.cos(a) * d, y = cy + Math.sin(a) * d;
+      if (x > .5 && y > .5 && x < GRID_W - .5 && y < GRID_H - .5 && !save.bld.some(b => { const z = BLD[b.k].size; return x > b.x - .3 && x < b.x + z + .3 && y > b.y - .3 && y < b.y + z + .3; })) return [x, y]; }
+    return [cx + 1.5, cy + 2.2]; };
+  const T = 7 + (i % 3), off = i * 2.3, n = Math.floor((t + off) / T), p = ((t + off) % T) / T, walkPart = .45;
+  const [x0, y0] = pt(n), [x1, y1] = pt(n + 1), dist = Math.hypot(x1 - x0, y1 - y0);
+  const sx = iso(1, 0)[0] - iso(0, 0)[0], dirx = (x1 - x0) * sx - (y1 - y0) * sx;   // screen direction, to face the way it walks
+  if (p >= walkPart) return { x: x1, y: y1, moving: false, face: dirx >= 0 ? 1 : -1, rate: 1 };
+  const u = p / walkPart, k = u * u * (3 - 2 * u);   // gentle start and stop
+  return { x: x0 + (x1 - x0) * k, y: y0 + (y1 - y0) * k, moving: true, face: dirx >= 0 ? 1 : -1, rate: Math.max(.6, Math.min(1.4, dist / (T * walkPart) / .45)) };
+}
 function drawBase(){
   const reg = REGIONS[0]; applyCam(camBase); drawWater(ctx, W, H, t, reg); drawShoreFoam(ctx, t, 11); blitTerrain(ctx, terrainFor('base-' + GRID_W + 'x' + GRID_H, reg, 11)); seaRocks(ctx, t, 11, true);
   if (!decorBase || decorBase.key !== GRID_W + 'x' + GRID_H) { decorBase = ringDecor(11, reg); decorBase.key = GRID_W + 'x' + GRID_H; }
@@ -1204,8 +1224,8 @@ function drawBase(){
     items.push({ k: b.x + b.y + s * 1.5, f: () => {
       if (b.lv) drawBld(ctx, b.k, b.x, b.y, b.lv, { t, egg: nestEgg || 'zippy', egg2: save.eggs[1] || 'pebblet' });
       if (b.build) drawScaffoldIso(ctx, b.x, b.y, s, clamp((Date.now() - b.build.start) / (b.build.end - b.build.start), 0, 1), t); } }); }
-  const den = B('den')[0]; if (den) save.crit.slice(0, 7).forEach((c, i) => { const nap = c.rest > Date.now(), a = nap ? i * .9 + 2 : t * .22 + i * .9, gx = den.x + 1 + Math.cos(a) * 2.2, gy = den.y + 1 + Math.sin(a) * 1.4 + 1.2;   // napping critters sleep by the den
-    items.push({ k: gx + gy, f: () => { const [px, py] = iso(gx, gy); drawCritterArt(ctx, c.s, c.t, px, py, IS.tw * 1.1, t, { seed: i * 3, moving: !nap, nap, face: -Math.sin(a) > 0 ? 1 : -1, stars: false }); } }); });
+  const den = B('den')[0]; if (den) save.crit.slice(0, 7).forEach((c, i) => { const w = wander(i, t), nap = c.rest > Date.now(), gx = nap ? den.x + 1 + Math.cos(i * .9 + 2) * 2.2 : w.x, gy = nap ? den.y + 2.2 + Math.sin(i * .9 + 2) * 1.4 : w.y;   // napping critters sleep by the den
+    items.push({ k: gx + gy, f: () => { const [px, py] = iso(gx, gy); drawCritterArt(ctx, c.s, c.t, px, py, IS.tw * 1.1, t, { seed: i * 3, moving: !nap && w.moving, nap, face: w.face, rate: w.rate, stars: false }); } }); });
   if (placing) { const s = BLD[placing.k].size, ok = placeOk(placing); items.push({ k: 999, f: () => { poly(ctx, [iso(placing.x, placing.y), iso(placing.x + s, placing.y), iso(placing.x + s, placing.y + s), iso(placing.x, placing.y + s)], ok ? 'rgba(76,195,138,.5)' : 'rgba(255,90,70,.5)', '#fff', 2);
     ctx.globalAlpha = .88; drawBld(ctx, placing.k, placing.x, placing.y, placing.lv || 1, { t, badge: false }); ctx.globalAlpha = 1; } }); }
   items.sort((a, b) => a.k - b.k).forEach(i => i.f());
@@ -1632,7 +1652,7 @@ function drawBattle(){
   for (const u of BT.units) items.push({ k: u.x + u.y, f: () => { const [px, py] = iso(u.x, u.y);
     if (u.dead) { if (u.ko < 1.5) { ctx.globalAlpha = 1 - u.ko / 1.5; const up = u.ko * T * 1.5; circ(ctx, px, py - up - T * .9, T * .25, '#FF9DB8'); ctx.strokeStyle = '#fff'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(px, py - up - T * .65); ctx.lineTo(px, py - up - T * .3); ctx.stroke(); drawCritterArt(ctx, u.s, u.t, px, py - up, T * .9, t, { still: true, stars: false, noShadow: true }); ctx.globalAlpha = 1; } return; }
     if (u.wait > 0) return;
-    const lunge = u.bump ? u.face * T * .12 : 0; drawCritterArt(ctx, u.s, u.t, px + lunge, py, T * 1.25, t + u.x, { battle: true, atkT: u.atkAt != null ? BT.time - u.atkAt : null, hurtT: u.hurtAt != null ? BT.time - u.hurtAt : null, moving: u.moving, face: u.face, hurt: u.hurt > 0, stars: false });
+    const lunge = u.bump ? u.face * T * .12 : 0; drawCritterArt(ctx, u.s, u.t, px + lunge, py, T * 1.25, t + u.x, { battle: true, rate: Math.max(.7, Math.min(1.6, u.spd)), atkT: u.atkAt != null ? BT.time - u.atkAt : null, hurtT: u.hurtAt != null ? BT.time - u.hurtAt : null, moving: u.moving, face: u.face, hurt: u.hurt > 0, stars: false });
     if (u.hp < u.max) { const w = T * .6; ctx.fillStyle = 'rgba(0,0,0,.45)'; rr(ctx, px - w / 2, py - T * 1.05, w, 5, 2.5); ctx.fill(); ctx.fillStyle = '#4CC38A'; rr(ctx, px - w / 2 + 1, py - T * 1.05 + 1, (w - 2) * u.hp / u.max, 3, 1.5); ctx.fill(); } } });
   items.sort((a, b) => a.k - b.k).forEach(i => i.f());
   if (BT.flare) { const [px, py] = iso(BT.flare.x, BT.flare.y); ctx.strokeStyle = 'rgba(255,92,60,.7)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(px, py, T * .6, T * .33, 0, 0, 7); ctx.stroke(); ctx.strokeStyle = '#8A5A34'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px, py - T * .8); ctx.stroke(); circ(ctx, px, py - T * .85, T * .15, '#FF5C3C');
