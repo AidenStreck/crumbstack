@@ -15,6 +15,12 @@ SHEETS = {
       'walk': {'poses': list(range(0, 8)), 'fps': 11},
       'nap':  {'poses': [34, 35, 36, 37, 36, 35], 'fps': 2, 'scaleFrom': range(27, 31), 'size': .85},
   }},
+  'zippy': {'ref': [14, 18, 19, 20], 'anims': {
+      'idle': {'poses': [14, 18, 19, 18, 14, 15, 16, 17], 'fps': 4},
+      'walk': {'poses': list(range(0, 8)), 'fps': 12},
+      'fly':  {'poses': [8, 9, 10, 11, 12, 11, 10, 9], 'fps': 12},   # used for moving in battle
+      'nap':  {'poses': [24], 'fps': 1, 'size': .95},
+  }},
 }
 CELL_H = 240   # pixels per frame in the output
 

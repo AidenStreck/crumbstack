@@ -1024,13 +1024,15 @@ function drawRig(c, sp, R, s, t, moving, blink){
 // animation in art/anims/<species>.png. Paste each line the script prints here. These win over RIGS.
 const ANIMS = {
   pebblet: {"cell":[318,240],"ref":0.8,"idle":{"row":0,"n":8,"fps":5},"walk":{"row":1,"n":8,"fps":11},"nap":{"row":2,"n":6,"fps":2}},
+  zippy: {"cell":[282,240],"ref":0.8,"idle":{"row":0,"n":8,"fps":4},"walk":{"row":1,"n":8,"fps":12},"fly":{"row":2,"n":8,"fps":12},"nap":{"row":3,"n":1,"fps":1}},
 };
 const ANIM_IMG = {}; for (const k in ANIMS) { const im = new Image(); im.src = 'art/anims/' + k + '.png'; ANIM_IMG[k] = im; }
 const animReady = sp => { const im = ANIM_IMG[sp]; return im && im.complete && im.naturalWidth ? ANIMS[sp] : null; };
 // feet at (0, 0); s = standing height in px; mode = idle | walk | nap | still
 function drawAnim(c, sp, A, s, t, mode){
   const a = A[mode] || A.idle, f = mode === 'still' ? 0 : Math.floor(t * a.fps) % a.n, [cw, ch] = A.cell, k = s / (ch * A.ref);
-  c.drawImage(ANIM_IMG[sp], f * cw, a.row * ch, cw, ch, -cw * k / 2, -ch * k, cw * k, ch * k);
+  const up = mode === 'fly' ? s * (.3 + Math.sin(t * 4) * .06) : 0;   // flyers hover above their shadow
+  c.drawImage(ANIM_IMG[sp], f * cw, a.row * ch, cw, ch, -cw * k / 2, -ch * k - up, cw * k, ch * k);
 }
 // ================= UI ICONS (SVG) =================
 const ICONS = {
@@ -1062,7 +1064,7 @@ function drawCritterArt(c, sp, tier, x, y, size, t, o = {}){
   if (!o.noShadow) ell(c, x, y, s * .28 * (1 - hopP * .25), s * .07, 'rgba(10,20,30,.25)');
   c.save(); c.translate(x, y - hopP * s * (o.moving ? .12 : .02)); c.scale((o.face || 1) * (1 + sq), 1 - sq);
   if (o.hurt) c.globalAlpha = .55 + .45 * Math.sin(t * 30);
-  if (anim) drawAnim(c, sp, anim, s * .95, t + seed, o.still || reduce ? 'still' : o.nap ? 'nap' : o.moving ? 'walk' : 'idle'); else if (rig) drawRig(c, sp, rig, s * .95, o.still ? 0 : t + seed, o.moving && !o.still, blink); else if (real) { const w = s * im.naturalWidth / im.naturalHeight; c.drawImage(im, -w / 2, -s * .95, w, s * .95); } else c.drawImage(im, -s / 2, -s * .925, s, s); c.restore();
+  if (anim) drawAnim(c, sp, anim, s * .95, t + seed, o.still || reduce ? 'still' : o.nap ? 'nap' : o.moving ? (o.battle && anim.fly ? 'fly' : 'walk') : 'idle'); else if (rig) drawRig(c, sp, rig, s * .95, o.still ? 0 : t + seed, o.moving && !o.still, blink); else if (real) { const w = s * im.naturalWidth / im.naturalHeight; c.drawImage(im, -w / 2, -s * .95, w, s * .95); } else c.drawImage(im, -s / 2, -s * .925, s, s); c.restore();
   if (o.nap && !(anim && anim.nap)) { c.fillStyle = '#fff'; c.strokeStyle = 'rgba(40,30,60,.6)'; c.lineWidth = 3; c.font = `700 ${Math.max(11, s * .2)}px Fredoka, sans-serif`; c.textAlign = 'center'; const zy = y - s * (1 + ((t * .6) % 1) * .3); c.strokeText('z', x + s * .3, zy); c.fillText('z', x + s * .3, zy); }
   if (tier >= 2 && o.stars !== false) { c.fillStyle = '#FFC83D'; c.strokeStyle = '#6A4200'; c.lineWidth = 2.5; c.font = `700 ${Math.max(11, s * .16)}px Fredoka, sans-serif`; c.textAlign = 'center'; const st = '★'.repeat(tier); c.strokeText(st, x, y - s * .95); c.fillText(st, x, y - s * .95); }
 }
@@ -1619,7 +1621,7 @@ function drawBattle(){
   for (const u of BT.units) items.push({ k: u.x + u.y, f: () => { const [px, py] = iso(u.x, u.y);
     if (u.dead) { if (u.ko < 1.5) { ctx.globalAlpha = 1 - u.ko / 1.5; const up = u.ko * T * 1.5; circ(ctx, px, py - up - T * .9, T * .25, '#FF9DB8'); ctx.strokeStyle = '#fff'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(px, py - up - T * .65); ctx.lineTo(px, py - up - T * .3); ctx.stroke(); drawCritterArt(ctx, u.s, u.t, px, py - up, T * .9, t, { still: true, stars: false, noShadow: true }); ctx.globalAlpha = 1; } return; }
     if (u.wait > 0) return;
-    const lunge = u.bump ? u.face * T * .12 : 0; drawCritterArt(ctx, u.s, u.t, px + lunge, py, T * 1.25, t + u.x, { moving: u.moving, face: u.face, hurt: u.hurt > 0, stars: false });
+    const lunge = u.bump ? u.face * T * .12 : 0; drawCritterArt(ctx, u.s, u.t, px + lunge, py, T * 1.25, t + u.x, { battle: true, moving: u.moving, face: u.face, hurt: u.hurt > 0, stars: false });
     if (u.hp < u.max) { const w = T * .6; ctx.fillStyle = 'rgba(0,0,0,.45)'; rr(ctx, px - w / 2, py - T * 1.05, w, 5, 2.5); ctx.fill(); ctx.fillStyle = '#4CC38A'; rr(ctx, px - w / 2 + 1, py - T * 1.05 + 1, (w - 2) * u.hp / u.max, 3, 1.5); ctx.fill(); } } });
   items.sort((a, b) => a.k - b.k).forEach(i => i.f());
   if (BT.flare) { const [px, py] = iso(BT.flare.x, BT.flare.y); ctx.strokeStyle = 'rgba(255,92,60,.7)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(px, py, T * .6, T * .33, 0, 0, 7); ctx.stroke(); ctx.strokeStyle = '#8A5A34'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px, py - T * .8); ctx.stroke(); circ(ctx, px, py - T * .85, T * .15, '#FF5C3C');
