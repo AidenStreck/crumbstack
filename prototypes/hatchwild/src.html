@@ -740,10 +740,10 @@ function ringDecor(seed, reg){
   return out;
 }
 // painted scenery pictures (art/decor/<kind>.png): foot = where the trunk meets the ground, as a fraction of the width
-const DECOR = { palm: { foot: .726, h: 2.1 }, tree: { foot: .534, h: 1.7 }, blossom: { foot: .534, h: 1.7, src: 'tree' }, bush1: { foot: .5, h: .75 }, bush2: { foot: .5, h: .75 }, bush3: { foot: .5, h: .75 }, rock1: { foot: .5, h: .8 }, rock2: { foot: .5, h: .6 }, rock3: { foot: .5, h: .45 } }, DECOR_IMG = {};
+const DECOR = { palm: { foot: .726, h: 2.1 }, tree: { foot: .534, h: 1.7 }, blossom: { foot: .534, h: 1.7, src: 'tree' }, bush1: { foot: .5, h: .75 }, bush2: { foot: .5, h: .75 }, bush3: { foot: .5, h: .75 }, rock1: { foot: .5, h: .8 }, rock2: { foot: .5, h: .6 }, rock3: { foot: .5, h: .45 }, flowers1: { foot: .5, h: .5 }, flowers2: { foot: .5, h: .5 }, flowers3: { foot: .5, h: .5 }, flowers4: { foot: .5, h: .5 } }, DECOR_IMG = {};
 for (const k in DECOR) { const im = new Image(); im.src = 'art/decor/' + (DECOR[k].src || k) + '.png'; DECOR_IMG[k] = im; }
 function drawDecor(c, d, t, reg){ const [x, y] = iso(d.gx, d.gy), s = IS.tw * d.s;
-  const pick = 1 + Math.floor(Math.abs(d.gx * 5 + d.gy * 11)) % 3, dk = d.kind === 'bush' || d.kind === 'rock' ? d.kind + pick : d.kind, D = DECOR[dk], im = D && DECOR_IMG[dk];
+  const pick = 1 + Math.floor(Math.abs(d.gx * 5 + d.gy * 11)) % 3, dk = d.kind === 'bush' || d.kind === 'rock' ? d.kind + pick : d.kind === 'flowers' ? 'flowers' + (1 + Math.floor(Math.abs(d.gx * 7 + d.gy * 13)) % 4) : d.kind, D = DECOR[dk], im = D && DECOR_IMG[dk];
   if (im && im.complete && im.naturalWidth) {   // a gentle sway from the foot, each one on its own beat; every other one mirrored for variety
     const h = s * D.h, w = h * im.naturalWidth / im.naturalHeight, flip = (Math.floor(d.gx * 7 + d.gy * 3) % 2) ? -1 : 1, sw = reduce ? 0 : Math.sin(t * .9 + d.gx * 1.3 + d.gy) * .018;
     ell(c, x, y, s * .45, s * .14, 'rgba(10,30,15,.22)'); c.save(); c.translate(x, y); c.rotate(sw); c.scale(flip, 1); c.drawImage(im, -w * D.foot, -h * .985, w, h); c.restore(); return; }
