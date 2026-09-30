@@ -668,14 +668,17 @@ function seaRocks(c, t, seed, front){ const R = rng(seed * 13 + 5), [cx, cy] = I
     c.strokeStyle = `rgba(255,255,255,${.45 + .3 * Math.sin(t * 2 + i)})`; c.lineWidth = 2; c.beginPath(); c.ellipse(px, py, rr2 * 1.15 + Math.sin(t * 2 + i) * 2, rr2 * .45, 0, 0, 7); c.stroke();
     rock(c, px, py + rr2 * .12, rr2 * 1.25, '#7A7E82'); } }
 // painted ground textures from art/terrain/ (seamless tiles)
-const TERRAIN_TEX = {}; ['grass'].forEach(k => { const im = new Image(); im.onload = () => { if (typeof terrainCache !== 'undefined') for (const z in terrainCache) delete terrainCache[z]; }; im.src = 'art/terrain/' + k + '.png'; TERRAIN_TEX[k] = im; });
+const TERRAIN_TEX = {}; ['grass', 'sand'].forEach(k => { const im = new Image(); im.onload = () => { if (typeof terrainCache !== 'undefined') for (const z in terrainCache) delete terrainCache[z]; }; im.src = 'art/terrain/' + k + '.png'; TERRAIN_TEX[k] = im; });
 const terrainTex = k => { const im = TERRAIN_TEX[k]; return im && im.complete && im.naturalWidth ? { im, w: im.naturalWidth } : null; };
 function drawTerrain(c, reg, seed, o = {}){
   const R = rng(seed), top = coastPts(seed, 0), topS = isoPoly(top, 0);
   // beach below the cliffs, with a wet edge
   c.save(); c.lineJoin = 'round'; const beach = isoPoly(coastPts(seed, 1.35), -CLIFF); poly(c, beach, reg.sand, reg.sand, IS.tw * .4);
+  const stex = terrainTex('sand'); if (stex) { const k = 5 / stex.w, pat = c.createPattern(stex.im, 'repeat');   // painted sand, laid flat at beach height
+    pat.setTransform(new DOMMatrix([k * IS.tw / 2, k * IS.th / 2, -k * IS.tw / 2, k * IS.th / 2, IS.ox, IS.oy + CLIFF * IS.tw * .5])); poly(c, beach, pat);
+    if (reg.id !== 'tropic') { c.save(); c.globalAlpha = .4; poly(c, beach, reg.sand); c.restore(); } }
   c.strokeStyle = shade(reg.sand, -.16); c.lineWidth = IS.tw * .1; c.beginPath(); isoPoly(coastPts(seed, 1.25), -CLIFF).forEach((p, i) => i ? c.lineTo(...p) : c.moveTo(...p)); c.closePath(); c.stroke(); c.restore();
-  for (let i = 0; i < 50; i++) { const th = R() * 6.283, [cx, cy] = ISLE_C(), r = islandR(seed, th) + .3 + R() * .9, [px, py] = iso(cx + Math.cos(th) * r, cy + Math.sin(th) * r, -CLIFF); circ(c, px, py, IS.tw * .03, i % 3 ? '#FFF6E0' : '#F2B8C6'); }
+  for (let i = 0; i < (stex ? 0 : 50); i++) { const th = R() * 6.283, [cx, cy] = ISLE_C(), r = islandR(seed, th) + .3 + R() * .9, [px, py] = iso(cx + Math.cos(th) * r, cy + Math.sin(th) * r, -CLIFF); circ(c, px, py, IS.tw * .03, i % 3 ? '#FFF6E0' : '#F2B8C6'); }
   // cliff faces on the sides that face you, back to front
   const faces = []; for (let i = 0; i < top.length; i++) { const A = top[i], Bp = top[(i + 1) % top.length], nx = Bp[1] - A[1], ny = -(Bp[0] - A[0]); if (nx + ny <= 0) continue; faces.push({ A, B: Bp, d: A[0] + A[1] + Bp[0] + Bp[1], lit: nx < ny }); }
   faces.sort((p, q) => p.d - q.d);
