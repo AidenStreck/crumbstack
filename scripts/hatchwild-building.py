@@ -4,8 +4,22 @@
 # corners in the lower part, front tip at the bottom), cleans the edge haze, sizes it and writes
 # prototypes/hatchwild/art/buildings/<key>.png. Prints the entry for BLD_META in the game.
 import sys, json
-import numpy as np
+import numpy as np, cv2
 from PIL import Image
+# All-levels sheets:  python3 scripts/hatchwild-building.py mill --sheet [scale]
+# splits art-src/hatchwild/mill-sheet.png (three buildings left to right, labels under them) into
+# mill-1.png, mill-2.png, mill-3.png, then prepares each one.
+if len(sys.argv) > 2 and sys.argv[2] == '--sheet':
+  key = sys.argv[1]; img = np.array(Image.open(f'art-src/hatchwild/{key}-sheet.png').convert('RGBA'))
+  m = cv2.morphologyEx((img[..., 3] > 60).astype(np.uint8), cv2.MORPH_CLOSE, np.ones((15, 15), np.uint8))
+  n, lab, st, _ = cv2.connectedComponentsWithStats(m)
+  big = sorted([i for i in range(1, n) if st[i][4] > 20000], key=lambda i: -st[i][4])[:3]
+  for j, i in enumerate(sorted(big, key=lambda i: st[i][0])):
+    x, y, w, h = st[i][:4]; part = img[y:y + h, x:x + w] * (lab[y:y + h, x:x + w] == i)[..., None]
+    Image.fromarray(part.astype(np.uint8)).save(f'art-src/hatchwild/{key}-{j + 1}.png')
+  import subprocess
+  for j in range(3): subprocess.run([sys.executable, __file__, f'{key}-{j + 1}'] + sys.argv[3:4])
+  sys.exit()
 key = sys.argv[1]; scale = float(sys.argv[2]) if len(sys.argv) > 2 else 1
 im = Image.open(f'art-src/hatchwild/{key}.png').convert('RGBA')
 a = np.array(im)[..., 3].astype(float); u = np.clip((a - 25) / 210, 0, 1); a = u * u * (3 - 2 * u) * 255
