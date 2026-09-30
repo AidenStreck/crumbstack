@@ -740,8 +740,8 @@ function ringDecor(seed, reg){
   return out;
 }
 // painted scenery pictures (art/decor/<kind>.png): foot = where the trunk meets the ground, as a fraction of the width
-const DECOR = { palm: { foot: .726, h: 2.1 } }, DECOR_IMG = {};
-for (const k in DECOR) { const im = new Image(); im.src = 'art/decor/' + k + '.png'; DECOR_IMG[k] = im; }
+const DECOR = { palm: { foot: .726, h: 2.1 }, tree: { foot: .534, h: 1.7 }, blossom: { foot: .534, h: 1.7, src: 'tree' } }, DECOR_IMG = {};
+for (const k in DECOR) { const im = new Image(); im.src = 'art/decor/' + (DECOR[k].src || k) + '.png'; DECOR_IMG[k] = im; }
 function drawDecor(c, d, t, reg){ const [x, y] = iso(d.gx, d.gy), s = IS.tw * d.s;
   const D = DECOR[d.kind], im = D && DECOR_IMG[d.kind];
   if (im && im.complete && im.naturalWidth) {   // a gentle sway from the foot, each one on its own beat; every other one mirrored for variety
