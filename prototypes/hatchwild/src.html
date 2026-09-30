@@ -984,7 +984,7 @@ function shadeHex(hex, k){ const n = parseInt(hex.slice(1), 16); let r = n >> 16
 //   buildings/<key>-<1|2|3>.png  e.g. buildings/hq-1.png  (1 = levels 1-3, 2 = 4-6, 3 = 7+; the footprint diamond fills the width, its front tip at the bottom edge)
 //   icons/<coin|food|gem|hammer|bolt>.png
 // Anything without a picture keeps the code-drawn look.
-const ART_FILES = [];
+const ART_FILES = ['critters/pebblet.png'];
 const ART = {};
 ART_FILES.forEach(f => { const im = new Image(); im.src = 'art/' + f; ART[f.replace(/\.\w+$/, '')] = im; });
 const artImg = k => { const im = ART[k]; return im && im.complete && im.naturalWidth ? im : null; };
