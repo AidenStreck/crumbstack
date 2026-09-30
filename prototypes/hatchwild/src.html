@@ -993,7 +993,22 @@ const ART = {};
 ART_FILES.forEach(f => { const im = new Image(); im.src = 'art/' + f; im.dataset.key = f.replace(/^.*\/|\.\w+$/g, ''); ART[f.replace(/\.\w+$/, '')] = im; });
 const artImg = k => { const im = ART[k]; return im && im.complete && im.naturalWidth ? im : null; };
 const bldArt = (k, lv) => { const tr = lv >= 7 ? 3 : lv >= 4 ? 2 : 1; for (let i = tr; i >= 1; i--) { const im = artImg('buildings/' + k + '-' + i); if (im) return im; } return null; };
+// animated buildings (scripts/hatchwild-building.py <key> --anim): one row per level tier, frames looped.
+// Paste each line the script prints here. These win over still pictures.
+const BLD_ANIM = {
+  mill: {"cell":[255,309],"tip":[119,302],"rows":[{"base":233.3,"n":8,"fps":8.0},{"base":234.7,"n":8,"fps":8.0},{"base":237.9,"n":8,"fps":8.0}],"scale":1.15},
+};
+const BLD_ANIM_IMG = {}; for (const k in BLD_ANIM) { const im = new Image(); im.src = 'art/buildings/' + k + '-anim.png'; BLD_ANIM_IMG[k] = im; }
 function drawBld(c, k, gx, gy, lv, o = {}){
+  const A = !o.enemy && BLD_ANIM[k], AI = A && BLD_ANIM_IMG[k];
+  if (A && AI.complete && AI.naturalWidth) {
+    const s = BLD[k].size, r = Math.min(A.rows.length - 1, lv >= 7 ? 2 : lv >= 4 ? 1 : 0), R = A.rows[r], [bx, by] = iso(gx + s, gy + s, 0);
+    const sc = s * IS.tw * .96 * (A.scale || 1) / R.base, f = reduce ? 0 : Math.floor((o.t || 0) * R.fps + gx * 3 + gy) % R.n, [cw, ch] = A.cell;
+    groundShadow(c, gx, gy, s, s);
+    c.drawImage(AI, f * cw, r * ch, cw, ch, bx - A.tip[0] * sc, by - A.tip[1] * sc + s * IS.tw * .012, cw * sc, ch * sc);
+    if (o.badge !== false) bldBadge(c, gx, gy, s, lv, o);
+    return;
+  }
   const im = !o.enemy && bldArt(k, lv); if (!im) return drawBldCode(c, k, gx, gy, lv, o);   // rival islands keep their own look (our flags are on this art)
   const s = k === 'hut' ? 1 : BLD[k] ? BLD[k].size : 1, [bx, by] = iso(gx + s, gy + s, 0), M = BLD_META[im.dataset.key];
   const sc = M ? s * IS.tw * .96 * (M.scale || 1) / M.base : s * IS.tw / im.naturalWidth, w = im.naturalWidth * sc, h = im.naturalHeight * sc, ox = M ? M.tip[0] * sc : w / 2, oy = M ? M.tip[1] * sc : h;

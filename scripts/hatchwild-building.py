@@ -6,6 +6,40 @@
 import sys, json
 import numpy as np, cv2
 from PIL import Image
+# Animated sheets:  python3 scripts/hatchwild-building.py mill --anim [fps]
+# cuts art-src/hatchwild/mill-anim.png (labelled rows LV 1-3 / LV 4-6 / LV 7+, frames left to right) into
+# prototypes/hatchwild/art/buildings/mill-anim.png (one row per level) with every frame's base tip on the
+# same spot, and prints the line for BLD_ANIM in the game.
+if len(sys.argv) > 2 and sys.argv[2] == '--anim':
+  key = sys.argv[1]; fps = float(sys.argv[3]) if len(sys.argv) > 3 else 8
+  src = open(__file__.replace('hatchwild-building.py', 'hatchwild-sheet.py')).read().split("if __name__")[0]; g = {}; exec(src, g)
+  img = np.array(Image.open(f'art-src/hatchwild/{key}-anim.png').convert('RGBA')); P, _ = g['find_labeled'](img)
+  rows = {}
+  for p in P: rows.setdefault(p.row, []).append(g['clean'](p.px))
+  rows = [rows[r] for r in sorted(rows)]
+  def meas(px):
+    sol = px[..., 3] > 128; ys = np.where(sol.any(1))[0]; top, bot = ys[0], ys[-1]
+    lowr = sol[top + int((bot - top) * .55):]; cols = np.where(lowr.any(0))[0]
+    tip = np.where(sol[max(top, bot - int((bot - top) * .06)):bot + 1].any(0))[0].mean()
+    return tip, bot, cols[-1] - cols[0]
+  H = 300   # every level drawn so its frames are this tall at most
+  prepared, spec_rows = [], []
+  for fr in rows:
+    k = H / max(f.shape[0] for f in fr); base = np.median([meas(f)[2] for f in fr]) * k
+    items = []
+    for f in fr:
+      tx, by, _ = meas(f); im = Image.fromarray(f).resize((round(f.shape[1] * k), round(f.shape[0] * k)), Image.LANCZOS)
+      items.append((im, tx * k, by * k))
+    prepared.append(items); spec_rows.append({'base': round(float(base), 1), 'n': len(items), 'fps': fps})
+  Lm = max(tx for fr in prepared for _, tx, _ in fr); Rm = max(im.width - tx for fr in prepared for im, tx, _ in fr)
+  Um = max(by for fr in prepared for _, _, by in fr); Dm = max(im.height - by for fr in prepared for im, _, by in fr)
+  W, CH, AX, AY = int(Lm + Rm) + 8, int(Um + Dm) + 8, int(Lm) + 4, int(Um) + 4
+  out = Image.new('RGBA', (W * max(len(f) for f in prepared), CH * len(prepared)))
+  for r, fr in enumerate(prepared):
+    for j, (im, tx, by) in enumerate(fr): out.alpha_composite(im, (round(j * W + AX - tx), round(r * CH + AY - by)))
+  out.save(f'prototypes/hatchwild/art/buildings/{key}-anim.png', optimize=True)
+  print(f"  {key}: {json.dumps({'cell': [W, CH], 'tip': [AX, AY], 'rows': spec_rows}, separators=(',', ':'))},")
+  sys.exit()
 # All-levels sheets:  python3 scripts/hatchwild-building.py mill --sheet [scale]
 # splits art-src/hatchwild/mill-sheet.png (three buildings left to right, labels under them) into
 # mill-1.png, mill-2.png, mill-3.png, then prepares each one.
