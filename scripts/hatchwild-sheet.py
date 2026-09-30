@@ -43,6 +43,10 @@ SHEETS = {
       S('idle', range(0, 7), 5), S('walk', range(7, 15), 9), S('run', range(15, 23), 12), S('jump', range(23, 31), 11, False, 'sheet'),
       S('blink', range(31, 39), 10, hold=1.2), S('sleep', range(39, 46), 4)],
     'game': {'idle': 'idle', 'walk': 'walk', 'run': 'run', 'nap': ('sleep', range(0, 5))}},   # the last two sleep poses are drawn smaller
+  'sparkfinch': {'cut': 120, 'ref': 'idle', 'seqs': [
+      S('idle', range(0, 10), 5), S('walk', range(10, 20), 9), S('fly', range(20, 28), 12, reg='torso'), S('cheer', range(28, 37), 11, False, 'sheet'),
+      S('zap', range(37, 45), 12, False, 'plant'), S('hurt', range(45, 53), 10, False, 'plant'), S('sleep', range(53, 62), 4)],
+    'game': {'idle': 'idle', 'walk': 'walk', 'fly': 'fly', 'attack': 'zap', 'hurt': 'hurt', 'nap': 'sleep'}},
 }
 GAME_H = 190   # a standing critter is this many pixels tall in the game atlas
 SRC, EXP, ATLAS = 'art-src/hatchwild', 'art-src/hatchwild/export', 'prototypes/hatchwild/art'
@@ -53,18 +57,17 @@ class Pose:
 
 def keep_pieces(a, main, box, margin=.12):
   # small separate pieces (Zzz, dizzy stars, sparks) belong to a pose if they sit over it
-  x0, y0, x1, y1 = box; w, h = x1 - x0, y1 - y0; n, lab, st, _ = cv2.connectedComponentsWithStats(a.astype(np.uint8))
-  keep = main.copy(); dropped = 0
-  for i in range(1, n):
-    x, y, bw, bh, ar = st[i]
-    if keep[lab == i].any() or ar < 150: continue
-    cx, cy = x + bw / 2, y + bh / 2
-    if x0 - w * margin < cx < x1 + w * margin and y0 - h * margin < cy < y1 + h * .05: keep |= lab == i
-    else: dropped += 1
-  return keep, dropped
+  x0, y0, x1, y1 = box; w, h = x1 - x0, y1 - y0; H, W = a.shape
+  X0, Y0, X1, Y1 = max(0, int(x0 - w * margin)), max(0, int(y0 - h * margin)), min(W, int(x1 + w * margin)), min(H, int(y1 + h * .05))
+  aw, mw = a[Y0:Y1, X0:X1], main[Y0:Y1, X0:X1]
+  n, lab, st, _ = cv2.connectedComponentsWithStats(aw.astype(np.uint8))
+  inmain = set(np.unique(lab[mw]).tolist())
+  cand = [i for i in range(1, n) if i not in inmain and st[i][4] >= 150 and st[i][0] > 0 and st[i][1] > 0 and st[i][0] + st[i][2] < aw.shape[1] and st[i][1] + st[i][3] < aw.shape[0]]
+  keep = main.copy(); keep[Y0:Y1, X0:X1] |= np.isin(lab, cand)
+  return keep, 0
 
-def find_plain(img):
-  a = img[..., 3] > 40; m = cv2.morphologyEx(a.astype(np.uint8), cv2.MORPH_CLOSE, np.ones((9, 9), np.uint8))
+def find_plain(img, cut=40):
+  a = img[..., 3] > cut; m = cv2.morphologyEx(a.astype(np.uint8), cv2.MORPH_CLOSE, np.ones((9, 9), np.uint8))
   n, lab, st, _ = cv2.connectedComponentsWithStats(m)
   bl = [(i, *st[i][:4]) for i in range(1, n) if st[i][4] > 2000]
   rows = []
@@ -72,10 +75,12 @@ def find_plain(img):
     for r in rows:
       if b[2] < r['y1'] - 20: r['b'].append(b); r['y1'] = max(r['y1'], b[2] + b[4]); break
     else: rows.append({'b': [b], 'y1': b[2] + b[4]})
-  out = []
+  out = []; loose = img[..., 3] > 40; taken = np.isin(lab, [b[0] for b in bl])
   for r_i, r in enumerate(rows):
     for i, x, y, w, h in sorted(r['b'], key=lambda b: b[1]):
-      out.append(Pose(img[y:y + h, x:x + w] * (lab[y:y + h, x:x + w] == i)[..., None], x, y, r_i))
+      m, _ = keep_pieces(loose & (~taken | (lab == i)), lab == i, (x, y, x + w, y + h))
+      ys, xs = np.where(m); x0, y0, x1, y1 = xs.min(), ys.min(), xs.max() + 1, ys.max() + 1
+      out.append(Pose(img[y0:y1, x0:x1] * m[y0:y1, x0:x1][..., None], x0, y0, r_i))
   return out, []
 
 def find_labeled(img):
@@ -113,13 +118,14 @@ def find_labeled(img):
   return out, notes
 
 def clean(px):
-  # the artwork stays as drawn; only the semi-transparent coloured halo around the edge is replaced by
-  # the neighbouring edge colour, and the alpha edge is tightened by one pixel
-  a = px[..., 3].astype(np.float32); solid = cv2.erode((a >= 245).astype(np.uint8), np.ones((3, 3), np.uint8))
+  # the artwork stays as drawn, glows included. Only the outer 2px rim, where AI tools leave a coloured
+  # halo of the old background, takes its colour from just inside the edge; faint haze is faded out.
+  a = px[..., 3].astype(np.float32); empty = (a < 25).astype(np.uint8)
+  rim = (cv2.dilate(empty, np.ones((5, 5), np.uint8)) > 0) & (a < 200) & (empty == 0)
   rgb = cv2.cvtColor(np.ascontiguousarray(px[..., :3]), cv2.COLOR_RGB2BGR)
-  fixed = cv2.cvtColor(cv2.inpaint(rgb, (1 - solid) * 255, 5, cv2.INPAINT_TELEA), cv2.COLOR_BGR2RGB)
-  rgb = np.where(solid[..., None] > 0, px[..., :3], fixed)
-  a = cv2.erode(a, np.ones((3, 3), np.uint8)); a = np.where(a > 200, 255, a)
+  fixed = cv2.cvtColor(cv2.inpaint(rgb, ((rim | (empty > 0)) * 255).astype(np.uint8), 4, cv2.INPAINT_TELEA), cv2.COLOR_BGR2RGB)
+  rgb = np.where(rim[..., None], fixed, px[..., :3])
+  lo, hi = 25, 235; u = np.clip((a - lo) / (hi - lo), 0, 1); a = u * u * (3 - 2 * u) * 255
   return np.dstack([rgb, a]).astype(np.uint8)
 
 # ---------- measuring ----------
@@ -205,7 +211,7 @@ def gif(cells, path, fps, hold=0, loop=True, bg=(236, 240, 232)):
 
 def main(cid):
   C = SHEETS[cid]; img = np.array(Image.open(f'{SRC}/{cid}-sheet.png').convert('RGBA'))
-  P, notes = (find_labeled if C.get('labeled') else find_plain)(img); notes = C.get('notes', []) + notes
+  P, notes = find_labeled(img) if C.get('labeled') else find_plain(img, C.get('cut', 40)); notes = C.get('notes', []) + notes
   for p in P: p.px = clean(p.px)
   used = {i for s in C['seqs'] for i in s['poses']}
   for i in range(len(P)):
