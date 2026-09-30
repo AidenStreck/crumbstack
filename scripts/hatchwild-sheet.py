@@ -21,6 +21,14 @@ SHEETS = {
       'fly':  {'poses': [8, 9, 10, 11, 12, 11, 10, 9], 'fps': 12},   # used for moving in battle
       'nap':  {'poses': [24], 'fps': 1, 'size': .95},
   }},
+  'coconeer': {'labeled': True, 'ref': range(0, 6), 'anims': {
+      'idle':   {'poses': [0, 1, 2, 3, 4, 5, 4, 3, 2, 1], 'fps': 5},
+      'walk':   {'poses': list(range(6, 16)), 'fps': 13},
+      'run':    {'poses': list(range(16, 26)), 'fps': 16},   # moving in battle
+      'attack': {'poses': list(range(33, 41)), 'fps': 16},   # plays once per throw
+      'hurt':   {'poses': list(range(48, 54)), 'fps': 12},   # plays once when hit
+      'nap':    {'poses': [54, 55, 56, 57, 58, 59, 58, 57, 56, 55], 'fps': 2.5},
+  }},
 }
 CELL_H = 240   # pixels per frame in the output
 
@@ -38,6 +46,32 @@ def poses(img):
     for i, x, y, w, h in sorted(r['b'], key=lambda b: b[1]): out.append((lab[y:y + h, x:x + w] == i, img[y:y + h, x:x + w]))
   return out
 
+def poses_labeled(img, label_w=100):
+  # rows marked by text labels at the left edge; poses may touch the rows above and below
+  a = img[..., 3] > 40; n, lab, st, _ = cv2.connectedComponentsWithStats(a[:, :label_w].astype(np.uint8))
+  tops = sorted(int(st[i][1]) for i in range(1, n) if st[i][0] < 20 and st[i][2] > 60 and st[i][3] < 45)
+  H = img.shape[0]; out = []
+  for r, y0 in enumerate(tops):
+    y0 = max(0, y0 - 12); y1 = min(H, tops[r + 1] - 12) if r + 1 < len(tops) else H
+    band = a[y0:y1, label_w:]; rgb = np.ascontiguousarray(img[y0:y1, label_w:, :3])
+    # split touching poses: seeds from a heavily shrunk mask, then grow them back (watershed)
+    core = cv2.erode(band.astype(np.uint8), np.ones((15, 15), np.uint8))
+    k, seeds, s2, _ = cv2.connectedComponentsWithStats(core)
+    markers = np.zeros(band.shape, np.int32); ids = [i for i in range(1, k) if s2[i][4] > 1500]
+    for j, i in enumerate(ids): markers[seeds == i] = j + 2
+    markers[~cv2.dilate(band.astype(np.uint8), np.ones((3, 3), np.uint8)).astype(bool)] = 1
+    cv2.watershed(cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR), markers)
+    row = []
+    for j in range(len(ids)):
+      m = (markers == j + 2) & band
+      if m.sum() < 5000: continue   # a thrown coconut, a star, some Zzz
+      ys, xs = np.where(m); bx, by, bx1, by1 = xs.min(), ys.min(), xs.max() + 1, ys.max() + 1
+      row.append((bx, m[by:by1, bx:bx1], img[y0 + by:y0 + by1, label_w + bx:label_w + bx1]))
+    row = [(m, px) for _, m, px in sorted(row, key=lambda f: f[0])]
+    out.append(row)
+  print('rows:', [len(r) for r in out], file=sys.stderr)
+  return [f for r in out for f in r]
+
 def clean(mask, px):
   a = px[..., 3].astype(np.float32) * mask; solid = (a >= 245).astype(np.uint8)
   solid = cv2.erode(solid, np.ones((3, 3), np.uint8))
@@ -53,7 +87,7 @@ def anchor(p):   # feet = lowest solid row; centre = middle of the upper body
 
 def main(cid):
   S = SHEETS[cid]; img = np.array(Image.open(f'art-src/hatchwild/{cid}-sheet.png').convert('RGBA'))
-  P = [clean(m, px) for m, px in poses(img)]; print(f'{len(P)} poses found', file=sys.stderr)
+  P = [clean(m, px) for m, px in (poses_labeled(img) if S.get('labeled') else poses(img))]; print(f'{len(P)} poses found', file=sys.stderr)
   refH = np.median([anchor(P[i])[2] for i in S['ref']]); k = CELL_H * .8 / refH   # a standing pose fills 80% of the cell height
   rows, spec = [], {'cell': [0, CELL_H], 'ref': .8}
   prepared = {}
