@@ -63,7 +63,7 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
 .btn.green{background:linear-gradient(#7BE8A8,#2BAE66);box-shadow:0 5px 0 #1F8A50}
 .btn.big{font-size:28px;padding:14px 50px}
 .modalWrap{position:fixed;inset:0;z-index:9;background:rgba(10,35,55,.55);display:flex;align-items:center;justify-content:center;padding:16px}
-.modal{background:var(--paper);border-radius:24px;width:100%;max-width:360px;padding:20px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;box-shadow:0 8px 0 var(--line),0 24px 50px rgba(0,0,0,.4);animation:mpop .3s cubic-bezier(.2,1.6,.4,1);position:relative}
+.modal{max-height:calc(100vh - 40px);overflow-y:auto;background:var(--paper);border-radius:24px;width:100%;max-width:360px;padding:20px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;box-shadow:0 8px 0 var(--line),0 24px 50px rgba(0,0,0,.4);animation:mpop .3s cubic-bezier(.2,1.6,.4,1);position:relative}
 @keyframes mpop{from{transform:scale(.75);opacity:0}}
 .modal h2{margin:0;font-size:26px;font-weight:700;line-height:1.1}
 .modal p{margin:0;font-size:15px;line-height:1.4;color:var(--ink-2);font-weight:500}
@@ -113,6 +113,7 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
 .jtabs button{flex:1;border:0;background:none;border-radius:9px;padding:6px 2px;font-weight:600;font-size:13.5px;color:var(--ink-2)}
 .jtabs button[aria-selected=true]{background:#fff;color:var(--ink);box-shadow:0 2px 0 var(--line)}
 .jbody{width:100%;max-height:52vh;overflow-y:auto;display:flex;flex-direction:column;gap:8px;text-align:left;padding:2px}
+.evlist{display:flex;flex-direction:column;gap:3px;text-align:left;font-size:13px;font-weight:600;color:var(--ink)}.evlist i{display:inline-block;min-width:34px;font-style:normal;font-weight:700;color:#8E5BD6}.evlist .on{opacity:.5;text-decoration:line-through}
 .jnote{font-size:13px!important;text-align:left}
 .task{display:grid;grid-template-columns:1fr auto;gap:4px 10px;align-items:center;background:#fff;border-radius:12px;padding:8px 10px;box-shadow:0 2px 0 var(--line)}
 .task b{font-size:14px;font-weight:600}
@@ -2415,7 +2416,7 @@ function featuresTick(dt){
   introCheck();
   if (!save.featIntro || S.modal || S.sailing) return;
   const p = S.player, wl = waterline(), a = hereArea();
-  if (EVENT && !save.event.seen && !coachQ.length) eventIntro();
+  if (EVENT && save.event.seen !== 2 && !coachQ.length && !S.modal) eventIntro();
   const dock = pads().find(x => x.key === 'sail');
   if (dock && areaAt(p.x) === AREAS[AREAS.length - 1]) coach('first:sail', [{ target: () => ({ x: dock.x, y: dock.y, r: 50 }), text: "The whole coast is restored! Stand on the <b>dock</b> when you're ready to <b>set sail</b> to a brand-new coast. You'll earn Sea Stars for perks that last forever, but it's one-way: you can't come back.", btn: 'Got it' }]);
   // timers
@@ -2543,18 +2544,27 @@ const EVENT = (() => { const d = new Date(), m = d.getMonth(), day = d.getDate()
     { at: 70,  sticker: 'ghostcrab', text: 'Ghost crab sticker' },
     { at: 110, sticker: 'jelly', text: 'Glow jellyfish sticker' },
     { at: 160, hat: 'pumpkinhat', text: 'Pumpkin head' },
-    { at: 220, sticker: 'vampsquid', text: 'Vampire squid sticker' } ] } : null; })();
+    { at: 220, sticker: 'vampsquid', stars: 10, text: 'Vampire squid sticker + 10 Sea Stars' } ] } : null; })();
 if (EVENT && save.event.id !== EVENT.id) save.event = { id: EVENT.id, pts: 0, got: {} };
 function eventCheck(){
   if (!EVENT) return;
   EVENT.tiers.forEach((t, i) => { if (save.event.pts >= t.at && !save.event.got[i]) { save.event.got[i] = 1;
     if (t.hat) { save.hats[t.hat] = true; toast(`Spooky reward: ${t.text}!`); }
     if (t.decor) { save.decorInv[t.decor] = (save.decorInv[t.decor] || 0) + t.n; toast(`Spooky reward: ${t.text} for your beach!`); }
-    if (t.sticker) albumAdd(t.sticker); } });
+    if (t.sticker) albumAdd(t.sticker);
+    if (t.stars) { save.stars += t.stars; SFX.milestone(); setTimeout(() => modal(`<h2>Spooky Shore complete!</h2><div class="amt"><span class="star"></span>+${t.stars}</div><p>You collected every reward. ${t.stars} Sea Stars are yours to spend on perks that last forever.</p><button class="btn green" type="button" data-close>Awesome</button>`), 3200); } } });
 }
-function eventIntro(){
-  if (!EVENT || save.event.seen) return; save.event.seen = 1; persist();
-  modal(`<h2>Spooky Shore!</h2><div class="amt">${iconHTML('pumpkin')}</div><p>Until ${EVENT.ends}, candy wrappers wash up on every beach. Collect them for a witch hat, a pumpkin head, jack-o'-lanterns and 3 spooky stickers you can only get now.</p><button class="btn green" type="button" data-close>Let's go</button>`);
+function eventIntro(force){
+  if (!EVENT || (!force && save.event.seen === 2)) return; save.event.seen = 2; persist();
+  const pts = save.event.pts || 0;
+  modal(`<button class="closeX" type="button" data-close aria-label="Close">✕</button><h2>It's spooky season!</h2><div class="amt">${iconHTML('pumpkin')}</div>
+    <p class="jnote"><b>Spooky Shore</b> is here until ${EVENT.ends}. The beach turns dusky, bats fly over and pumpkins sit by every counter.</p>
+    <p class="jnote"><b>Candy wrappers</b> (the glowing purple ones) wash up on every beach. Walk over one to collect it. A handful wash up each day, then they slow down, so come back daily. During a <b>Big Cleanup</b> each one counts double.</p>
+    <p class="jnote"><b>Rewards</b> unlock as your wrapper count grows:</p>
+    <div class="evlist">${EVENT.tiers.map((t, i) => `<span class="${save.event.got[i] ? 'on' : ''}"><i>${t.at}</i>${t.text}</span>`).join('')}</div>
+    <p class="jnote"><b>Jack-o'-lanterns</b> are decorations: each one you place makes that beach's goods sell for 2% more. The <b>3 spooky stickers</b> fill an album page worth 3 more Sea Stars. Hats and stickers are yours to keep, but can only be earned during the event.</p>
+    <p class="jnote">You have <b>${pts}</b> wrapper${pts === 1 ? '' : 's'}. Track your progress in the <b>Journal</b>, under Spooky.</p>
+    <button class="btn green" type="button" data-close>Let's go</button>`);
 }
 function iconHTML(decorId){ const c = document.createElement('canvas'); c.width = c.height = 112; const g = c.getContext('2d'); g.scale(2, 2); drawDecor(g, decorId, 28, 44); return `<img src="${c.toDataURL()}" width="56" height="56" alt="">`; }
 function spookyWorld(){
@@ -2632,8 +2642,9 @@ function jHats(body, redo){
 }
 function jEvent(body){
   const pts = save.event.pts || 0;
-  body.innerHTML = `<p class="jnote"><b>Spooky Shore</b> is on until ${EVENT.ends}. Walk over the candy wrappers that wash up (worth double during a Big Cleanup).</p><div class="amt" style="font-size:28px">${pts} wrappers</div>`
+  body.innerHTML = `<p class="jnote"><b>Spooky Shore</b> is on until ${EVENT.ends}. Walk over the candy wrappers that wash up (worth double during a Big Cleanup).</p><div class="amt" style="font-size:28px">${pts} wrappers</div><button class="btn ghost" type="button" id="evHow" style="font-size:15px;padding:6px 16px">How it works</button>`
     + EVENT.tiers.map((t, i) => `<div class="task ${save.event.got[i] ? 'claimed' : ''}"><b>${t.text}</b><span class="tbar"><i style="width:${Math.min(100, pts / t.at * 100)}%"></i></span><span class="tprog">${save.event.got[i] ? 'Got it!' : Math.min(pts, t.at) + '/' + t.at}</span></div>`).join('');
+  body.querySelector('#evHow').onclick = () => eventIntro(true);
 }
 function journalDot(){ return tasksClaimable() || !!save.albumNew; }
 function featuresStart(){
