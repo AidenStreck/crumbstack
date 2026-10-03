@@ -437,6 +437,9 @@ const GOAL_PLAN = [
   { t:'health', a:1, pct:50, r:600 }, { t:'mlv', m:4, lv:2, r:600 }, { t:'mlv', m:5, lv:2, r:700 }, { t:'hire', a:1, k:'pelicans', n:2, r:800 },
   { t:'health', a:1, pct:100, r:1000 }, { t:'earn', n:8000, r:1000, text:'Earn 8,000 coins' }, { t:'area', a:2, r:1500, hat:1 }, { t:'sell', m:6, n:15, r:1200 },
   { t:'build', m:7, r:1500 }, { t:'build', m:8, r:2000 }, { t:'health', a:2, pct:100, r:4000, text:'Heal the whole coast' },
+  // the home stretch: get the last area nearly maxed out before the dock appears
+  { t:'hire', a:2, k:'crabs', n:2, r:2000 }, { t:'hire', a:2, k:'pelicans', n:2, r:2500 }, { t:'mlv', m:6, lv:3, r:2500 }, { t:'mlv', m:7, lv:3, r:3000 },
+  { t:'mlv', m:8, lv:3, r:3000 }, { t:'hire', a:2, k:'crabs', n:3, r:3500 }, { t:'global', k:'shoes', lv:3, r:3500, text:'Get faster flip-flops' }, { t:'global', k:'bag', lv:5, r:4000, text:'Get an even bigger bag' },
 ];
 const GOALS = GOAL_PLAN.map(p => { const g = { ...p }, m = p.m != null ? MACHINES[p.m] : null;
   if (m) { g.id = m.id; g.item = p.t === 'recycle' ? m.input : m.output; }
@@ -1559,7 +1562,7 @@ function pads(){
     list.push({ key: 'a:' + nl.id, x: nl.x + 58, y: (L.machY + L.row0) / 2, cost: nl.cost, label: 'Restore\n' + nl.name, kind: 'area', area: nl, locked: !reqsMet(nl) }); }
   // the whole coast is open: a dock appears at the far end to sail on
   const last = AREAS[AREAS.length - 1];
-  if (!nl) list.push({ key: 'sail', x: last.x + 335, y: L.row1 - 6, cost: starsNow(), label: 'Set sail', kind: 'sail' });
+  if (!nl && save.goal >= GOALS.length) list.push({ key: 'sail', x: last.x + 335, y: L.row1 - 6, cost: starsNow(), label: 'Set sail', kind: 'sail' });
   return list;
 }
 function complete(pad){
@@ -2325,7 +2328,7 @@ function albumAdd(id, quiet){
   const c = creature(id);
   if (!quiet) { stickerPop(c); SFX.milestone(); }
   const page = CREATURES[c.page];
-  if (page.every(x => save.album[x[0]]) && !save.album['page:' + c.page]) { save.album['page:' + c.page] = 1; save.stars += 10; if (!quiet) setTimeout(() => toast(`Album page complete! +10 Sea Stars`), 2600); }
+  if (page.every(x => save.album[x[0]]) && !save.album['page:' + c.page]) { save.album['page:' + c.page] = 1; save.stars += 5; if (!quiet) setTimeout(() => toast(`Album page complete! +5 Sea Stars`), 2600); }
   persist(); return true;
 }
 function albumMilestone(i){ if (S.sailing) return; const c = CREATURES[COAST.id] && CREATURES[COAST.id][i]; if (c) albumAdd(c[0]); }
@@ -2383,14 +2386,14 @@ function collectSpecial(sp){
   if (sp.type === 'msg') { bump('msgs'); SFX.claim(); sparkle(sp.x, sp.y, ['#FFE58A', '#fff', '#35C6D8'], 16);
     const r = Math.random();
     if (r < .3) { save.map++; toast(`Message in a bottle: a treasure map piece! (${save.map}/4)`); if (save.map >= 4) { save.map = 0; save.chest = true; setTimeout(() => { spawnSpecial('chest'); toast('Your map is complete! Find the X on the beach'); }, 1500); } }
-    else if (r < .42) { save.stars++; toast('Message in a bottle: a Sea Star!'); }
+    else if (r < .34) { save.stars++; toast('Message in a bottle: a Sea Star!'); }
     else { const c = Math.round(rnd(40, 90) * m); earn(c, sp.x, sp.y); pop('+' + c, sp.x, sp.y - 20, '#FFC83D'); toast(`Message in a bottle: +${c} coins!`); } }
   if (sp.type === 'rare') { sparkle(sp.x, sp.y, ['#FFE58A', '#FFC83D', '#fff'], 30);
     if (!albumAdd(sp.data)) { const c = Math.round(150 * m); earn(c, sp.x, sp.y); pop('+' + c, sp.x, sp.y - 20, '#FFC83D'); toast(`You spotted the ${creature(sp.data).name} again! +${c}`); } }
   if (sp.type === 'candy') { save.event.pts = (save.event.pts || 0) + (S.cleanup ? 2 : 1); SFX.pick(4); pop('+' + (S.cleanup ? 2 : 1), sp.x, sp.y - 16, '#C9A6FF'); eventCheck(); }
   if (sp.type === 'chest') { save.chest = false; SFX.milestone(); sparkle(sp.x, sp.y, ['#FFC83D', '#FF7A6B', '#fff'], 36);
-    const c = Math.round(300 * m), d = pick(DECOR.filter(x => x.cost)); save.stars += 5; earn(c, sp.x, sp.y); save.decorInv[d.id] = (save.decorInv[d.id] || 0) + 1;
-    modal(`<h2>Treasure!</h2><div class="amt"><span class="star"></span>+5</div><p>You dug up 5 Sea Stars, ${fmt(c)} coins and a <b>${d.name}</b> for your beach.</p><button class="btn green" type="button" data-close>Awesome</button>`); }
+    const c = Math.round(300 * m), d = pick(DECOR.filter(x => x.cost)); save.stars += 1; earn(c, sp.x, sp.y); save.decorInv[d.id] = (save.decorInv[d.id] || 0) + 1;
+    modal(`<h2>Treasure!</h2><div class="amt"><span class="star"></span>+1</div><p>You dug up a Sea Star, ${fmt(c)} coins and a <b>${d.name}</b> for your beach.</p><button class="btn green" type="button" data-close>Awesome</button>`); }
   persist();
 }
 // New features switch on after the first area is healed, with a short guided intro
@@ -2593,13 +2596,13 @@ function jTasks(body, redo){
   const d = dailyTasks(), rw = taskReward();
   body.innerHTML = `<p class="jnote">New tasks every day. Finish all 3 for a bonus.</p>` + d.tasks.map((k, i) => { const T = TASKS.find(x => x.t === k.t), pr = taskProg(k), done = pr >= k.n;
     return `<div class="task ${k.claimed ? 'claimed' : ''}"><b>${T.text(k.n)}</b><span class="tbar"><i style="width:${pr / k.n * 100}%"></i></span><span class="tprog">${k.claimed ? 'Done' : pr + '/' + k.n}</span>${k.claimed ? '' : `<button class="buy" type="button" data-i="${i}" ${done ? '' : 'disabled'}><span class="coin sm"></span>${fmt(rw)}</button>`}</div>`; }).join('')
-    + `<div class="task bonus"><b>All 3 done</b><span class="tprog">${d.bonus ? 'Claimed' : d.tasks.filter(k => k.claimed).length + '/3'}</span>${d.bonus ? '' : `<button class="buy stars" type="button" id="bonusBtn" ${d.tasks.every(k => k.claimed) ? '' : 'disabled'}><span class="star sm"></span>3</button>`}</div>`;
+    + `<div class="task bonus"><b>All 3 done</b><span class="tprog">${d.bonus ? 'Claimed' : d.tasks.filter(k => k.claimed).length + '/3'}</span>${d.bonus ? '' : `<button class="buy stars" type="button" id="bonusBtn" ${d.tasks.every(k => k.claimed) ? '' : 'disabled'}><span class="star sm"></span>1</button>`}</div>`;
   body.querySelectorAll('[data-i]').forEach(b => b.onclick = () => { const k = d.tasks[+b.dataset.i]; if (k.claimed || taskProg(k) < k.n) return; k.claimed = true; earn(rw, S.player.x, S.player.y - 30); SFX.claim(); persist(); redo(); });
-  const bb = body.querySelector('#bonusBtn'); if (bb) bb.onclick = () => { if (d.bonus || !d.tasks.every(k => k.claimed)) return; d.bonus = true; save.stars += 3; SFX.claim(); persist(); redo(); };
+  const bb = body.querySelector('#bonusBtn'); if (bb) bb.onclick = () => { if (d.bonus || !d.tasks.every(k => k.claimed)) return; d.bonus = true; save.stars += 1; SFX.claim(); persist(); redo(); };
 }
 function jAlbum(body){
   body.innerHTML = PAGES.filter(p => !p.event || EVENT || CREATURES[p.id].some(c => save.album[c[0]])).map(p => { const list = CREATURES[p.id], have = list.filter(c => save.album[c[0]]).length;
-    return `<div class="page"><div class="phead"><b>${p.name}</b><span>${have}/${list.length}${save.album['page:' + p.id] ? ' · complete!' : ' · finish for +10 stars'}</span></div><div class="stickers" data-p="${p.id}"></div></div>`; }).join('');
+    return `<div class="page"><div class="phead"><b>${p.name}</b><span>${have}/${list.length}${save.album['page:' + p.id] ? ' · complete!' : ' · finish for +5 stars'}</span></div><div class="stickers" data-p="${p.id}"></div></div>`; }).join('');
   body.querySelectorAll('.stickers').forEach(box => CREATURES[box.dataset.p].forEach(c => { const own = !!save.album[c[0]], el = document.createElement('div'); el.className = 'sticker' + (own ? '' : ' missing') + (c[4] ? ' rare' : '');
     el.appendChild(creatureCanvas(c[2], c[3], 48, !own)); el.insertAdjacentHTML('beforeend', `<span>${own ? c[1] : c[4] ? 'Rare: ???' : '???'}</span>`); box.appendChild(el); }));
 }
