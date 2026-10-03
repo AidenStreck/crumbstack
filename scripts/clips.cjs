@@ -38,7 +38,7 @@ const CLOCK = `(() => {
 const BOT = `(() => {
   const c = window.__cs, S = c.S; if (!S || !S.order || S.over) return;
   const pw = Math.min(118, c.W * .3) * (S.boost && S.boost.plate ? 1.22 : 1);
-  const H = { bunTop:.38, patty:.21, cheese:.1, lettuce:.13, tomato:.12, onion:.1, bunBottom:.2 };
+  const H = c.heights;
   let top = c.plateY; S.stack.forEach(t => top -= H[t] * pw * .9);
   const need = S.order[S.idx];
   const falling = S.items.filter(i => i.state === 'fall' && i.y < top);
