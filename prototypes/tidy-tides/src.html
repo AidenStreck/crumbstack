@@ -1555,7 +1555,7 @@ function pads(){
     });
   }
   const nl = nextLocked();
-  if (nl) { const prev = AREAS[nl.i - 1]; if (prev.machines.filter(built).length >= 2)
+  if (nl) { const prev = AREAS[nl.i - 1]; if (health(prev) >= .9)   // the Restore spot only appears once the area before it is nearly healed
     list.push({ key: 'a:' + nl.id, x: nl.x + 58, y: (L.machY + L.row0) / 2, cost: nl.cost, label: 'Restore\n' + nl.name, kind: 'area', area: nl, locked: !reqsMet(nl) }); }
   // the whole coast is open: a dock appears at the far end to sail on
   const last = AREAS[AREAS.length - 1];
