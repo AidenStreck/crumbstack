@@ -428,6 +428,13 @@ const HATS = [
 COASTS.forEach(c => { if (c.hatName && !HATS.find(h => h.id === c.hats[1])) HATS.push({ id: c.hats[1], name: c.hatName, how: 'goal' }); });
 // where each goal hat comes from (coast hats: [restore area 2, restore area 3, heal area 1])
 COASTS.forEach(c => c.hats.forEach((h, i) => { const hat = HATS.find(x => x.id === h); if (hat) hat.note = `${c.name}: ${i === 2 ? 'heal ' + c.areas[0].name : 'restore ' + c.areas[i + 1].name}`; }));
+// Gift Workshop: from the second coast on, the third area gets a workshop that only the player can run (helpers
+// never touch it). It turns two different finished goods from that area into one gift basket worth far more.
+// It is a bonus for active play: nothing else depends on it except the last two goals of the coast.
+const WS = COAST_N >= 1 ? { area: AREAS[2], x: AREAS[2].x + 200, a: AREAS[2].machines[1].output, b: AREAS[2].machines[2].output, cost: 15000, time: 3, cap: 10 } : null;
+if (WS) PRICE.basket = 400; LABEL.basket = 'Gift baskets';
+const wsY = () => L.row0 + 8, wsBuilt = () => !!(WS && A(WS.area.id).built.workshop);
+const wsSt = () => { const st = A(WS.area.id).st; return st.workshop || (st.workshop = { a:0, b:0, out:0, t:0 }); };
 // Goals, written by position (m = machine 0-8, a = area 0-2) so every coast gets the same shape
 const GOAL_PLAN = [
   { t:'recycle', m:0, n:5, r:15 }, { t:'sell', m:0, n:6, r:20 }, { t:'build', m:1, r:25 }, { t:'global', k:'bag', lv:1, r:30, text:'Get a bigger bag' },
@@ -443,6 +450,7 @@ const GOAL_PLAN = [
   { t:'hire', a:2, k:'crabs', n:2, r:2000 }, { t:'hire', a:2, k:'pelicans', n:2, r:2500 }, { t:'mlv', m:6, lv:3, r:2500 }, { t:'mlv', m:7, lv:3, r:3000 },
   { t:'mlv', m:8, lv:3, r:3000 }, { t:'hire', a:2, k:'crabs', n:3, r:3500 }, { t:'global', k:'shoes', lv:3, r:3500, text:'Get faster flip-flops' }, { t:'global', k:'bag', lv:5, r:4000, text:'Get an even bigger bag' },
 ];
+if (WS) GOAL_PLAN.push({ t:'ws', r:4000, text:'Build the Gift Workshop' }, { t:'sell', item:'basket', n:10, r:8000, text:'Sell 10 gift baskets' });
 const GOALS = GOAL_PLAN.map(p => { const g = { ...p }, m = p.m != null ? MACHINES[p.m] : null;
   if (m) { g.id = m.id; g.item = p.t === 'recycle' ? m.input : m.output; }
   if (p.a != null) { g.area = AREAS[p.a].id; if (p.t === 'area') g.id = g.area; }
@@ -607,6 +615,13 @@ function drawItem(c, type, x, y, s){
       c.fillStyle = '#4CC38A'; c.beginPath(); c.ellipse(-2, 3, 3, 4, -.4, 0, 7); c.ellipse(2.5, 2, 2.5, 4.5, .4, 0, 7); c.fill();
       c.fillStyle = 'rgba(200,240,250,.45)'; c.beginPath(); c.arc(0, 1, 6.5, Math.PI, 0); c.lineTo(6.5, 5); c.lineTo(-6.5, 5); c.fill();
       c.strokeStyle = 'rgba(255,255,255,.8)'; c.lineWidth = 1; c.beginPath(); c.arc(0, 1, 6.5, Math.PI * 1.1, Math.PI * 1.5); c.stroke(); break;
+    case 'basket':   // gift basket: the coast's two best goods peeking out of a woven basket with a bow
+      c.strokeStyle = '#8A5A2B'; c.lineWidth = 1.6; c.beginPath(); c.arc(0, -1, 7.5, Math.PI, 0); c.stroke();
+      if (WS) { drawItem(c, WS.a, -3.5, -2, 8.5); drawItem(c, WS.b, 3.5, -2.5, 8.5); }
+      c.fillStyle = '#C98D52'; c.beginPath(); c.moveTo(-8.5, 0); c.lineTo(8.5, 0); c.lineTo(6.5, 8); c.lineTo(-6.5, 8); c.closePath(); c.fill();
+      c.strokeStyle = 'rgba(90,55,25,.5)'; c.lineWidth = .8; c.beginPath(); c.moveTo(-7.5, 3); c.lineTo(7.5, 3); c.moveTo(-7, 5.8); c.lineTo(7, 5.8); c.stroke();
+      c.fillStyle = '#E0A968'; c.fillRect(-9, -1, 18, 2.2);
+      c.fillStyle = '#FF7A6B'; c.beginPath(); c.moveTo(0, 1.5); c.lineTo(-4, -.8); c.lineTo(-4, 3.8); c.closePath(); c.moveTo(0, 1.5); c.lineTo(4, -.8); c.lineTo(4, 3.8); c.closePath(); c.fill(); c.beginPath(); c.arc(0, 1.5, 1.3, 0, 7); c.fill(); break;
     case 'planter':
       c.fillStyle = '#FFC83D'; c.beginPath(); c.ellipse(0, 3, 7, 4, 0, 0, 7); c.fill(); c.strokeStyle = '#E09E1F'; c.lineWidth = 1.5; c.stroke();
       c.fillStyle = '#6B4A2E'; c.beginPath(); c.ellipse(0, 1.5, 4.5, 2, 0, 0, 7); c.fill();
@@ -1061,6 +1076,19 @@ function drawMachine(m){
   ctx.fillStyle = '#fff'; ctx.fillText(txt, x, y + 32.5);
   if (working) { ctx.strokeStyle = 'rgba(255,255,255,.9)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(x - 36, y - 20, 6, -Math.PI / 2, -Math.PI / 2 + st.t / mtime(m) * Math.PI * 2); ctx.stroke(); }
 }
+function drawWorkshop(){
+  const x = WS.x, y = wsY(), w = wsSt(), working = w.a > 0 && w.b > 0 && w.out < WS.cap;
+  basket(x - 44, y - 2, WS.a, w.a); basket(x + 44, y - 2, WS.b, w.b);
+  shade(x + 3, y + 16, 26, 6);
+  ctx.fillStyle = '#6B4226'; ctx.fillRect(x - 21, y - 34, 3.5, 48); ctx.fillRect(x + 17.5, y - 34, 3.5, 48);
+  ctx.fillStyle = '#C98D52'; ctx.beginPath(); ctx.roundRect(x - 25, y - 4, 50, 15, 4); ctx.fill(); ctx.fillStyle = '#E0A968'; ctx.fillRect(x - 25, y - 4, 50, 4);
+  for (let i = 0; i < 5; i++) { ctx.fillStyle = i % 2 ? '#FFF7E8' : '#FF7A6B'; ctx.beginPath(); ctx.moveTo(x - 28 + i * 11.2, y - 40); ctx.lineTo(x - 16.8 + i * 11.2, y - 40); ctx.lineTo(x - 16.8 + i * 11.2, y - 30); ctx.arc(x - 22.4 + i * 11.2, y - 30, 5.6, 0, Math.PI); ctx.closePath(); ctx.fill(); }
+  if (w.out) { for (let i = 0; i < Math.min(w.out, 3); i++) drawItem(ctx, 'basket', x - 12 + i * 12, y - 12, 15); badge(x + 24, y - 20, w.out); }
+  else { ctx.globalAlpha = .4; drawItem(ctx, 'basket', x, y - 12, 15); ctx.globalAlpha = 1; }
+  ctx.font = '700 9px Fredoka, sans-serif'; ctx.textAlign = 'center'; const txt = 'GIFT WORKSHOP', wl2 = ctx.measureText(txt).width + 12;
+  ctx.fillStyle = 'rgba(22,50,74,.85)'; ctx.beginPath(); ctx.roundRect(x - wl2 / 2, y + 16, wl2, 13, 6); ctx.fill(); ctx.fillStyle = '#fff'; ctx.fillText(txt, x, y + 25.5);
+  if (working) { ctx.strokeStyle = 'rgba(255,255,255,.95)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(x, y - 50, 6, -Math.PI / 2, -Math.PI / 2 + w.t / WS.time * Math.PI * 2); ctx.stroke(); }
+}
 function drawBoard(ax){
   // "Crew & Upgrades" notice board, stand on it to open the upgrades sheet
   const x = ax + 44, y = L.row0, active = S.boardOpen === areaAt(ax + 1).id;
@@ -1075,12 +1103,12 @@ function drawBoard(ax){
   if (canAffordAny(areaAt(ax + 1))) { const b = reduce ? 0 : Math.sin(S.t * 5) * 2; ctx.fillStyle = '#FF7A6B'; ctx.beginPath(); ctx.arc(x + 26, y - 38 + b, 7, 0, 7); ctx.fill(); ctx.fillStyle = '#fff'; ctx.font = '700 10px Fredoka, sans-serif'; ctx.fillText('!', x + 26, y - 34.5 + b); }
 }
 function drawPad(pad){
-  const paid = save.pads[pad.key] || 0, k = paid / pad.cost, active = S.payKey === pad.key, big = pad.kind !== 'machine', w = big ? 96 : 60, h = big ? 64 : 52;
+  const paid = save.pads[pad.key] || 0, k = paid / pad.cost, active = S.payKey === pad.key, big = pad.kind !== 'machine' && pad.kind !== 'ws', w = big ? 96 : 60, h = big ? 64 : 52;
   ctx.fillStyle = 'rgba(50,32,15,.18)'; ctx.beginPath(); ctx.roundRect(pad.x - w / 2 + 2, pad.y - h / 2 + 4, w, h, 12); ctx.fill();
   ctx.fillStyle = active ? '#FFF1C2' : 'rgba(255,248,232,.85)'; ctx.beginPath(); ctx.roundRect(pad.x - w / 2, pad.y - h / 2, w, h, 12); ctx.fill();
   ctx.save(); ctx.beginPath(); ctx.roundRect(pad.x - w / 2, pad.y - h / 2, w, h, 12); ctx.clip(); ctx.fillStyle = 'rgba(76,195,138,.5)'; ctx.fillRect(pad.x - w / 2, pad.y + h / 2 - h * k, w, h * k); ctx.restore();
   ctx.strokeStyle = active ? '#D99A12' : 'rgba(22,50,74,.45)'; ctx.setLineDash([6, 5]); ctx.lineWidth = 2; ctx.beginPath(); ctx.roundRect(pad.x - w / 2, pad.y - h / 2, w, h, 12); ctx.stroke(); ctx.setLineDash([]);
-  if (pad.kind === 'machine') drawItem(ctx, pad.icon, pad.x, pad.y - 8, 15);
+  if (pad.kind === 'machine' || pad.kind === 'ws') drawItem(ctx, pad.icon, pad.x, pad.y - 8, 15);
   else if (pad.kind === 'sail') drawItem(ctx, 'boat', pad.x, pad.y - 13, 24);
   else if (pad.locked) { ctx.fillStyle = '#8A949A'; ctx.beginPath(); ctx.roundRect(pad.x - 7, pad.y - 16, 14, 11, 3); ctx.fill(); ctx.strokeStyle = '#8A949A'; ctx.lineWidth = 2.4; ctx.beginPath(); ctx.arc(pad.x, pad.y - 16, 4.5, Math.PI, 0); ctx.stroke(); }
   else { ctx.fillStyle = '#4CC38A'; ctx.beginPath(); ctx.arc(pad.x, pad.y - 12, 9, 0, 7); ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 2.4; ctx.beginPath(); ctx.moveTo(pad.x - 4, pad.y - 12); ctx.lineTo(pad.x - 1, pad.y - 9); ctx.lineTo(pad.x + 5, pad.y - 16); ctx.stroke(); }
@@ -1567,6 +1595,7 @@ function pads(){
       if (show) list.push({ key: 'm:' + m.id, x: m.x, y: L.machY, cost: m.cost * (a.i === 0 ? 1 : 1), label: m.name, icon: m.output, kind: 'machine', m });
     });
   }
+  if (WS && A(WS.area.id).unlocked && !wsBuilt() && WS.area.machines.every(built)) list.push({ key: 'ws', x: WS.x, y: wsY(), cost: Math.round(WS.cost * bargain()), label: 'Workshop', icon: 'basket', kind: 'ws' });
   const nl = nextLocked();
   if (nl) { const prev = AREAS[nl.i - 1]; if (health(prev) >= .9)   // the Restore spot only appears once the area before it is nearly healed
     list.push({ key: 'a:' + nl.id, x: nl.x + 58, y: (L.machY + L.row0) / 2, cost: nl.cost, label: 'Restore\n' + nl.name, kind: 'area', area: nl, locked: !reqsMet(nl) }); }
@@ -1577,6 +1606,8 @@ function pads(){
 }
 function complete(pad){
   if (pad.kind === 'machine') { A(pad.m.area.id).built[pad.m.id] = true; toast(`${pad.m.name} built!`); onBuilt(pad.m); }
+  if (pad.kind === 'ws') { A(WS.area.id).built.workshop = true; toast('Gift Workshop built!');
+    coach('first:ws', [{ target: () => ({ x: WS.x, y: wsY(), r: 62 }), text: `The <b>Gift Workshop</b> is yours to run: your helpers won't touch it. Carry <b>${LABEL[WS.a].toLowerCase()}</b> and <b>${LABEL[WS.b].toLowerCase()}</b> here. One of each makes a <b>gift basket</b>, which sells for far more than both together.`, btn: 'Got it' }]); }
   if (pad.kind === 'area') {
     const st = A(pad.area.id); st.unlocked = true; st.built[pad.area.machines[0].id] = true;
     toast(`Welcome to ${pad.area.name}!`); SFX.milestone();
@@ -1658,6 +1689,15 @@ function update(dt){
       if (st.smokeT <= 0 && (m.shape === 'kiln' || m.shape === 'press' || m.shape === 'booth')) { st.smokeT = .32; S.smoke.push({ x: m.x + (m.shape === 'kiln' ? 17 : 0), y: L.machY - (m.shape === 'kiln' ? 50 : 34), t: 0, col: m.shape === 'booth' ? m.col : null }); }
     } else st.t = 0;
   }
+
+  // Gift Workshop: only the player drops goods here and collects baskets
+  if (wsBuilt()) { const w = wsSt(), near = Math.abs(p.x - WS.x) < 58 && Math.abs(p.y - wsY()) < 26;
+    if (near && S.dropT <= 0) {
+      const side = w.a <= w.b ? ['a', 'b'] : ['b', 'a']; let did = false;
+      for (const k of side) { if (did || w[k] >= WS.cap) continue; if (takeTopOf(p.stack, i => i === WS[k])) { w[k]++; did = true; fly(WS[k], p.x, stackTopY(), WS.x + (k === 'a' ? -44 : 44), wsY() - 4); SFX.drop(); } }
+      if (!did && w.out > 0 && p.stack.length < cap()) { w.out--; p.stack.push('basket'); did = true; fly('basket', WS.x, wsY() - 14, p.x, stackTopY()); SFX.pick(p.stack.length); }
+      if (did) S.dropT = .09; }
+    if (w.a > 0 && w.b > 0 && w.out < WS.cap) { w.t += dt; if (w.t >= WS.time) { w.t = 0; w.a--; w.b--; w.out++; sparkle(WS.x, wsY() - 18, ['#FFC83D', '#FF7A6B', '#fff'], 8); SFX.build(); } } else w.t = 0; }
 
   // stock the counter: stand on the sell mat and your goods go on display
   S.stockT -= dt;
@@ -1807,6 +1847,7 @@ function goalProgress(g){
     case 'mlv': return [Math.min(g.lv, mlv(MBY[g.id])), g.lv];
     case 'health': return [Math.min(g.pct, Math.round(health(AREAS.find(a => a.id === g.area)) * 100)), g.pct];
     case 'area': return [A(g.id).unlocked ? 1 : 0, 1];
+    case 'ws': return [wsBuilt() ? 1 : 0, 1];
     case 'sail': return [0, 1];
   }
   return [0, 1];
@@ -1824,6 +1865,7 @@ function goalTarget(){
   if (!save.tutDone) return null;
   const g = goalAt(save.goal);
   if (g.t === 'build') { const pd = pads().find(x => x.key === 'm:' + g.id); return pd ? { x: pd.x, y: pd.y - 30 } : null; }
+  if (g.t === 'ws') { const pd = pads().find(x => x.key === 'ws'); return pd ? { x: pd.x, y: pd.y - 30 } : null; }
   if (g.t === 'sail') { const pd = pads().find(x => x.key === 'sail'); return pd ? { x: pd.x, y: pd.y - 36 } : null; }
   if (g.t === 'area') { const pd = pads().find(x => x.key === 'a:' + g.id); return pd ? { x: pd.x, y: pd.y - 36 } : null; }
   if (g.t === 'hire' || g.t === 'mlv' || g.t === 'global') { const a = g.area ? AREAS.find(x => x.id === g.area) : (g.id ? MBY[g.id].area : areaAt(S.player.x)); if (!A(a.id).unlocked) return null; const [c, n] = goalProgress(g); return c < n ? { x: a.x + 44, y: L.row0 - 44 } : null; }
@@ -1883,6 +1925,7 @@ function draw(){
   // workshop row
   for (const a of AREAS) if (A(a.id).unlocked && vis(a)) drawBoard(a.x);
   for (const m of MACHINES) if (built(m) && vis(m.area)) drawMachine(m);
+  if (wsBuilt() && vis(WS.area)) drawWorkshop();
   for (const sm of S.smoke) { const k = sm.t / 1.6; ctx.fillStyle = sm.col ? sm.col : `rgba(240,236,230,${.55 * (1 - k)})`; if (sm.col) ctx.globalAlpha = .4 * (1 - k); ctx.beginPath(); ctx.arc(sm.x + Math.sin(sm.t * 3) * 3, sm.y - k * 34, 4 + k * 9, 0, 7); ctx.fill(); ctx.globalAlpha = 1; }
   for (const g of L.grass) { if (g.x < X0 - 10 || g.x > X1 + 10) continue; ctx.strokeStyle = COAST.grass; ctx.lineWidth = 1.6; ctx.lineCap = 'round'; const sway = reduce ? 0 : Math.sin(t * 1.5 + g.x) * 1.5;
     for (const d of [-3, 0, 3]) { ctx.beginPath(); ctx.moveTo(g.x + d, g.y); ctx.quadraticCurveTo(g.x + d + sway, g.y - g.h * .6, g.x + d * 1.6 + sway, g.y - g.h); ctx.stroke(); } }
