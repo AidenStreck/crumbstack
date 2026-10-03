@@ -380,8 +380,8 @@ const COAST = coastInfo(COAST_N), NEXT_COAST = coastInfo(COAST_N + 1);
 const twist = id => !!(COAST.twist && COAST.twist.id === id);
 
 // Same prices on every coast (by position), so nothing gets endlessly more expensive
-const AREA_COST = [0, 1500, 8000], AREA_MULT = [1, 3, 9];
-const MACH_COST = [[0, 25, 100], [0, 200, 450], [0, 900, 1800]];
+const AREA_COST = [0, 5000, 40000], AREA_MULT = [1, 3, 9];
+const MACH_COST = [[0, 60, 300], [0, 800, 2000], [0, 5000, 12000]];
 const SLOT_PRICE = [4, 7, 12, 16, 24, 36, 45, 70, 100];
 const AREAS = COAST.areas.map((a, i) => ({ id: a.id, name: a.name, short: a.short, stall: a.stall, i, x: i * AW, cost: AREA_COST[i], mult: AREA_MULT[i],
   machines: a.machines.map(([id, name, input, output, col, shape], j) => ({ id, name, input, output, col, shape, dx: 75 + j * 125, cost: Math.round(MACH_COST[i][j] * (twist('bargain') ? .7 : 1)), slot: i * 3 + j })) }));
@@ -399,16 +399,16 @@ COASTS.forEach(c => Object.assign(LABEL, c.labels || {}));
 const MILESTONES = [5, 15, 35, 60, 100].map((at, i) => ({ at, short: COAST.wild[i][0], text: COAST.wild[i][1] }));
 // Upgrades on each area's Crew & Upgrades board. Costs scale with the area.
 const AREA_UPS = [
-  { k:'crabs',    name: COAST.collector.name, desc:'Collects trash and fills baskets.',      base:[50,120,240], max:3 },
-  { k:'pelicans', name: COAST.carrier.name,   desc:'Carries finished goods to the counter.', base:[140,380],    max:2 },
-  { k:'display',  name:'Bigger counter',      desc:'Holds 8 more goods for sale.',           base:[60,150,350], max:3 },
-  { k:'umbrella', name:'Beach umbrellas',     desc:'More tourists, arriving faster.',        base:[180,500],    max:2 },
+  { k:'crabs',    name: COAST.collector.name, desc:'Collects trash and fills baskets.',      base:[100,250,500], max:3 },
+  { k:'pelicans', name: COAST.carrier.name,   desc:'Carries finished goods to the counter.', base:[300,800],    max:2 },
+  { k:'display',  name:'Bigger counter',      desc:'Holds 8 more goods for sale.',           base:[120,300,700], max:3 },
+  { k:'umbrella', name:'Beach umbrellas',     desc:'More tourists, arriving faster.',        base:[350,1000],   max:2 },
 ];
 const GLOBAL_UPS = [
-  { k:'bag',   name:'Bigger bag', desc:'Carry 3 more items.',  costs:[30,80,160,320,640,1200], max:6 },
-  { k:'shoes', name:'Flip-flops', desc:'Walk faster.',         costs:[45,110,260,600],         max:4 },
+  { k:'bag',   name:'Bigger bag', desc:'Carry 3 more items.',  costs:[30,100,400,1200,4000,10000], max:6 },
+  { k:'shoes', name:'Flip-flops', desc:'Walk faster.',         costs:[60,500,3000,12000],       max:4 },
 ];
-const MACH_UP = [40, 100, 220, 450]; // x area multiplier
+const MACH_UP = [80, 200, 450, 900]; // x area multiplier
 const HATS = [
   { id:'sun',      name:'Sun hat',      how:'free' },
   { id:'flower',   name:'Flower crown', how:'goal' },
@@ -433,11 +433,11 @@ const GOAL_PLAN = [
   { t:'recycle', m:0, n:5, r:15 }, { t:'sell', m:0, n:6, r:20 }, { t:'build', m:1, r:25 }, { t:'global', k:'bag', lv:1, r:30, text:'Get a bigger bag' },
   { t:'sell', m:1, n:8, r:40 }, { t:'hire', a:0, k:'crabs', n:1, r:40 }, { t:'mlv', m:0, lv:1, r:50 }, { t:'build', m:2, r:60 },
   { t:'hire', a:0, k:'pelicans', n:1, r:80 }, { t:'health', a:0, pct:50, r:100 }, { t:'sell', m:2, n:15, r:100 }, { t:'hire', a:0, k:'crabs', n:2, r:120 },
-  { t:'mlv', m:1, lv:2, r:150 }, { t:'health', a:0, pct:100, r:200, hat:2 }, { t:'earn', n:1500, r:200, text:'Earn 1,500 coins' }, { t:'area', a:1, r:300, hat:0 },
+  { t:'mlv', m:1, lv:2, r:150 }, { t:'health', a:0, pct:100, r:200, hat:2 }, { t:'earn', n:5000, r:200, text:'Earn 5,000 coins' }, { t:'area', a:1, r:300, hat:0 },
   { t:'sell', m:3, n:10, r:250 }, { t:'build', m:4, r:250 }, { t:'hire', a:1, k:'crabs', n:1, r:300 }, { t:'sell', m:4, n:12, r:350 },
   { t:'build', m:5, r:400 }, { t:'hire', a:1, k:'pelicans', n:1, r:450 }, { t:'mlv', m:3, lv:2, r:500 }, { t:'sell', m:5, n:15, r:500 },
   { t:'health', a:1, pct:50, r:600 }, { t:'mlv', m:4, lv:2, r:600 }, { t:'mlv', m:5, lv:2, r:700 }, { t:'hire', a:1, k:'pelicans', n:2, r:800 },
-  { t:'health', a:1, pct:100, r:1000 }, { t:'earn', n:8000, r:1000, text:'Earn 8,000 coins' }, { t:'area', a:2, r:1500, hat:1 }, { t:'sell', m:6, n:15, r:1200 },
+  { t:'health', a:1, pct:100, r:1000 }, { t:'earn', n:40000, r:1000, text:'Earn 40,000 coins' }, { t:'area', a:2, r:1500, hat:1 }, { t:'sell', m:6, n:15, r:1200 },
   { t:'build', m:7, r:1500 }, { t:'build', m:8, r:2000 }, { t:'health', a:2, pct:100, r:4000, text:'Heal the whole coast' },
   // the home stretch: get the last area nearly maxed out before the dock appears
   { t:'hire', a:2, k:'crabs', n:2, r:2000 }, { t:'hire', a:2, k:'pelicans', n:2, r:2500 }, { t:'mlv', m:6, lv:3, r:2500 }, { t:'mlv', m:7, lv:3, r:3000 },
@@ -481,7 +481,7 @@ const PERKS = [
 ];
 
 // ================= SAVE =================
-function freshArea(a){ return { unlocked: a.i === 0, built: a.i === 0 ? { [a.machines[0].id]: true } : {}, mlv: {}, st: {}, crabs:0, pelicans:0, display:0, umbrella:0, disp:{}, recycled:0 }; }
+function freshArea(a){ return { unlocked: a.i === 0, built: a.i === 0 ? { [a.machines[0].id]: true } : {}, mlv: {}, st: {}, crabs:0, pelicans:0, display:0, umbrella:0, disp:{}, recycled:0, hp:null, ms:null }; }
 let save = { v:2, coins:0, bag:0, shoes:0, areas:{}, pads:{}, stats:{ rec:{}, sold:{}, earned:0 }, goal:0, goalBase:0, tutDone:false, lastSeen:0, giftDay:'', streak:0, hats:{ sun:true }, hat:'sun', muted:false,
   coast:0, stars:0, starsEarned:0, perks:{}, sails:0, coached:{}, ads:{ day:'', n:0 }, boostUntil:0 };
 AREAS.forEach(a => save.areas[a.id] = freshArea(a));
@@ -501,6 +501,11 @@ try {
 const perk = k => { const p = PERKS.find(x => x.k === k); return Math.min(save.perks[k] || 0, p ? p.max : 99); };
 function persist(){ save.lastSeen = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(save)); } catch(e){} }
 const A = id => save.areas[id];
+// Healing: each area needs HEAL_NEED pieces recycled to reach 100%. Health (hp, 0-100) is kept apart from the lifetime
+// recycle count so trash the tide takes back can cost a little health. Reaching a wildlife milestone locks that much in.
+const HEAL_NEED = [400, 900, 1600];
+AREAS.forEach(a => { const st = A(a.id); if (st.hp == null) st.hp = Math.min(100, st.recycled || 0); if (st.ms == null) st.ms = MILESTONES.filter(m => st.hp >= m.at).length; });
+const healStep = a => 100 / HEAL_NEED[a.i];
 
 // ================= LAYOUT =================
 let H = 720, scale = 1, dpr = 1, viewW = AW, camX = 0, sandTex = null, L = {};
@@ -1451,7 +1456,7 @@ function mcap(m){ return 20 + mlv(m) * 10; }
 function built(m){ return !!A(m.area.id).built[m.id]; }
 function cap(){ return 6 + save.bag * 3; }
 function speed(){ return 125 + save.shoes * 16; }
-function health(a){ return Math.min(1, A(a.id).recycled / 100); }
+function health(a){ return Math.min(1, A(a.id).hp / 100); }
 function dispCap(a){ return 12 + A(a.id).display * 8; }
 function dispCount(a){ return Object.values(A(a.id).disp).reduce((s, n) => s + n, 0); }
 function unlockedEnd(){ return unlockedCount() * AW; }
@@ -1473,7 +1478,7 @@ function machUpCost(m){ const lv = mlv(m); return lv < MACH_UP.length ? Math.rou
 function salePrice(it, a){ return Math.round(PRICE[it] * (1 + .05 * perk('income')) * (twist('golden') ? 1.5 : 1) * (1 + (a ? decorBonus(a) : 0))); }
 // Sea Stars for setting sail: 10 (the dock only appears once the coast is finished), plus 2 more per later tour.
 // The boat also needs supplies: a pile of coins you must have saved up before leaving.
-const SAIL_COST = 20000;
+const SAIL_COST = 100000;
 function starsMax(){ return 10 + 2 * (COAST.tour - 1); }
 function starsNow(){ return starsMax(); }
 // Pacing gates: upgrades open up as the coast does, so nobody can max everything on the first beach.
@@ -1586,7 +1591,7 @@ function complete(pad){
 function spawnOne(a, near){
   const wl = waterline(), types = builtOutputs(a).length ? a.machines.filter(built).map(m => m.input) : [];
   if (!types.length) return;
-  S.trash[a.id].push({ type: pick(types), x: a.x + rnd(20, AW - 20), y: near ? rnd(wl + 20, L.trashMax) : clamp(wl + rnd(6, 60), wl + 6, L.trashMax), rot: rnd(-1, 1), claimed: null });
+  S.trash[a.id].push({ type: pick(types), x: a.x + rnd(20, AW - 20), y: near ? rnd(wl + 20, L.trashMax) : clamp(wl + rnd(6, 60), wl + 6, L.trashMax), rot: rnd(-1, 1), claimed: null, born: S.t });
 }
 function spawnTrash(dt){
   const wl = waterline(), receding = wl < S.lastWater; S.lastWater = wl;
@@ -1597,11 +1602,12 @@ function spawnTrash(dt){
     if (S.spawnT[a.id] <= 0 && S.trash[a.id].length < max) { S.spawnT[a.id] = receding ? rnd(.5, 1) : rnd(1.6, 2.6); spawnOne(a); }
   }
 }
+const WASH_AGE = 25, WASH_COST = .5;   // seconds on the sand before the tide can take a piece; health lost, in recycled pieces
 function recycle(m){
-  const st = A(m.area.id); st.recycled++; bump('rec'); save.stats.rec[m.input] = (save.stats.rec[m.input] || 0) + 1;
+  const st = A(m.area.id); st.recycled++; st.hp = Math.min(100, st.hp + healStep(m.area)); if (st.hp > 99.99) st.hp = 100; bump('rec'); save.stats.rec[m.input] = (save.stats.rec[m.input] || 0) + 1;
   sparkle(m.x, L.machY - 20, ['#8BD3A5', '#fff', m.col], 6);
-  const ms = MILESTONES.find(x => x.at === st.recycled);
-  if (ms) { toast(m.area.i ? `${m.area.name}: ${ms.text}` : ms.text); SFX.milestone(); setTimeout(() => albumMilestone(MILESTONES.indexOf(ms)), 700); }
+  const ms = st.ms < MILESTONES.length && st.hp >= MILESTONES[st.ms].at ? MILESTONES[st.ms] : null;
+  if (ms) { st.ms++; toast(m.area.i ? `${m.area.name}: ${ms.text}` : ms.text); SFX.milestone(); setTimeout(() => albumMilestone(MILESTONES.indexOf(ms)), 700); }
 }
 
 function update(dt){
@@ -1627,6 +1633,15 @@ function update(dt){
     if (tr.dead || p.stack.length >= cap() || tr.y < wl + 4) continue;
     if (dist(p.x, p.y, tr.x, tr.y) < 20) { tr.dead = true; if (tr.claimed) tr.claimed.target = null; fly(tr.type, tr.x, tr.y, p.x, stackTopY()); p.stack.push(tr.type); SFX.pick(p.stack.length); if (S.cleanup) S.cleanup.got++; }
   }
+  // the tide takes back trash that has sat on the sand too long, and each lost piece costs the beach a little health
+  // (never below the last wildlife milestone it reached, and not during a Big Cleanup)
+  const rising = wl > (S.wlPrev == null ? wl : S.wlPrev); S.wlPrev = wl;
+  if (rising && !S.cleanup) for (const a of AREAS) { const st = A(a.id);
+    for (const tr of S.trash[a.id]) { if (tr.dead || tr.y > wl - 2 || S.t - (tr.born || 0) < WASH_AGE) continue;
+      tr.dead = true; if (tr.claimed) tr.claimed.target = null; S.washed = (S.washed || 0) + 1;
+      const floor = st.ms ? MILESTONES[st.ms - 1].at : 0;
+      if (st.hp > floor) { st.hp = Math.max(floor, st.hp - healStep(a) * WASH_COST); if (S.t - (S.washPopT || -9) > 1.2) { S.washPopT = S.t; pop('lost to the tide', tr.x, wl + 14, '#D9544A'); }
+        coach('first:wash', [{ center: true, text: "<b>The tide took some trash back out to sea.</b> Trash left on the sand too long gets washed away, and that hurts the beach a little. Grab it before the water does. Helpers make this much easier.", btn: 'Got it' }]); } } }
   for (const a of AREAS) S.trash[a.id] = S.trash[a.id].filter(t => !t.dead);
 
   // machines
@@ -1835,7 +1850,7 @@ function draw(){
   ctx.globalAlpha = 1;
   for (const sh of L.shells) if (sh.x > X0 - 10 && sh.x < X1 + 10) drawShell(sh);
   for (const rk of L.rocks) if (rk.x > X0 - 30 && rk.x < X1 + 30) drawRock(rk);
-  for (const a of AREAS) if (vis(a) && A(a.id).recycled >= 60) [[40, L.trashMax + 20], [362, L.trashMax + 55], [150, L.row0 + 30], [250, L.row1 + 18]].forEach(([x, y], i) => drawStar(a.x + x, y, i + a.i));
+  for (const a of AREAS) if (vis(a) && A(a.id).hp >= 60) [[40, L.trashMax + 20], [362, L.trashMax + 55], [150, L.row0 + 30], [250, L.row1 + 18]].forEach(([x, y], i) => drawStar(a.x + x, y, i + a.i));
   // trash (faint under water)
   for (const a of AREAS) for (const tr of S.trash[a.id]) { if (tr.x < X0 - 20 || tr.x > X1 + 20) continue; ctx.save(); ctx.globalAlpha = tr.y < wl ? .35 : 1; shade(tr.x + 2, tr.y + 6, 8, 3, .2);
     ctx.translate(tr.x, tr.y - (tr.y > wl && !reduce ? Math.abs(Math.sin(t * 2 + tr.x)) * 1.2 : 0)); ctx.rotate(tr.rot); drawItem(ctx, tr.type, 0, 0, 16); ctx.restore(); }
@@ -1855,7 +1870,7 @@ function draw(){
   for (let r = 0; r < 4; r++) { ctx.beginPath(); const yy = wl * (.22 + r * .18); for (let x = X0 - X0 % 12 - 12; x <= X1 + 12; x += 12) { const y = yy + Math.sin(x * .04 + t * 1.3 + r) * 3; x <= X0 - X0 % 12 - 12 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); } ctx.stroke(); }
   for (let i = 0; i < 30; i++) { const sx = (i * 97.3) % (AW * 3), sy = ((i * 53.7) % Math.max(20, wl - 30)) + 8, k = Math.sin(t * 2.5 + i * 1.7);
     if (k > .55 && sx > X0 && sx < X1) { ctx.fillStyle = `rgba(255,255,255,${(k - .55) * 1.8})`; ctx.beginPath(); ctx.moveTo(sx - 4, sy); ctx.lineTo(sx, sy - 1.5); ctx.lineTo(sx + 4, sy); ctx.lineTo(sx, sy + 1.5); ctx.fill(); } }
-  for (const a of AREAS) { if (!vis(a)) continue; const rc = A(a.id).recycled, ax = a.x;
+  for (const a of AREAS) { if (!vis(a)) continue; const rc = A(a.id).hp, ax = a.x;
     if (rc >= 35) {
       [[50, .5, '#FF7A6B'], [130, .65, '#FFC83D'], [260, .45, '#8E7CF0'], [345, .6, '#FF9AC4']].forEach(([x, k, col]) => { ctx.fillStyle = col; ctx.globalAlpha = .55; for (let i = 0; i < 4; i++) { ctx.beginPath(); ctx.arc(ax + x + i * 6 - 9, wl * k + (i % 2) * 5, 4, 0, 7); ctx.fill(); } ctx.globalAlpha = 1; });
       for (let i = 0; i < 3; i++) { const fx = ax + (t * 30 + i * 140) % (AW + 40) - 20, fy = wl * (.3 + i * .15); ctx.fillStyle = '#FFC83D'; ctx.beginPath(); ctx.ellipse(fx, fy, 5, 3, 0, 0, 7); ctx.fill(); ctx.beginPath(); ctx.moveTo(fx - 4, fy); ctx.lineTo(fx - 9, fy - 3); ctx.lineTo(fx - 9, fy + 3); ctx.fill(); }
@@ -1901,7 +1916,7 @@ function draw(){
   if (X1 > AW * 3 + 30) { drawTree(AW * 3 + 70, L.row0, -1); drawUmbrella(AW * 3 + 60, L.machY - 20, '#35C6D8'); }
   for (const f of S.flies) { const k = Math.min(1, f.t / f.dur), e = 1 - (1 - k) * (1 - k); drawItem(ctx, f.type, f.x0 + (f.x1 - f.x0) * e, f.y0 + (f.y1 - f.y0) * e - Math.sin(k * Math.PI) * 26, 14); }
   for (let i = 0; i < 4; i++) { const cx = (t * 7 + i * 330) % (AW * 3 + 260) - 130, cy = L.trashMax + (i % 2) * 220; if (cx < X0 - 150 || cx > X1 + 150) continue; ctx.fillStyle = 'rgba(30,60,80,.06)'; ctx.beginPath(); ctx.ellipse(cx, cy, 90, 38, 0, 0, 7); ctx.ellipse(cx + 60, cy + 12, 60, 28, 0, 0, 7); ctx.fill(); }
-  for (const a of AREAS) if (vis(a) && A(a.id).recycled >= 5) for (let i = 0; i < 3; i++) { const gx = a.x + (t * (22 + i * 6) + i * 150) % (AW + 60) - 30, gy = 30 + i * 24 + Math.sin(t * 2 + i) * 6, fl = Math.sin(t * 8 + i) * 4;
+  for (const a of AREAS) if (vis(a) && A(a.id).hp >= 5) for (let i = 0; i < 3; i++) { const gx = a.x + (t * (22 + i * 6) + i * 150) % (AW + 60) - 30, gy = 30 + i * 24 + Math.sin(t * 2 + i) * 6, fl = Math.sin(t * 8 + i) * 4;
     shade(gx + 20, gy + 70, 7, 2, .1); ctx.strokeStyle = '#fff'; ctx.lineWidth = 2.4; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(gx - 9, gy + fl); ctx.quadraticCurveTo(gx - 4, gy - 5, gx, gy); ctx.quadraticCurveTo(gx + 4, gy - 5, gx + 9, gy + fl); ctx.stroke(); }
   spookyWorld();
   const gt = goalTarget(); if (gt && !S.modal) drawArrow(gt.x, gt.y);
@@ -1998,11 +2013,11 @@ function hud(){
   if (hudC.coins !== save.coins) { hudC.coins = save.coins; $('coins').textContent = fmt(save.coins);
     document.querySelectorAll('.sheet .buy[data-cost]').forEach(b => { b.disabled = +b.dataset.cost > save.coins; }); }
   let a = areaAt(S.player.x); if (!A(a.id).unlocked) a = AREAS[a.i - 1];
-  const key = a.id + ':' + A(a.id).recycled;
+  const key = a.id + ':' + A(a.id).hp.toFixed(1);
   if (hudC.area !== key) { hudC.area = key; const hp = health(a);
     $('areaName').textContent = a.name; $('hp').textContent = Math.round(hp * 100) + '%'; $('hpBar').style.width = hp * 100 + '%';
-    const nx = MILESTONES.find(m => m.at > A(a.id).recycled);
-    $('next').textContent = nx ? `Next: ${nx.short} · ${nx.at - A(a.id).recycled} more` : `${a.name} is fully healed!`; }
+    const nx = MILESTONES[A(a.id).ms];
+    $('next').textContent = nx ? `Next: ${nx.short} · ${Math.max(1, Math.ceil((nx.at - A(a.id).hp) / healStep(a) - 1e-6))} more` : `${a.name} is fully healed!`; }
   const gift = save.giftDay !== today(); if (hudC.gift !== gift) { hudC.gift = gift; $('giftDot').hidden = !gift; }
   if ((S.t | 0) !== hudC.jt) { hudC.jt = S.t | 0; $('journalDot').hidden = !journalDot(); }
   const showStars = save.stars > 0 || save.sails > 0 || !nextLocked(), sk = showStars + ':' + save.stars;
@@ -2267,7 +2282,7 @@ save.coached = save.coached || {};
 function coach(key, steps){ if (save.coached[key]) return; save.coached[key] = true; steps.forEach(st => coachQ.push(st)); persist(); }
 function nearestTrash(a, type){ const p = S.player; return S.trash[a.id].filter(t => t.type === type && t.y > waterline() + 4).sort((p1, p2) => dist(p.x, p.y, p1.x, p1.y) - dist(p.x, p.y, p2.x, p2.y))[0]; }
 function onBuilt(m, fresh){
-  const a = m.area; for (let i = 0; i < 3; i++) S.trash[a.id].push({ type: m.input, x: clamp(S.player.x + rnd(-120, 120), a.x + 24, a.x + AW - 24), y: rnd(Math.max(waterline() + 30, L.trashMax - 60), L.trashMax), rot: rnd(-1, 1), claimed: null });
+  const a = m.area; for (let i = 0; i < 3; i++) S.trash[a.id].push({ type: m.input, x: clamp(S.player.x + rnd(-120, 120), a.x + 24, a.x + AW - 24), y: rnd(Math.max(waterline() + 30, L.trashMax - 60), L.trashMax), rot: rnd(-1, 1), claimed: null, born: S.t });
   const inp = LABEL[m.input], out = LABEL[m.output].toLowerCase();
   coach('m:' + m.id, [
     { target: () => { const t = nearestTrash(a, m.input); return t ? { x: t.x, y: t.y, r: 26 } : { x: m.x, y: L.trashMax - 30, r: 40 }; },
@@ -2649,7 +2664,7 @@ function jEvent(body){
 function journalDot(){ return tasksClaimable() || !!save.albumNew; }
 function featuresStart(){
   // stickers for creatures you already brought back before the album existed
-  AREAS.forEach(a => MILESTONES.forEach((ms, i) => { if (A(a.id).recycled >= ms.at && CREATURES[COAST.id]) albumAdd(CREATURES[COAST.id][i][0], true); }));
+  AREAS.forEach(a => MILESTONES.forEach((ms, i) => { if (i < A(a.id).ms && CREATURES[COAST.id]) albumAdd(CREATURES[COAST.id][i][0], true); }));
   save.albumNew = save.albumNew && Object.keys(save.album).length > 0;
   dailyTasks(); eventCheck();
 }
@@ -2689,6 +2704,7 @@ if (COAST_N > 0) { $('coastTag').hidden = false; $('coastTag').textContent = 'Co
   [100, 400, 1000, 2500].forEach(ms => setTimeout(check, ms)); addEventListener('orientationchange', () => setTimeout(check, 300)); document.addEventListener('visibilitychange', () => setTimeout(check, 200)); }
 if (document.fonts) document.fonts.ready.then(() => { layout(); if (!running) S.player.y = L.row0 - 10; });
 if (location.hash.includes('test')) window.__tt = { ADS, renderBoard, openGift, offlineCheck, S, save, AREAS, MACHINES, MBY, get L(){ return L; }, get camX(){ return camX; }, pads, waterline, mst, built, dispCount, dispCap, goalAt, goalProgress, claimGoal, areaUpCost, machUpCost, globalCost, AREA_UPS, GLOBAL_UPS, ensureHelpers, cap, coachQ, edgeTabs, drawItem, spawnSpecial, openJournal, postcard, dailyTasks, albumAdd, EVENT, startPlacing, DECOR, CREATURES, drawCreature, COAST, COAST_N, NEXT_COAST, doSail, openSail, openStars, starsNow, PERKS, salePrice, get tut(){ return tutStep; }, endTutorial, start, openBoard, closeBoard };
+if (location.hash.includes('test')) window.__ev = c => eval(c);   // lets scripts/tidytides-bot.cjs fast-forward the real game
 requestAnimationFrame(loop);
 })();
 </script>
