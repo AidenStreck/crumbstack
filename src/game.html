@@ -161,11 +161,12 @@ canvas#game{width:100%;height:100%;display:block;touch-action:none}
 .homeCenter{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding-inline:16px;padding-block:0 30px;width:100%;box-sizing:border-box}
 .logo.big{font-size:clamp(48px,15vw,64px);transform:rotate(-4deg);text-shadow:0 5px 0 #B8531F,0 10px 0 rgba(0,0,0,.15),0 14px 30px rgba(0,0,0,.3)}
 .tagline{font-size:15px;color:#fff;background:rgba(20,12,50,.35);border-radius:999px;padding:4px 14px;letter-spacing:.3px}
-#homeBurger{width:min(260px,62vw);height:auto;animation:float 3s ease-in-out infinite}
+#homeBurger{width:min(230px,52vw);max-height:30vh;object-fit:contain;height:auto;animation:float 3s ease-in-out infinite}
 @keyframes float{50%{transform:translateY(-10px) rotate(1.5deg)}}
 .btn.big{font-size:32px;padding:14px 56px;border-radius:24px;display:flex;flex-direction:column;align-items:center;line-height:1}
 .btn.big small{font-family:var(--body);font-weight:900;font-size:13px;opacity:.9;margin-top:4px;letter-spacing:.5px}
-.homeRow{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.homeRow{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:min(320px,100%)}
+.homeRow .btn.ghost{padding:10px 8px;font-size:17px;white-space:nowrap}
 
 /* ---------- Shop ---------- */
 #shop{background:linear-gradient(#3A2A86,var(--bg))}
@@ -216,6 +217,42 @@ canvas#game{width:100%;height:100%;display:block;touch-action:none}
 .toggle i::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .2s}
 .toggle[aria-pressed="true"] i{background:var(--good)}
 .toggle[aria-pressed="true"] i::after{transform:translateX(20px)}
+.recipe .step.changed{background:#FFD3E6}
+.recipe.long .step{width:30px;height:22px;border-radius:6px}
+.recipe.long .step canvas{width:27px;height:18px}
+.recipe .free{font-size:13px;line-height:1.25;color:var(--ink-2)}
+.recipe .free b{color:var(--ink);font-family:var(--display);font-weight:400;font-size:16px;display:block}
+.ticket.critic{background:linear-gradient(135deg,#F1E6FF,#D9C4FF)}
+.ticket.critic .vipTag{display:inline-block;background:#5B2A9A;color:#fff}
+.ticket.gold{background:linear-gradient(135deg,#FFF3C4,#FFD25E)}
+.badge.happy{color:var(--butter)}.badge.wind{color:#BFE9FF}
+.banner.small{font-size:26px;top:30%;padding:0 14px}
+.field.gold{box-shadow:inset 0 0 0 4px var(--butter)}
+/* map: special-level tags */
+.node .ntag{position:absolute;top:-11px;left:50%;transform:translateX(-50%);font-family:var(--display);font-size:10px;letter-spacing:.6px;line-height:1;padding:3px 6px;border-radius:7px;background:var(--ink);color:var(--butter);white-space:nowrap;box-shadow:0 2px 0 rgba(0,0,0,.25)}
+.node.locked .ntag{background:#5B5578;color:#E9E6F2}
+/* home: daily + stickers */
+.homeRow .btn.ghost{position:relative}
+.dot{position:absolute;top:-5px;right:-5px;width:16px;height:16px;border-radius:50%;background:var(--pink);border:3px solid #fff;box-sizing:border-box}
+.modeTag{display:inline-block;font-family:var(--display);font-size:12px;letter-spacing:.5px;text-transform:none;background:var(--ink);color:var(--butter);border-radius:8px;padding:2px 8px;margin-left:4px;vertical-align:1px}
+.stickGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:100%;max-height:46vh;overflow-y:auto;padding:4px 2px}
+.stick{border:0;background:#fff;border-radius:14px;padding:6px 2px 5px;display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--ink);box-shadow:0 3px 0 var(--cream-2)}
+.stick canvas{width:48px;height:48px}
+.stick b{font-family:var(--display);font-weight:400;font-size:11px;line-height:1.05}
+.stick.off{background:var(--cream-2);box-shadow:none}
+.stick.off canvas{filter:grayscale(1) brightness(1.15);opacity:.3}
+.stick.off b{color:var(--ink-2)}
+.stick[aria-pressed="true"]{outline:3px solid var(--pink)}
+.stickInfo{font-size:13px;line-height:1.35;min-height:36px;color:var(--ink);background:#FFF1B8;border-radius:12px;padding:8px 12px;width:100%;box-sizing:border-box}
+.newStick{font-size:13px;color:var(--ink);background:#FFE3EF;border-radius:12px;padding:7px 12px;width:100%;box-sizing:border-box}
+.newStick b{color:#D92E6E}
+.plateGrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.plateCard{background:var(--cream);color:var(--ink);border-radius:18px;padding:8px 6px 8px;display:flex;flex-direction:column;align-items:center;gap:4px;box-shadow:0 5px 0 #D4C39C}
+.plateCard canvas{width:84px;height:40px}
+.plateCard b{font-family:var(--display);font-weight:400;font-size:14px;line-height:1}
+.plateCard .buyBtn{width:100%;flex:none;font-size:14px;padding:7px 4px}
+.plateCard .buyBtn.on{background:linear-gradient(#7BE8A8,#2BAE66);color:#fff;box-shadow:0 3px 0 #1F8A50}
+.plateCard small{font-size:11px;line-height:1.2;color:var(--ink-2);text-align:center;min-height:26px;display:grid;place-items:center}
 @media (prefers-reduced-motion:reduce){ #homeBurger,.toast{animation:none} .toggle i,.toggle i::after{transition:none} }
 @media (prefers-reduced-motion:reduce){
   .node.current,.youAreHere,.recipe .step.next{animation:none}
@@ -240,6 +277,8 @@ canvas#game{width:100%;height:100%;display:block;touch-action:none}
       <canvas id="homeBurger" width="360" height="300"></canvas>
       <button class="btn green big" id="homePlay">Play<small id="homeLevel">Level 1</small></button>
       <div class="homeRow">
+        <button class="btn ghost" id="homeDaily">Daily challenge<span class="dot" id="dailyDot" hidden></span></button>
+        <button class="btn ghost" id="homeStickers">Stickers <span id="stickCount"></span></button>
         <button class="btn ghost" id="homeShop"><svg viewBox="0 0 24 24"><use href="#i-bag"/></svg>Shop</button>
         <button class="btn ghost" id="homeHow">How to play</button>
       </div>
@@ -265,7 +304,7 @@ canvas#game{width:100%;height:100%;display:block;touch-action:none}
       <button class="iconBtn" id="pauseBtn" aria-label="Pause">II</button>
       <div class="hudMid">
         <div class="lv" id="hudLevel">Level 1</div>
-        <div class="goal" id="hudGoal">Burgers <b>0</b> / 3</div>
+        <div class="goal" id="hudGoal">Orders <b>0</b> / 3</div>
         <div class="timer" id="hudTimer" hidden>1:00</div>
       </div>
       <div class="hearts" id="hearts" aria-label="Lives"></div>
@@ -276,7 +315,7 @@ canvas#game{width:100%;height:100%;display:block;touch-action:none}
     </div>
     <div class="ticket" id="ticket" aria-live="polite">
       <canvas id="avatar" width="104" height="104"></canvas>
-      <div class="tTop"><div class="who"><span id="whoName">Gus</span><span class="vipTag">VIP ×2</span></div><div class="orderNo" id="orderNo">#1</div></div>
+      <div class="tTop"><div class="who"><span id="whoName">Gus</span><span class="vipTag" id="vipTag">VIP ×2</span></div><div class="orderNo" id="orderNo">#1</div></div>
       <div class="recipe" id="recipe"></div>
       <div class="patience"><i id="pat"></i></div>
     </div>
@@ -332,6 +371,12 @@ let save = {unlocked:1, stars:{}, best:{}, coins:120, inv:{}, gifted:{}, giftDay
 try { const s = JSON.parse(localStorage.getItem(SAVE_KEY)); if (s && s.unlocked) save = Object.assign(save, s); } catch(e){}
 save.inv = Object.assign({magnet:0, plate:0, heart:0}, save.inv||{});
 save.gifted = save.gifted || {};
+// Added later (old saves get these defaults): sticker book, plate looks, daily challenge.
+save.stickers = save.stickers || {};
+save.plates = Object.assign({classic:true}, save.plates||{});
+save.plate = save.plate || 'classic';
+save.daily = Object.assign({day:'', streak:0}, save.daily||{});
+save.fails = save.fails || {};   // tries lost in a row on a level (special levels ease off after a couple)
 function persist(){ try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch(e){} }
 
 // ================= SOUND =================
@@ -387,6 +432,9 @@ const Sound = (() => {
     win(){ [[72,0],[76,.12],[79,.24],[84,.36],[79,.52],[84,.64]].forEach(([m,d])=>tone(mf(m),.3,{vol:.17,delay:d})); },
     lose(){ [[67,0],[63,.2],[60,.4]].forEach(([m,d])=>tone(mf(m),.35,{vol:.14,delay:d,type:'sine'})); tone(mf(48),.6,{vol:.1,delay:.6,type:'sine'}); },
     whoosh(){ noise(.35,{vol:.07,freq:900,ft:'bandpass'}); },
+    gust(){ noise(.9,{vol:.09,freq:500,ft:'bandpass'}); noise(.6,{vol:.05,freq:1400,ft:'bandpass',delay:.2}); },
+    lucky(){ [79,84,88,91].forEach((m,i)=>tone(mf(m),.16,{type:'sine',vol:.16,delay:i*.05})); },
+    bell(){ tone(mf(88),.5,{type:'sine',vol:.18}); tone(mf(95),.5,{type:'sine',vol:.1,delay:.12}); },
   };
   // Phone vibration: only inside the iPhone app (Capacitor Haptics plugin); ignored on the web.
   const HAP = {catch:'light', token:'light', heart:'light', wrong:'heavy', topple:'heavy', serve:'success', win:'success'};
@@ -448,50 +496,128 @@ function worldOf(n){
 // Last level worth showing: the end of the world the player has reached (never less than TOTAL).
 const mapEnd = () => Math.max(TOTAL, Math.ceil(save.unlocked/WSIZE)*WSIZE);
 // When each feature first appears. `icon` draws a picture in the tip.
-const UNLOCK = {power:3, wobble:5, freeze:7, rush:8, flies:10, vip:13, fast:17};
+const UNLOCK = {power:3, wobble:5, freeze:7, rush:8, flies:10, vip:13, fast:17,
+  pickle:4, bacon:4, sandwich:9, egg:15, pancakes:18, mushroom:21,   // new food
+  mystery:4, happy:6, swap:7, wind:9};                                // surprises that happen mid-level
+// Kinds of level. Most are 'classic'; the others change what you're trying to do.
+const MODES = {
+  classic:{name:'', tag:''},
+  rush:   {name:'Rush hour',   tag:'RUSH',  desc:'<b>Rush hour!</b> Serve every order before the timer runs out.'},
+  perfect:{name:'No slip-ups', tag:'1 HEART', desc:'<b>No slip-ups!</b> You only get one heart, so only catch what the ticket shows.'},
+  tall:   {name:'Sky-high',    tag:'TOWER', desc:'<b>Sky-high!</b> No orders. Catch <b>anything</b> and stack up to the line before the clock runs out.'},
+  frenzy: {name:'Golden hour', tag:'GOLD',  desc:'<b>Golden hour!</b> No hearts to lose. Serve as many as you can. Every order pays bonus coins.'},
+  boss:   {name:'The Critic',  tag:'BOSS',  desc:'<b>The Critic</b> wants two giant towers and pays triple. Move gently so they don\'t topple.'},
+};
+const HAND_MODES = {6:'tall', 8:'rush', 11:'perfect', 12:'rush', 14:'frenzy', 16:'boss', 19:'perfect', 20:'rush', 22:'tall', 23:'frenzy', 24:'boss'};
+const LAP_MODES = ['classic','perfect','classic','rush','tall','classic','frenzy','boss'];
+const modeOf = n => n <= TOTAL ? (HAND_MODES[n] || 'classic') : LAP_MODES[(n-1) % WSIZE];
 const TIPS = {
   1:{text:'Catch the <b>glowing</b> ingredient. Build every burger from the bottom bun up to the top bun.'},
   2:{text:'Only catch what the ticket needs. Letting other food drop is free. Serve orders back to back for a <b>streak bonus</b>.'},
   3:{text:'<b>Power-ups!</b> The magnet pulls the right ingredient onto your plate. Hearts give you a life back.', icon:'magnet', isNew:true},
+  4:{text:'On the menu now: <b>pickles</b> and <b>bacon</b>. Also watch for the <b>mystery box</b>. It counts as whatever you need next.', icon:'food:bacon', isNew:true},
   5:{text:'<b>Wobble!</b> Fast moves make tall burgers sway. Shake too hard and the top piece falls off.', icon:'wobble', isNew:true},
+  6:{text:'<b>Sky-high!</b> No orders this time. Catch <b>anything</b> and stack it up to the line before the clock runs out. Thick pieces get you there faster.', icon:'tall', isNew:true},
   7:{text:'<b>Freeze</b> joins the power-ups. It slows everything and pauses the customer\'s patience.', icon:'freeze', isNew:true},
-  8:{text:'<b>Rush hour!</b> Serve every burger before the timer runs out.', icon:'timer', isNew:true},
-  9:{text:'Welcome to the <b>Rooftop Grill</b>. Bigger orders from here on.'},
+  8:{text:'<b>Rush hour!</b> Serve every order before the timer runs out.', icon:'timer', isNew:true},
+  9:{text:'Welcome to the <b>Rooftop Grill</b>. Bigger orders, <b>toasted sandwiches</b>, and the odd gust of wind.', icon:'food:bread', isNew:true},
   10:{text:'<b>Flies</b> buzz in from now on. Don\'t catch them, they cost a heart.', icon:'fly', isNew:true},
+  11:{text:'<b>No slip-ups!</b> You only get one heart here. Take it slow and only catch what the ticket shows.', icon:'perfect', isNew:true},
   13:{text:'<b>VIPs</b> wear a crown. They pay double but won\'t wait long.', icon:'vip', isNew:true},
+  14:{text:'<b>Golden hour!</b> No hearts to lose. Serve as many as you can before time runs out. Every order pays bonus coins.', icon:'frenzy', isNew:true},
+  15:{text:'<b>Fried eggs</b> are on the menu now.', icon:'food:egg', isNew:true},
+  16:{text:'<b>The Critic</b> is here. Two giant tower orders, and she pays triple. Move gently so they don\'t topple.', icon:'boss', isNew:true},
   17:{text:'The <b>Midnight Food Truck</b>. Everything falls faster out here.', icon:'fast', isNew:true},
+  18:{text:'<b>Pancake stacks!</b> Late-night customers want pancakes with berries and cream.', icon:'food:pancakeTop', isNew:true},
+  21:{text:'<b>Mushrooms</b> join the menu.', icon:'food:mushroom', isNew:true},
   25:{text:'<b>Bonus worlds!</b> The kitchens repeat from here on, food falls a little faster, and the levels never run out.'},
 };
-function levelDef(n){
-  const w = worldOf(n);
+// What customers can order. A dish is a bottom piece, some fillings, then a top piece.
+const DISHES = {
+  burger:  {name:'burger',        bottom:'bunBottom', top:'bunTop',     mids:['patty','cheese','lettuce','tomato','onion','pickle','bacon','egg','mushroom']},
+  sandwich:{name:'sandwich',      bottom:'bread',     top:'bread',      mids:['cheese','lettuce','tomato','pickle','bacon','egg','mushroom']},
+  pancakes:{name:'pancake stack', bottom:'pancake',   top:'pancakeTop', mids:['berries','cream']},
+};
+// The dishes and fillings a level can ask for (new food arrives as you climb).
+function menuOf(n){
+  const has = t => n >= (UNLOCK[t]||0);
+  const m = {burger: DISHES.burger.mids.filter(has)};
+  if(n >= UNLOCK.sandwich) m.sandwich = DISHES.sandwich.mids.filter(has);
+  if(n >= UNLOCK.pancakes) m.pancakes = DISHES.pancakes.mids.slice();
+  return m;
+}
+// `force` plays level n's difficulty as a different kind of level (used by the daily challenge).
+function levelDef(n, force){
+  const w = worldOf(n), mode = force || modeOf(n);
   // Past the hand-made levels, speed creeps up a little every world, then levels off so it stays beatable.
   const dn = n <= TOTAL ? n : TOTAL + Math.min(3, Math.floor((n-TOTAL-1)/WSIZE));
   const minMid = Math.min(4, 1 + Math.floor((n-1)/7));
   const maxMid = Math.min(5, 2 + Math.floor((n-1)/4));
-  const goal = Math.min(8, 3 + Math.floor((n-1)/3));
-  const timed = n >= UNLOCK.rush && n % 4 === 0 ? Math.round(goal * (13 + (minMid+maxMid)*2.2)) : 0;
+  let goal = Math.min(force ? 5 : 8, 3 + Math.floor((n-1)/3)), timed = 0, hearts = 3;   // the daily keeps it short
   const avgLen = 2 + (minMid+maxMid)/2;
   const perOrder = avgLen*15 + 15;
-  const base = goal*perOrder;
+  let base = goal*perOrder, cut = [.6, 1, 1.35];
+  if(mode==='rush') timed = Math.round(goal * (13 + (minMid+maxMid)*2.2));
+  // A helping hand so a special level can never become a wall: every 2 losses in a row adds a heart (one-heart levels) or 8 seconds (towers).
+  const help = force ? 0 : Math.min(2, Math.floor((save.fails[n]||0) / 2));
+  if(mode==='perfect'){ goal = Math.max(3, goal-2); hearts = 1 + help; base = goal*perOrder; cut = [.6, .9, 1.15]; }
+  if(mode==='boss'){ goal = 2; base = (maxMid*2 + 10)*35 + 60; cut = [.7, 1.05, 1.35]; }
+  if(mode==='frenzy'){ goal = 3; timed = 45; base = perOrder*6; cut = [.5, .8, 1.1]; }
+  if(mode==='tall'){ goal = 1; timed = 40 + help*8; base = 400; cut = [.6, .85, 1]; }
   const r10 = v => Math.round(v/10)*10;
+  const menu = menuOf(n);
+  const pool = [...new Set(Object.keys(menu).flatMap(d => [DISHES[d].bottom, DISHES[d].top, ...menu[d], ...(d==='pancakes'?['pancake']:[])]))];
+  const soft = mode==='frenzy', calm = soft || mode==='perfect';   // one-heart levels drop the flies and slow the food a touch to stay fair
   return {
-    n, world:w, goal, timed, minMid, maxMid,
-    speed: 135 + dn*6 + (n>=UNLOCK.fast?25:0),
+    n, world:w, mode, goal, timed, hearts, minMid, maxMid, menu, pool,
+    help: (mode==='perfect' || mode==='tall') ? help : 0,
+    speed: (135 + dn*6 + (n>=UNLOCK.fast?25:0)) * (mode==='perfect' ? .9 : 1),
     patience: Math.max(14, 27 - Math.min(n, TOTAL)*.45),
     power: n >= UNLOCK.power, freeze: n >= UNLOCK.freeze,
     wobble: n >= UNLOCK.wobble ? (n < 12 ? .75 : 1) : 0,
-    flies: n >= UNLOCK.flies ? Math.min(.15, .05 + (n-UNLOCK.flies)*.007) : 0,
-    vip: n >= UNLOCK.vip ? Math.min(.3, .15 + (n-UNLOCK.vip)*.012) : 0,
-    stars: [r10(base*.6), r10(base*1.0), r10(base*1.35)],
-    tip: TIPS[n] || null,
+    flies: n >= UNLOCK.flies && !calm ? Math.min(.15, .05 + (n-UNLOCK.flies)*.007) : 0,
+    vip: n >= UNLOCK.vip && !soft && mode!=='boss' ? Math.min(.3, .15 + (n-UNLOCK.vip)*.012) : 0,
+    stars: cut.map(k => r10(base*k)),
+    tip: force ? null : (TIPS[n] || null),
   };
 }
 
+// ----- Daily challenge: one special level a day, the same for everyone, with a twist -----
+const TWISTS = {
+  tiny:  {name:'Tiny plate',     desc:'Your plate is smaller today.'},
+  vip:   {name:'VIP night',      desc:'Every customer is a VIP: double pay, short patience.'},
+  swarm: {name:'Fly swarm',      desc:'Flies everywhere. Don\'t catch them.'},
+  windy: {name:'Windy day',      desc:'The wind never stops pushing the food around.'},
+  feast: {name:'Big appetites',  desc:'Every order is one layer taller.'},
+};
+const TWIST_FOR = {classic:['tiny','vip','swarm','windy','feast'], rush:['tiny','vip','swarm','windy','feast'],
+  tall:['tiny','swarm','windy'], frenzy:['tiny','windy','feast'], boss:['tiny','swarm','windy']};
+const DAILY_FROM = 6, DAILY_COINS = 40;
+const today = () => new Date().toISOString().slice(0,10);
+const yesterday = () => new Date(Date.now()-864e5).toISOString().slice(0,10);
+function dailyDef(day){
+  day = day || today();
+  let h = 2166136261; for(const ch of day){ h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); }
+  const r = k => { h ^= h<<13; h ^= h>>>17; h ^= h<<5; return (h>>>0) % k; };
+  const mode = ['classic','rush','tall','frenzy','boss'][r(5)];
+  const twist = TWIST_FOR[mode][r(TWIST_FOR[mode].length)];
+  const n = clamp(save.unlocked, DAILY_FROM, 18);   // a daily should be winnable in a try or two, so it never gets as hard as the late levels
+  const L = levelDef(n, mode);
+  L.daily = day; L.twist = twist; L.world = WORLDS[r(WORLDS.length)];
+  if(twist==='vip') L.vip = 1;
+  if(twist==='swarm') L.flies = .2;
+  if(twist==='feast'){ L.minMid++; L.maxMid++; L.stars = L.stars.map(v => Math.round(v*1.15/10)*10); }
+  return L;
+}
+
 // ================= INGREDIENT ART =================
-const H = {bunTop:.38, patty:.21, cheese:.1, lettuce:.13, tomato:.12, onion:.1, bunBottom:.2};
-const MIDDLE = ['patty','cheese','lettuce','tomato','onion'];
-const ALL = ['bunTop','bunBottom',...MIDDLE];
-const CRUMB = {bunTop:'#E9A95B', bunBottom:'#E9A95B', patty:'#7A4128', cheese:'#FFC62E', lettuce:'#6CCB4A', tomato:'#F0473A', onion:'#D9A6E8'};
+const H = {bunTop:.38, patty:.21, cheese:.1, lettuce:.13, tomato:.12, onion:.1, bunBottom:.2,
+  pickle:.1, bacon:.11, egg:.14, mushroom:.14, bread:.2, pancake:.15, berries:.12, cream:.17, pancakeTop:.26};
+const ALL = Object.keys(H);   // everything that can fall (used for the home screen rain)
+const CRUMB = {bunTop:'#E9A95B', bunBottom:'#E9A95B', patty:'#7A4128', cheese:'#FFC62E', lettuce:'#6CCB4A', tomato:'#F0473A', onion:'#D9A6E8',
+  pickle:'#7DB843', bacon:'#D9543B', egg:'#FFD84A', mushroom:'#C99A6B', bread:'#E2B66C', pancake:'#E9A95B', berries:'#5568D8', cream:'#FFFFFF', pancakeTop:'#A8551A'};
+// Short names for banners and the sticker book.
+const FOOD = {patty:'beef', cheese:'cheese', lettuce:'lettuce', tomato:'tomato', onion:'onion', pickle:'pickles', bacon:'bacon', egg:'egg', mushroom:'mushrooms', bread:'toast', pancake:'pancakes', berries:'berries', cream:'cream'};
 
 function rr(c,x,y,w,h,r){c.beginPath();c.roundRect?c.roundRect(x,y,w,h,r):c.rect(x,y,w,h);}
 function vg(c,y0,y1,a,b){const g=c.createLinearGradient(0,y0,0,y1);g.addColorStop(0,a);g.addColorStop(1,b);return g;}
@@ -552,13 +678,77 @@ function drawIng(c,type,cx,by,w){
         c.beginPath(); c.ellipse(cx+w*ox,y+h*.5,w*rx,h*.34,0,0,7); c.stroke();
       }
       break;
+    case 'pickle':
+      for(let i=0;i<4;i++){ const ex=x+w*(.14+i*.24);
+        c.fillStyle='#4E8F2E'; c.beginPath(); c.ellipse(ex,y+h*.5,w*.125,h*.5,0,0,7); c.fill(); c.stroke();
+        c.fillStyle='#B7DE6A'; c.beginPath(); c.ellipse(ex,y+h*.5,w*.095,h*.32,0,0,7); c.fill();
+        c.fillStyle='#EAF6BC'; for(const d of [-.045,0,.045]){ c.beginPath(); c.arc(ex+w*d,y+h*.5,h*.08,0,7); c.fill(); } }
+      break;
+    case 'bacon': {
+      const n=24, amp=h*.2, band=h*.6, wave=i=>Math.sin(i/n*Math.PI*5)*amp;
+      c.beginPath();
+      for(let i=0;i<=n;i++){ const px=x+w*i/n, py=y+amp+wave(i); i?c.lineTo(px,py):c.moveTo(px,py); }
+      for(let i=n;i>=0;i--) c.lineTo(x+w*i/n, y+amp+band+wave(i));
+      c.closePath(); c.fillStyle=vg(c,y,by,'#E0603F','#96301F'); c.fill(); c.stroke();
+      c.strokeStyle='#F8D2B0'; c.lineWidth=h*.17; c.beginPath();
+      for(let i=1;i<n;i++){ const px=x+w*i/n, py=y+amp+band*.5+wave(i); i>1?c.lineTo(px,py):c.moveTo(px,py); }
+      c.stroke();
+      break; }
+    case 'egg':
+      c.fillStyle=vg(c,y,by,'#FFFFFF','#E9E4D6'); rr(c,x+w*.02,y+h*.42,w*.96,h*.58,h*.29); c.fill(); c.stroke();
+      c.fillStyle=vg(c,y,y+h*.6,'#FFE066','#F59A12'); c.beginPath(); c.ellipse(cx+w*.06,y+h*.52,w*.17,h*.52,0,Math.PI,0); c.closePath(); c.fill(); c.stroke();
+      c.fillStyle='rgba(255,255,255,.75)'; c.beginPath(); c.ellipse(cx,y+h*.22,w*.04,h*.09,-.4,0,7); c.fill();
+      break;
+    case 'mushroom':
+      for(let i=0;i<3;i++){ const mx=x+w*(.19+i*.31);
+        c.fillStyle='#F3E3C8'; rr(c,mx-w*.05,y+h*.4,w*.1,h*.6,h*.15); c.fill(); c.stroke();
+        c.fillStyle=vg(c,y,y+h*.6,'#D2A375','#8E6238'); c.beginPath(); c.ellipse(mx,y+h*.58,w*.145,h*.58,0,Math.PI,0); c.closePath(); c.fill(); c.stroke();
+        c.fillStyle='rgba(255,240,220,.4)'; c.beginPath(); c.ellipse(mx-w*.05,y+h*.25,w*.035,h*.1,-.5,0,7); c.fill(); }
+      break;
+    case 'bread':
+      c.fillStyle=vg(c,y,by,'#F8E4B0','#E6BC74'); rr(c,x+w*.02,y,w*.96,h,h*.3); c.fill();
+      c.strokeStyle='#B8752E'; c.lineWidth=line*2.4; c.stroke();
+      c.strokeStyle='rgba(184,117,46,.4)'; c.lineWidth=line*1.6; c.lineCap='round';
+      for(let i=1;i<7;i++){ const gx=x+w*i/7; c.beginPath(); c.moveTo(gx-w*.02,y+h*.32); c.lineTo(gx+w*.02,y+h*.68); c.stroke(); }
+      break;
+    case 'pancake':
+      c.fillStyle=vg(c,y,by,'#F6C777','#D08A3A'); rr(c,x+w*.03,y,w*.94,h,h*.5); c.fill(); c.stroke();
+      c.fillStyle='#FBE3AE'; rr(c,x+w*.07,y+h*.45,w*.86,h*.28,h*.14); c.fill();
+      c.fillStyle='rgba(150,80,25,.38)'; rr(c,x+w*.13,y+line,w*.74,h*.24,h*.12); c.fill();
+      break;
+    case 'berries':
+      for(let i=0;i<5;i++){ const bx=x+w*(.12+i*.19), r=h*.5;
+        c.fillStyle=i%2?'#5568D8':'#E8425A'; c.beginPath(); c.arc(bx,y+h*.5,r,0,7); c.fill(); c.stroke();
+        c.fillStyle='rgba(255,255,255,.6)'; c.beginPath(); c.arc(bx-r*.3,y+h*.3,r*.24,0,7); c.fill(); }
+      break;
+    case 'cream':
+      c.fillStyle=vg(c,y,by,'#FFFFFF','#E3DCF5');
+      c.beginPath(); c.moveTo(x+w*.08,by);
+      c.quadraticCurveTo(x-w*.02,y+h*.5,x+w*.2,y+h*.45);
+      c.quadraticCurveTo(x+w*.25,y+h*.05,x+w*.42,y+h*.3);
+      c.quadraticCurveTo(cx,y-h*.3,x+w*.58,y+h*.3);
+      c.quadraticCurveTo(x+w*.75,y+h*.05,x+w*.8,y+h*.45);
+      c.quadraticCurveTo(x+w*1.02,y+h*.5,x+w*.92,by); c.closePath(); c.fill(); c.stroke();
+      c.strokeStyle='rgba(150,130,200,.45)'; c.lineWidth=line*1.5; c.lineCap='round';
+      c.beginPath(); c.moveTo(x+w*.3,y+h*.6); c.quadraticCurveTo(cx,y+h*.85,x+w*.7,y+h*.6); c.stroke();
+      break;
+    case 'pancakeTop': {
+      const ph=h*.58, py=by-ph;
+      c.fillStyle=vg(c,py,by,'#F6C777','#D08A3A'); rr(c,x+w*.03,py,w*.94,ph,ph*.5); c.fill(); c.stroke();
+      c.fillStyle='#A8551A';
+      c.beginPath(); c.moveTo(x+w*.14,py+ph*.1); c.lineTo(x+w*.86,py+ph*.1);
+      c.quadraticCurveTo(x+w*.93,py+ph*.5,x+w*.82,py+ph*.42); c.quadraticCurveTo(x+w*.77,py+ph*1.05,x+w*.71,py+ph*.42);
+      c.lineTo(x+w*.36,py+ph*.42); c.quadraticCurveTo(x+w*.31,py+ph*.9,x+w*.25,py+ph*.42);
+      c.quadraticCurveTo(x+w*.07,py+ph*.5,x+w*.14,py+ph*.1); c.closePath(); c.fill();
+      c.fillStyle=vg(c,y,py+ph*.2,'#FFF0A0','#FFD23F'); rr(c,cx-w*.1,y,w*.2,h*.46,h*.07); c.fill(); c.stroke();
+      break; }
   }
   c.restore();
 }
 
 // Power-up tokens and fly
 const HEART = new Path2D('M12 21s-7.5-4.6-9.6-9.3C.9 8.2 3 4.5 6.6 4.5c2.1 0 3.6 1.2 5.4 3.2 1.8-2 3.3-3.2 5.4-3.2 3.6 0 5.7 3.7 4.2 7.2C19.5 16.4 12 21 12 21z');
-const TOKEN = {magnet:['#FF8F87','#E8392F'], freeze:['#A6E4FF','#2E9BD6'], heart:['#FF9AC4','#E23C7E']};
+const TOKEN = {magnet:['#FF8F87','#E8392F'], freeze:['#A6E4FF','#2E9BD6'], heart:['#FF9AC4','#E23C7E'], mystery:['#FFE98A','#F0A000']};
 function drawToken(c,kind,cx,cy,r,t){
   c.save(); c.translate(cx,cy);
   const pulse = reduce?0:Math.sin(t*6);
@@ -574,6 +764,9 @@ function drawToken(c,kind,cx,cy,r,t){
     c.lineWidth=r*.14;
     for(let i=0;i<3;i++){ c.rotate(Math.PI/3); c.beginPath(); c.moveTo(-r*.55,0); c.lineTo(r*.55,0); c.stroke();
       c.beginPath(); c.moveTo(r*.35,-r*.14); c.lineTo(r*.48,0); c.lineTo(r*.35,r*.14); c.stroke(); }
+  } else if(kind==='mystery'){
+    c.font=`${Math.round(r*1.5)}px "Lilita One", sans-serif`; c.textAlign='center'; c.textBaseline='middle';
+    c.lineWidth=r*.22; c.strokeStyle='#B87400'; c.lineJoin='round'; c.strokeText('?',0,r*.08); c.fillText('?',0,r*.08);
   } else { const s=r*.07; c.translate(-12*s,-12.5*s); c.scale(s,s); c.fill(HEART); }
   c.restore();
 }
@@ -621,6 +814,12 @@ function drawCustomer(c,cu,mood){ // mood 0..1 = patience; 2 = delighted
   else { c.beginPath(); c.arc(24,34,4,Math.PI*1.15,Math.PI*1.85); c.stroke(); }
   // cheeks
   if(mood>.55){ c.fillStyle='rgba(255,110,140,.35)'; c.beginPath(); c.arc(15.5,28,2.4,0,7); c.arc(32.5,28,2.4,0,7); c.fill(); }
+  // The Critic: round glasses and a bow tie
+  if(cu.critic){ c.strokeStyle='#2A1B4F'; c.lineWidth=1.5; c.fillStyle='rgba(255,255,255,.35)';
+    for(const ex of [19,29]){ c.beginPath(); c.arc(ex,24,4.2,0,7); c.fill(); c.stroke(); }
+    c.beginPath(); c.moveTo(23.2,24); c.lineTo(24.8,24); c.stroke();
+    c.fillStyle='#D92E6E'; c.beginPath(); c.moveTo(24,41); c.lineTo(17,37); c.lineTo(17,45); c.closePath(); c.fill();
+    c.beginPath(); c.moveTo(24,41); c.lineTo(31,37); c.lineTo(31,45); c.closePath(); c.fill(); }
   // VIP crown
   if(cu.vip){ c.fillStyle='#FFC62E'; c.strokeStyle='#B87400'; c.lineWidth=1;
     c.beginPath(); c.moveTo(15,11); c.lineTo(17,3); c.lineTo(21,8); c.lineTo(24,1.5); c.lineTo(27,8); c.lineTo(31,3); c.lineTo(33,11); c.closePath(); c.fill(); c.stroke(); }
@@ -688,7 +887,7 @@ function buildBg(world){
 
 // ================= LAYOUT =================
 let W=0, Hh=0, dpr=1, plateBase=0, plateY=0, unit=1;
-const plateW = () => plateBase * (S && S.boost.plate ? 1.22 : 1);
+const plateW = () => plateBase * (S && S.boost.plate ? 1.22 : 1) * (S && S.L.twist==='tiny' ? .8 : 1);
 function resize(){
   const r = cv.getBoundingClientRect(); if(!r.width) return;
   dpr = Math.min(window.devicePixelRatio||1, 2);
@@ -704,50 +903,127 @@ addEventListener('resize', resize);
 
 // ================= GAME STATE =================
 let S = null, last = 0, running = false, clock = 0;
+// Tower and Golden-hour levels have no customer patience: the clock is the pressure.
+const freeMode = L => L.mode==='tall' || L.mode==='frenzy';
+const towerFrac = () => S.tallH ? (plateY - stackTop()) / S.tallH : 0;
 
-function startLevel(n, boost){
+// Plate looks (bought with coins in the shop; never real money).
+const PLATES = [
+  {k:'classic', name:'Classic',   price:0,   a:'#FFFFFF', b:'#D9D2F2', rim:'#FF6FA8'},
+  {k:'picnic',  name:'Picnic',    price:150, a:'#FFFFFF', b:'#FFD9D6', rim:'#E8392F', dash:[7,5]},
+  {k:'ocean',   name:'Ocean',     price:250, a:'#E2F8FF', b:'#7FC8F0', rim:'#2E7BD6'},
+  {k:'sunny',   name:'Sunflower', price:350, a:'#FFF6C2', b:'#FFC94A', rim:'#E07A1F', dash:[3,6]},
+  {k:'neon',    name:'Neon',      price:500, a:'#4A379E', b:'#1B1247', rim:'#7FFFD4', line:'#7FFFD4'},
+  {k:'gold',    name:'Golden',    price:-1,  a:'#FFF3B0', b:'#F0A000', rim:'#FFFFFF', line:'#8A5A00'},  // prize for a full sticker book
+];
+const plateLook = () => PLATES.find(p => p.k===save.plate && save.plates[p.k]) || PLATES[0];
+function drawPlate(c, px, py, pw, P){
+  c.fillStyle='rgba(20,10,40,.35)'; c.beginPath(); c.ellipse(px, py+11, pw*.6, 8, 0,0,7); c.fill();
+  const pg=c.createLinearGradient(0,py-9,0,py+12); pg.addColorStop(0,P.a); pg.addColorStop(1,P.b);
+  c.fillStyle=pg; c.beginPath(); c.ellipse(px, py+3, pw*.62, 11, 0,0,7); c.fill();
+  c.strokeStyle=P.line||'#2A1B4F'; c.lineWidth=2.5; c.stroke();
+  c.strokeStyle=P.rim; c.lineWidth=2.5; if(P.dash) c.setLineDash(P.dash);
+  c.beginPath(); c.ellipse(px, py+3, pw*.5, 7, 0,0,7); c.stroke(); c.setLineDash([]);
+}
+
+// Sticker book: food stickers come from serving that food, the rest from feats.
+const STICKERS = [
+  ...Object.keys(FOOD).map(t => ({k:'f_'+t, name:FOOD[t][0].toUpperCase()+FOOD[t].slice(1), how:`Serve an order with ${FOOD[t]} in it.`, food:t})),
+  {k:'streak5', name:'On a roll',      how:'Serve 5 orders in a row without a slip.', glyph:'5×', col:['#FFB36B','#E8502F']},
+  {k:'mystery', name:'Lucky dip',      how:'Catch a mystery box.', token:'mystery'},
+  {k:'vip',     name:'Red carpet',     how:'Serve a VIP.', face:'vip'},
+  {k:'tower',   name:'Sky-high',       how:'Clear a Sky-high tower level.', glyph:'↑', col:['#A6E4FF','#2E9BD6']},
+  {k:'perfect', name:'Spotless',       how:'Clear a No slip-ups level.', token:'heart'},
+  {k:'golden',  name:'Golden hour',    how:'Serve 6 orders in one Golden hour.', glyph:'6', col:['#FFE98A','#F0A000']},
+  {k:'critic',  name:'Critic\'s pick', how:'Win over The Critic.', face:'critic'},
+  {k:'stars30', name:'Star chef',      how:'Collect 30 stars.', glyph:'★', col:['#C9A6FF','#7A4FB5']},
+  {k:'daily1',  name:'Regular',        how:'Win a daily challenge.', glyph:'1', col:['#8DF0B8','#26A360']},
+  {k:'daily3',  name:'Loyal',          how:'Win the daily challenge 3 days in a row.', glyph:'3', col:['#8DF0B8','#26A360']},
+  {k:'daily7',  name:'Legend',         how:'Win the daily challenge 7 days in a row.', glyph:'7', col:['#8DF0B8','#26A360']},
+];
+const stickerCount = () => STICKERS.filter(s => save.stickers[s.k]).length;
+function award(k){
+  const st = STICKERS.find(s => s.k===k);
+  if(!st || save.stickers[k]) return;
+  save.stickers[k] = today();
+  if(stickerCount() === STICKERS.length) save.plates.gold = true;
+  persist();
+  if(S){ S.newStickers.push(st.name); if(!S.over) pop('New sticker!', W/2, Hh*.2, '#FF9AC4', 20); }
+}
+
+function startLevel(n, boost, force){ begin(levelDef(n, typeof force==='string' ? force : undefined), boost||{}); }
+function begin(L, boost){
   showScreen('play'); closeModal();
-  const L = levelDef(n);
-  S = {L, score:0, hearts:3 + (boost.heart?1:0), maxHearts:3 + (boost.heart?1:0), served:0, orderNo:0,
-       px:0, targetX:0, prevPx:0, items:[], stack:[], pops:[], parts:[], spawnT:.8, order:null, idx:0,
+  const hearts = L.hearts + (boost.heart?1:0);
+  S = {L, score:0, hearts, maxHearts:hearts, served:0, orderNo:0,
+       px:0, targetX:0, prevPx:0, items:[], stack:[], pops:[], parts:[], spawnT:.8, order:[], idx:0,
        patience:1, patMax:20, shake:0, serveAnim:null, combo:0, lean:0, riskT:0, warnT:0,
-       magnetT: boost.magnet ? 10 : 0, freezeT:0, cust:null, moodDrawn:-1, timeLeft:L.timed, over:false, boost, starsLit:0};
+       magnetT: boost.magnet ? 10 : 0, freezeT:0, cust:null, moodDrawn:-1, timeLeft:L.timed, over:false, boost, starsLit:0,
+       evT:rnd(8,12), lastEv:'', wind:0, windT:0, happyT:0, bonusCoins:0, pieces:0, tallH:0, newStickers:[], dish:'burger', swapPool:[], swapI:-1};
   resize();
   S.px = S.targetX = S.prevPx = W/2;
-  $('hudLevel').textContent = 'Level ' + n;
+  $('hudLevel').textContent = L.daily ? 'Daily challenge' : 'Level ' + L.n;
   $('hudTimer').hidden = !L.timed;
+  $('field').classList.toggle('gold', L.mode==='frenzy');
   buildMeter();
   renderHearts();
   newOrder();
+  S.tallH = Math.min(plateY - Hh*.2, plateBase*.9*(2.3 + Math.min(.5, L.n*.02)));
   updateHud();
-  banner(L.timed ? 'Rush hour!' : 'Level ' + n);
+  banner(MODES[L.mode].name ? MODES[L.mode].name + '!' : L.daily ? 'Daily challenge' : 'Level ' + L.n);
   running = true; last = performance.now();
 }
 function newOrder(){
-  const L = S.L;
-  const midLen = Math.floor(rnd(L.minMid, L.maxMid+1));
-  const mid = [];
-  for(let i=0;i<midLen;i++){ let t; do { t = pick(MIDDLE); } while(mid[mid.length-1]===t); mid.push(t); }
-  S.order = ['bunBottom',...mid,'bunTop'];
-  S.idx = 0; S.orderNo++;
+  const L = S.L, first = S.orderNo===0;
+  S.idx = 0; S.patience = 1; S.lean = 0; S.moodDrawn = -1; S.swapI = -1;
+  if(L.mode==='tall'){   // no orders: anything stacks
+    S.order = []; S.orderNo = 1; S.patMax = 1;
+    S.cust = S.cust || Object.assign(newCustomer(false), {name:'Tower time!'});
+    renderTicket(); return;
+  }
+  let dish = 'burger';
+  if(L.mode!=='boss'){
+    const r = Math.random();
+    if(first && !L.daily && L.n===UNLOCK.sandwich) dish = 'sandwich';
+    else if(first && !L.daily && L.n===UNLOCK.pancakes) dish = 'pancakes';
+    else if(L.menu.pancakes && r < .25) dish = 'pancakes';
+    else if(L.menu.sandwich && r >= .25 && r < .55) dish = 'sandwich';
+  }
+  const midLen = L.mode==='boss' ? L.maxMid + (first ? 2 : 4) : Math.floor(rnd(L.minMid, L.maxMid+1));
+  const mid = [], from = L.menu[dish];
+  for(let i=0;i<midLen;i++){
+    if(dish==='pancakes'){ mid.push(i%2 ? 'pancake' : pick(from)); continue; }
+    let t; do { t = pick(from); } while(mid[mid.length-1]===t); mid.push(t);
+  }
+  S.dish = dish; S.swapPool = from;
+  S.order = [DISHES[dish].bottom, ...mid, DISHES[dish].top];
+  S.orderNo++;
   const vip = Math.random() < L.vip;
   S.cust = newCustomer(vip);
-  S.patMax = (L.patience + midLen*1.6) * (vip ? .72 : 1);
-  S.patience = 1; S.lean = 0; S.moodDrawn = -1;
+  if(L.mode==='boss') Object.assign(S.cust, {name:'The Critic', critic:true, style:1, hair:'#F2F2F2', shirt:'#2A1B4F'});
+  S.patMax = (L.patience + midLen*1.6) * (vip ? .72 : 1) * (L.mode==='boss' ? 1.7 : 1);
   renderTicket();
 }
 function renderTicket(){
+  const L = S.L, tk = $('ticket');
   $('whoName').textContent = S.cust.name;
-  $('orderNo').textContent = 'Order ' + S.orderNo;
-  $('ticket').classList.toggle('vip', !!S.cust.vip);
+  $('orderNo').textContent = L.mode==='tall' ? '' : 'Order ' + S.orderNo;
+  tk.classList.toggle('vip', !!S.cust.vip);
+  tk.classList.toggle('critic', !!S.cust.critic);
+  tk.classList.toggle('gold', L.mode==='frenzy');
+  $('vipTag').textContent = S.cust.critic ? 'PAYS ×3' : 'VIP ×2';
   const box = $('recipe'); box.innerHTML='';
+  box.classList.toggle('long', S.order.length > 7);
+  if(L.mode==='tall') box.innerHTML = '<div class="free"><b>Catch anything!</b>Stack it up to the dashed line.</div>';
   S.order.forEach((t,i)=>{
     const d=document.createElement('div');
-    d.className='step'+(i<S.idx?' done':'')+(i===S.idx?' next':'');
+    d.className='step'+(i<S.idx?' done':'')+(i===S.idx?' next':'')+(i===S.swapI?' changed':'');
     const c=document.createElement('canvas'); c.width=72; c.height=48;
     const w=58; drawIng(c.getContext('2d'),t,36,24+H[t]*w/2,w);
     d.appendChild(c); box.appendChild(d);
   });
+  // a taller or shorter ticket changes how much room the kitchen has
+  const r = cv.getBoundingClientRect(); if(r.height && Math.abs(r.height - Hh) > 1) resize();
 }
 function renderHearts(){
   let h=''; for(let i=0;i<S.maxHearts;i++) h+=`<svg viewBox="0 0 24 24" style="fill:${i<S.hearts?'var(--bad)':'rgba(255,255,255,.18)'}"><use href="#i-heart"/></svg>`;
@@ -759,20 +1035,27 @@ function buildMeter(){
   s.forEach((v,i)=>{ const m=document.createElement('div'); m.className='mk'; m.style.left=(v/top*100)+'%'; m.innerHTML=star(false); m.dataset.i=i; bar.appendChild(m); });
 }
 function updateHud(){
+  const L = S.L;
   $('pts').textContent = S.score;
-  $('hudGoal').innerHTML = `Burgers <b>${S.served}</b> / ${S.L.goal}`;
-  $('barFill').style.width = Math.min(100, S.score/S.L.stars[2]*100)+'%';
-  const lit = S.L.stars.filter(v=>S.score>=v).length;
+  const goal = L.mode==='tall' ? `Tower <b>${clamp(Math.round(towerFrac()*100),0,100)}%</b>`
+    : L.mode==='frenzy' ? `Served <b>${S.served}</b> · need ${L.goal}`
+    : `Orders <b>${S.served}</b> / ${L.goal}`;
+  if($('hudGoal').innerHTML !== goal) $('hudGoal').innerHTML = goal;
+  $('barFill').style.width = Math.min(100, S.score/L.stars[2]*100)+'%';
+  const lit = L.stars.filter(v=>S.score>=v).length;
   if(lit !== S.starsLit){ S.starsLit = lit; $('bar').querySelectorAll('.mk').forEach(m=>{ m.innerHTML = star(+m.dataset.i < lit); }); }
-  if(S.L.timed){ const t=Math.max(0,Math.ceil(S.timeLeft)); $('hudTimer').textContent = Math.floor(t/60)+':'+String(t%60).padStart(2,'0'); }
+  if(L.timed){ const t=Math.max(0,Math.ceil(S.timeLeft)); $('hudTimer').textContent = Math.floor(t/60)+':'+String(t%60).padStart(2,'0'); }
   const b=[];
   if(S.magnetT>0) b.push(`<span class="badge magnet">Magnet ${Math.ceil(S.magnetT)}s</span>`);
   if(S.freezeT>0) b.push(`<span class="badge freeze">Freeze ${Math.ceil(S.freezeT)}s</span>`);
+  if(S.happyT>0) b.push(`<span class="badge happy">2× points ${Math.ceil(S.happyT)}s</span>`);
+  if(S.windT>0) b.push(`<span class="badge wind">Wind ${S.wind>0?'→':'←'}</span>`);
   if(S.combo>1) b.push(`<span class="badge streak">${S.combo}x streak</span>`);
   const html=b.join(''); if($('badges').innerHTML!==html) $('badges').innerHTML=html;
-  const p=$('pat'); p.style.width=Math.max(0,S.patience*100)+'%';
-  p.style.background = S.freezeT>0 ? 'var(--ice)' : S.patience>.5?'var(--good)':S.patience>.25?'var(--butter)':'var(--bad)';
-  const mood = S.serveAnim ? 2 : Math.round(S.patience*20)/20;
+  const pf = freeMode(L) ? S.timeLeft/L.timed : S.patience;
+  const p=$('pat'); p.style.width=Math.max(0,pf*100)+'%';
+  p.style.background = S.freezeT>0 ? 'var(--ice)' : pf>.5?'var(--good)':pf>.25?'var(--butter)':'var(--bad)';
+  const mood = S.serveAnim ? 2 : Math.round(pf*20)/20;
   if(mood!==S.moodDrawn){ S.moodDrawn=mood; drawCustomer($('avatar').getContext('2d'), S.cust, mood); }
 }
 function pop(text,x,y,color,size){ S.pops.push({text,x,y,color,t:0,size:size||22}); }
@@ -781,8 +1064,8 @@ function burst(x,y,colors,n,power){
   for(let i=0;i<n;i++){ const a=rnd(0,Math.PI*2), sp=rnd(.3,1)*(power||220);
     S.parts.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-120,life:rnd(.5,1),t:0,c:pick(colors),s:rnd(2,5),r:rnd(0,6),conf:power>300}); }
 }
-function banner(text){
-  const b=document.createElement('div'); b.className='banner'; b.textContent=text; $('field').appendChild(b);
+function banner(text, small){
+  const b=document.createElement('div'); b.className='banner'+(small?' small':''); b.textContent=text; $('field').appendChild(b);
   setTimeout(()=>b.remove(),1700);
 }
 function loseHeart(reason,x,y){
@@ -793,21 +1076,64 @@ function loseHeart(reason,x,y){
 
 // ================= SPAWNING =================
 function spawn(){
-  const L=S.L, r=Math.random();
+  const L=S.L, r=Math.random(), tall = L.mode==='tall', frenzy = L.mode==='frenzy';
   const powerChance = L.power ? .075 : 0;
   const w = plateW()*.9, x = w/2 + Math.random()*(W-w);
   const baseV = L.speed*unit;
   if(r < powerChance){
-    const kind = S.hearts < S.maxHearts && Math.random()<.3 ? 'heart' : (L.freeze && Math.random()<.5 ? 'freeze' : 'magnet');
-    S.items.push({kind:'token', type:kind, x, y:-24, vy:baseV*.8, state:'fall'});
+    let kind = S.hearts < S.maxHearts && Math.random()<.3 ? 'heart' : (L.freeze && Math.random()<.5 ? 'freeze' : 'magnet');
+    if(tall && kind==='magnet') kind = L.freeze ? 'freeze' : '';   // nothing for a magnet to pull in a tower level
+    if(kind){ S.items.push({kind:'token', type:kind, x, y:-24, vy:baseV*.8, state:'fall'}); return; }
   } else if(r < powerChance + L.flies){
     S.items.push({kind:'fly', x, bx:x, y:-20, vy:baseV*.7, ph:Math.random()*6, amp:rnd(30,80), state:'fall'});
-  } else {
-    // Mostly the ingredient needed now, often the one after it (so there's no dead wait between catches), sometimes anything.
-    const need = S.order[S.idx], next = S.order[S.idx+1], roll = Math.random();
-    const t = roll < .4 ? need : (next && roll < .62) ? next : pick(ALL);
-    S.items.push({kind:'ing', type:t, x, y:-10, vy:baseV*rnd(.85,1.15), rot:rnd(-.3,.3), vr:rnd(-1,1), state:'fall', vx:0});
+    return;
   }
+  // Mostly the ingredient needed now, often the one after it (so there's no dead wait between catches), sometimes anything.
+  const need = S.order[S.idx], next = S.order[S.idx+1], roll = Math.random();
+  const t = tall ? pick(L.pool) : roll < (frenzy?.6:.4) ? need : (next && roll < (frenzy?.82:.62)) ? next : pick(L.pool);
+  S.items.push({kind:'ing', type:t, x, y:-10, vy:baseV*rnd(.85,1.15), rot:rnd(-.3,.3), vr:rnd(-1,1), state:'fall', vx:0});
+}
+
+// ================= SURPRISES =================
+// Every so often something unexpected happens, so no two runs of a level play the same.
+function gust(){
+  const dir = S.wind ? -Math.sign(S.wind) : (Math.random()<.5 ? -1 : 1);
+  S.wind = dir * rnd(55,85) * unit; S.windT = 5;
+  banner('Wind gust!', true); Sound.play('gust');
+}
+function surprise(){
+  const L = S.L, n = L.n;
+  if(L.twist==='windy'){ gust(); return; }   // a windy day is windy even in Golden hour
+  if(L.mode==='frenzy') return;
+  const opts = [];
+  if(L.mode!=='tall'){
+    if(n >= UNLOCK.mystery) opts.push('mystery');
+    if(n >= UNLOCK.happy && S.happyT<=0) opts.push('happy');
+    if(n >= UNLOCK.swap && L.mode!=='boss' && swapSpots().length) opts.push('swap');
+  }
+  if(n >= UNLOCK.wind && S.windT<=0) opts.push('wind');
+  if(!opts.length) return;
+  const fresh = opts.filter(o => o!==S.lastEv), k = pick(fresh.length ? fresh : opts);
+  S.lastEv = k;
+  if(k==='wind') gust();
+  if(k==='happy'){ S.happyT = 8; banner('Happy hour! 2× points', true); Sound.play('bell'); }
+  if(k==='mystery'){
+    const w = plateW()*.9;
+    S.items.push({kind:'mystery', x: w/2 + Math.random()*(W-w), y:-24, vy:S.L.speed*unit*.75, state:'fall'});
+  }
+  if(k==='swap'){
+    const i = pick(swapSpots());
+    const t = pick(S.swapPool.filter(t => t!==S.order[i] && t!==S.order[i-1] && t!==S.order[i+1]));
+    S.order[i] = t; S.swapI = i; S.patience = Math.min(1, S.patience + .15);
+    renderTicket(); banner(`“Make it ${FOOD[t]}!”`, true); Sound.play('bell');
+  }
+}
+// Fillings the customer could still change their mind about (not the one you're on, not the lid).
+function swapSpots(){
+  const out = [];
+  for(let i=S.idx+1; i<S.order.length-1; i++)
+    if(S.swapPool.includes(S.order[i]) && S.swapPool.some(t => t!==S.order[i] && t!==S.order[i-1] && t!==S.order[i+1])) out.push(i);
+  return out;
 }
 
 // ================= UPDATE =================
@@ -822,11 +1148,11 @@ function update(dt){
   S.prevPx = S.px;
   S.px += (S.targetX - S.px) * Math.min(1, dt*18);
 
-  // wobble
+  // wobble (very tall towers stop getting any touchier after 9 pieces)
   const v = (S.px - S.prevPx) / Math.max(dt, .001);
   const target = clamp(-v / (1100*unit+200), -1.2, 1.2) * L.wobble;
   S.lean += (target - S.lean) * Math.min(1, dt*5);
-  const risk = Math.abs(S.lean) * Math.max(0, S.stack.length-1) / 4.2;
+  const risk = Math.abs(S.lean) * clamp(S.stack.length-1, 0, 8) / 4.2;
   if(L.wobble && !S.serveAnim && S.stack.length > 1 && risk > .85) S.riskT += dt; else S.riskT = Math.max(0, S.riskT - dt);
   S.warnT -= dt;
   if(L.wobble && risk > .6 && S.warnT <= 0 && S.stack.length > 1){ pop('Steady!', S.px, stackTop()-30, '#FFD25E'); S.warnT = 1.2; Sound.play('warn'); }
@@ -835,16 +1161,21 @@ function update(dt){
   const frozen = S.freezeT > 0;
   S.magnetT = Math.max(0, S.magnetT - dt);
   S.freezeT = Math.max(0, S.freezeT - dt);
-  if(L.timed && !frozen && !S.serveAnim){ S.timeLeft -= dt; if(S.timeLeft<=0){ finish(false, "Time's up"); return; } }
+  S.happyT = Math.max(0, S.happyT - dt);
+  S.windT = Math.max(0, S.windT - dt);
+  if(L.timed && !frozen && !S.serveAnim){
+    S.timeLeft -= dt;
+    if(S.timeLeft<=0){ S.timeLeft = 0; if(L.mode==='frenzy' && S.served >= L.goal) finish(true); else finish(false, "Time's up"); return; }
+  }
 
   if(S.serveAnim){
     S.serveAnim.t += dt;
     if(S.serveAnim.t > .6){
       S.serveAnim=null; S.stack=[];
-      if(S.served >= L.goal){ finish(true); return; }
+      if(S.served >= L.goal && L.mode!=='frenzy'){ finish(true); return; }
       newOrder();
     }
-  } else if(!frozen){
+  } else if(!frozen && !freeMode(L)){
     S.patience -= dt / S.patMax;
     if(S.patience <= 0){
       S.stack=[];
@@ -853,16 +1184,18 @@ function update(dt){
       newOrder();
     }
   }
+  if(!S.serveAnim){ S.evT -= dt; if(S.evT<=0){ surprise(); S.evT = L.twist==='windy' ? 6 : rnd(11,17); } }
 
   const fall = frozen ? .45 : 1;
   S.spawnT -= dt * fall;
-  if(S.spawnT<=0){ spawn(); S.spawnT = Math.max(.5, 1.05 - L.n*.018) * rnd(.8,1.2); }
+  if(S.spawnT<=0){ spawn(); S.spawnT = Math.max(.5, 1.05 - L.n*.018) * rnd(.8,1.2) * (L.mode==='frenzy' ? .5 : 1); }
 
   const top = stackTop();
   for(const it of S.items){
     const prev = it.y;
     if(it.state==='fall'){
       it.y += it.vy*dt*fall;
+      if(S.windT>0){ const dx = S.wind*dt*fall; if(it.kind==='fly') it.bx = clamp(it.bx+dx, 12, W-12); else it.x = clamp(it.x+dx, 14, W-14); }
       if(it.kind==='ing'){
         it.rot += it.vr*dt*.3;
         if(S.magnetT>0 && it.type===S.order[S.idx] && it.y > Hh*.2) it.x += (S.px - it.x) * Math.min(1, dt*4);
@@ -890,6 +1223,7 @@ function updateFx(dt){
 }
 
 function catchItem(it, top){
+  const L = S.L, x2 = S.happyT>0 ? 2 : 1;
   if(it.kind==='token'){
     it.dead = true;
     burst(S.px, top-10, TOKEN[it.type], 14); Sound.play(it.type==='heart'?'heart':'token');
@@ -903,19 +1237,35 @@ function catchItem(it, top){
     loseHeart('Yuck, a fly!', S.px, top-30);
     return running;
   }
+  if(it.kind==='mystery'){   // counts as whatever the ticket needs next
+    it.dead = true; burst(S.px, top-10, TOKEN.mystery, 18); Sound.play('lucky'); award('mystery');
+    if(S.idx >= S.order.length) return true;
+    S.stack.push(S.order[S.idx]); S.idx++;
+    S.score += 25*x2; pop('Lucky! +'+25*x2, S.px, top-30, '#FFE98A', 24);
+    if(S.idx >= S.order.length) serve(); else renderTicket();
+    return true;
+  }
+  if(L.mode==='tall'){
+    Sound.play('catch', Math.min(7, S.stack.length)); it.dead = true; S.stack.push(it.type); S.pieces++;
+    S.score += 10; pop('+10', S.px, top-20, '#FFD25E', 18);
+    burst(S.px, top, [CRUMB[it.type],'#FFFFFF'], 8, 160);
+    if(towerFrac() >= 1){ S.served = 1; finish(true); return false; }
+    return true;
+  }
   if(it.type === S.order[S.idx]){
-    Sound.play('catch', S.idx); it.dead = true; S.stack.push(it.type); S.idx++;
-    S.score += 5; pop('+5', S.px, top-20, '#FFD25E', 18);
+    Sound.play('catch', Math.min(7, S.idx)); it.dead = true; S.stack.push(it.type); S.idx++;
+    S.score += 5*x2; pop('+'+5*x2, S.px, top-20, '#FFD25E', 18);
     burst(S.px, top, [CRUMB[it.type],'#FFFFFF'], 8, 160);
     if(S.idx >= S.order.length) serve(); else renderTicket();
     return true;
   }
   it.state='bounce'; it.vy = -260*unit; it.vx = (it.x<S.px?-1:1)*160; it.vr = 8;
+  if(L.mode==='frenzy'){ S.combo = 0; Sound.play('wrong'); pop('Oops!', S.px, top-24, '#FF5E57'); return true; }   // no hearts to lose in Golden hour
   loseHeart('Wrong!', S.px, top-24);
   return running;
 }
 function topple(){
-  const t = S.stack.pop(); S.idx--;
+  const t = S.stack.pop(); if(S.L.mode!=='tall') S.idx--;
   const dir = S.lean > 0 ? 1 : -1;
   S.items.push({kind:'ing', type:t, x:S.px + swayOffset(S.stack.length+1), y:stackTop(), vy:-200*unit, vx:dir*220, rot:0, vr:dir*9, state:'bounce'});
   S.lean *= .3; S.riskT = 0; S.combo = 0; S.shake = reduce?0:.2;
@@ -923,61 +1273,98 @@ function topple(){
   renderTicket();
 }
 function serve(){
-  const tip = Math.round(S.patience*20);
+  const L = S.L, tip = Math.round(S.patience*20);
   S.combo++;
   let bonus = S.order.length*10 + tip + (S.combo>1 ? S.combo*5 : 0);
   if(S.cust.vip) bonus *= 2;
+  if(S.cust.critic) bonus *= 3;
+  if(S.happyT>0) bonus *= 2;
   S.score += bonus; S.served++;
-  pop((S.cust.vip?'VIP! +':'Yum! +')+bonus, S.px, stackTop()-40, '#7BE8A8', 26);
+  if(L.mode==='frenzy') S.bonusCoins += 3;
+  pop((S.cust.critic?'Exquisite! +':S.cust.vip?'VIP! +':'Yum! +')+bonus, S.px, stackTop()-40, '#7BE8A8', 26);
+  if(L.mode==='frenzy') pop('+3 coins', S.px, stackTop()-70, '#FFD25E', 20);
   burst(S.px, stackTop(), ['#FFD25E','#FF6FA8','#7FD3FF','#3FCB7E','#FFFFFF'], 30, 360);
   S.serveAnim = {t:0, x:S.px}; Sound.play('serve'); setTimeout(()=>Sound.play('whoosh'),250);
   S.items.forEach(i=>{ if(i.state==='fall' && i.kind==='ing'){ i.state='bounce'; i.vy=-120*unit; i.vx=rnd(-100,100); i.vr=4; }});
+  new Set(S.order).forEach(t => award('f_'+t));
+  if(S.cust.vip) award('vip');
+  if(S.combo >= 5) award('streak5');
   renderTicket(); updateHud();
 }
 
 // ================= FINISH =================
 function finish(won, reason){
   if(S.over) return; S.over = true; running = false;
-  const n = S.L.n;
+  const L = S.L, n = L.n;
   if(!won){
-    Sound.play('lose'); setTimeout(()=>openModal(loseHtml(n, reason)), 500);
+    if(!L.daily){ save.fails[n] = (save.fails[n]||0) + 1; persist(); }
+    Sound.play('lose'); setTimeout(()=>openModal(loseHtml(L, reason)), 500);
     return;
   }
-  const heartBonus = S.hearts*50, timeBonus = S.L.timed ? Math.floor(S.timeLeft)*3 : 0;
+  if(!L.daily) delete save.fails[n];
+  const heartBonus = L.mode==='frenzy' ? 0 : S.hearts*50;
+  const timeBonus = L.timed && L.mode!=='frenzy' ? Math.floor(S.timeLeft) * (L.mode==='tall' ? 5 : 3) : 0;
   const base = S.score; S.score += heartBonus + timeBonus; updateHud();
-  const stars = Math.max(1, S.L.stars.filter(v=>S.score>=v).length);
-  const coins = Math.round(S.score/10);
-  const prevStars = save.stars[n]||0;
-  save.stars[n] = Math.max(prevStars, stars);
-  save.best[n] = Math.max(save.best[n]||0, S.score);
-  save.unlocked = Math.max(save.unlocked, n+1);
-  save.coins += coins; persist();
+  const stars = Math.max(1, L.stars.filter(v=>S.score>=v).length);
+  let coins = Math.round(S.score/10) + S.bonusCoins, firstToday = false;
+  if(L.daily){
+    // The daily pays a fixed prize once a day (replays are just for fun), plus a little more for each day in a row.
+    firstToday = save.daily.day !== L.daily;
+    if(firstToday){
+      save.daily.streak = save.daily.day === yesterday() ? save.daily.streak + 1 : 1;
+      save.daily.day = L.daily;
+      coins = DAILY_COINS + Math.min(save.daily.streak, 7)*5;
+    } else coins = 0;
+    award('daily1'); if(save.daily.streak >= 3) award('daily3'); if(save.daily.streak >= 7) award('daily7');
+  } else {
+    save.stars[n] = Math.max(save.stars[n]||0, stars);
+    save.best[n] = Math.max(save.best[n]||0, S.score);
+    save.unlocked = Math.max(save.unlocked, n+1);
+  }
+  save.coins += coins;
+  if(L.mode==='tall') award('tower');
+  if(L.mode==='perfect') award('perfect');
+  if(L.mode==='boss') award('critic');
+  if(L.mode==='frenzy' && S.served >= 6) award('golden');
+  if(Object.values(save.stars).reduce((a,b)=>a+b,0) >= 30) award('stars30');
+  persist();
   for(let i=0;i<4;i++) setTimeout(()=>burst(rnd(W*.2,W*.8), rnd(Hh*.2,Hh*.5), ['#FFD25E','#FF6FA8','#7FD3FF','#3FCB7E','#FFFFFF'], 30, 420), i*180);
-  banner('Order complete!'); Sound.play('win');
-  setTimeout(()=>{ openModal(winHtml(n, stars, base, heartBonus, timeBonus, coins)); for(let i=0;i<stars;i++) setTimeout(()=>Sound.play('star',i), 150+i*300); setTimeout(()=>Sound.play('coin'), 250+stars*300); }, 1300);
+  banner(L.mode==='tall' ? 'Sky-high!' : L.mode==='frenzy' ? "Time's up!" : 'Order complete!'); Sound.play('win');
+  setTimeout(()=>{ openModal(winHtml(L, stars, base, heartBonus, timeBonus, coins, firstToday)); for(let i=0;i<stars;i++) setTimeout(()=>Sound.play('star',i), 150+i*300); setTimeout(()=>Sound.play('coin'), 250+stars*300); }, 1300);
 }
-function winHtml(n, stars, base, hb, tb, coins){
-  const last = n===TOTAL;
-  return `<div class="ribbon win">Level ${n} cleared</div>
+function winHtml(L, stars, base, hb, tb, coins, firstToday){
+  const n = L.n, last = n===TOTAL && !L.daily;
+  const what = L.mode==='tall' ? `Tower pieces (${S.pieces})` : `Orders served (${S.served})`;
+  return `<div class="ribbon win">${L.daily ? 'Daily cleared' : 'Level '+n+' cleared'}</div>
     <div class="starsRow big">${[0,1,2].map(i=>`<svg viewBox="0 0 24 24" class="${i<stars?'pop':''} ${i===1?'mid':''}" style="animation-delay:${.15+i*.3}s"><use href="#${i<stars?'i-star':'i-star-off'}"/></svg>`).join('')}</div>
     <div class="bigScore">${S.score}</div>
-    <div class="breakdown"><span>Burgers served</span><span>${base}</span>
-      <span>Hearts left × 50</span><span>${hb}</span>
-      ${S.L.timed?`<span>Time left × 3</span><span>${tb}</span>`:''}
+    <div class="breakdown"><span>${what}</span><span>${base}</span>
+      ${L.mode==='frenzy'?'':`<span>Hearts left × 50</span><span>${hb}</span>`}
+      ${tb||L.mode==='rush'||L.mode==='tall'?`<span>Time left × ${L.mode==='tall'?5:3}</span><span>${tb}</span>`:''}
       <span class="tot">Total</span><span class="tot">${S.score}</span></div>
-    <div class="earned">${coin}+${coins}</div>
+    ${L.daily && !firstToday ? '<div class="thresholds">You already collected today\'s prize. Come back tomorrow for a new challenge.</div>'
+      : `<div class="earned">${coin}+${coins}</div>${L.daily ? `<div class="thresholds">${save.daily.streak} day${save.daily.streak>1?'s':''} in a row. Come back tomorrow to keep it going.</div>` : S.bonusCoins ? `<div class="thresholds">Includes ${S.bonusCoins} Golden hour bonus coins</div>` : ''}`}
+    ${S.newStickers.length ? `<div class="newStick">New sticker${S.newStickers.length>1?'s':''}: <b>${S.newStickers.join(', ')}</b></div>` : ''}
     <div class="modalBtns">
-      <button class="btn ghost" data-act="map">Map</button>
-      <button class="btn green" data-act="next" data-n="${n+1}">Next level</button>
+      ${L.daily ? '<button class="btn green" data-act="home">Done</button>'
+        : `<button class="btn ghost" data-act="map">Map</button><button class="btn green" data-act="next" data-n="${n+1}">Next level</button>`}
     </div>
     ${last?'<div class="tip">You beat all three worlds! <b>Bonus worlds</b> are open now, and they never end.</div>':''}`;
 }
-function loseHtml(n, reason){
+function loseHtml(L, reason){
+  const did = L.mode==='tall' ? `Your tower got <b>${clamp(Math.round(towerFrac()*100),0,99)}%</b> of the way up.`
+    : L.mode==='frenzy' ? `You served <b>${S.served}</b>. You need <b>${L.goal}</b> to pass.`
+    : `You served <b>${S.served}</b> of <b>${L.goal}</b> orders.`;
+  const tips = L.mode==='tall' ? ['Thick pieces like buns and patties climb fastest.','Slow down as the tower grows, or the top piece slides off.']
+    : L.mode==='perfect' ? ['With one heart, let anything you\'re unsure about drop.','An Extra Heart booster gives you a second chance here.']
+    : L.mode==='boss' ? ['Move gently once the tower is tall.','A Big Plate makes giant orders much easier to catch.']
+    : ['Move smoothly with tall stacks so they don\'t topple.','Grab the freeze when a customer is running out of patience.','Ignore ingredients you don\'t need. Letting them drop is free.','Try a booster before you start. The magnet helps a lot.'];
   return `<div class="ribbon lose">${reason}</div>
     <div class="starsRow">${star(false)}<svg viewBox="0 0 24 24" class="mid"><use href="#i-star-off"/></svg>${star(false)}</div>
-    <p style="margin:0;font-size:15px">You served <b>${S.served}</b> of <b>${S.L.goal}</b> burgers.</p>
-    <div class="tip">${pick(['Move smoothly with tall stacks so they don\'t topple.','Grab the freeze when a customer is running out of patience.','Ignore ingredients you don\'t need. Letting them drop is free.','Try a booster before you start. The magnet helps a lot.'])}</div>
-    <div class="modalBtns"><button class="btn ghost" data-act="map">Map</button><button class="btn green" data-act="open" data-n="${n}">Try again</button></div>`;
+    <p style="margin:0;font-size:15px">${did}</p>
+    <div class="tip">${pick(tips)}</div>
+    <div class="modalBtns">${L.daily ? '<button class="btn ghost" data-act="home">Home</button><button class="btn green" data-act="daily">Try again</button>'
+      : `<button class="btn ghost" data-act="map">Map</button><button class="btn green" data-act="open" data-n="${L.n}">Try again</button>`}</div>`;
 }
 
 // ================= DRAW =================
@@ -987,11 +1374,26 @@ function draw(){
   ctx.clearRect(0,0,W,Hh);
   if(S.shake>0) ctx.translate(rnd(-5,5)*S.shake*2, rnd(-3,3)*S.shake*2);
   if(bgCache) ctx.drawImage(bgCache, 0,0, W, Hh);
+  if(S.L.mode==='frenzy'){ ctx.fillStyle='rgba(255,210,94,.16)'; ctx.fillRect(0,0,W,Hh); }
   if(S.freezeT>0){ ctx.fillStyle='rgba(143,216,255,.16)'; ctx.fillRect(0,0,W,Hh); }
   const pw = plateW();
+  if(S.L.mode==='tall'){   // the line the tower has to reach
+    const gy = plateY - S.tallH;
+    ctx.strokeStyle='rgba(30,16,60,.5)'; ctx.lineWidth=6; ctx.setLineDash([14,10]); ctx.beginPath(); ctx.moveTo(0,gy+2); ctx.lineTo(W,gy+2); ctx.stroke();
+    ctx.strokeStyle='#FFD25E'; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(W,gy); ctx.stroke(); ctx.setLineDash([]);
+    ctx.font='16px "Lilita One", sans-serif'; ctx.textAlign='left'; ctx.lineJoin='round';
+    ctx.strokeStyle='rgba(30,16,60,.85)'; ctx.lineWidth=4; ctx.strokeText('GOAL', 8, gy-7); ctx.fillStyle='#FFD25E'; ctx.fillText('GOAL', 8, gy-7);
+  }
+  if(S.windT>0 && !reduce){   // wind streaks
+    const d = Math.sign(S.wind), span = W+80;
+    ctx.strokeStyle='rgba(255,255,255,.45)'; ctx.lineWidth=2; ctx.lineCap='round';
+    for(let i=0;i<7;i++){ const yy = Hh*(.07+i*.11), xx = (((clock*230*d + i*97) % span) + span) % span - 40;
+      ctx.beginPath(); ctx.moveTo(xx,yy); ctx.lineTo(xx-d*36,yy); ctx.stroke(); }
+  }
 
   for(const it of S.items){
     if(it.kind==='token'){ drawToken(ctx,it.type,it.x,it.y,pw*.17,clock); continue; }
+    if(it.kind==='mystery'){ drawToken(ctx,'mystery',it.x,it.y,pw*.19,clock); continue; }
     if(it.kind==='fly'){ drawFly(ctx,it.x,it.y,pw*.22,clock); continue; }
     ctx.save(); ctx.translate(it.x, it.y); ctx.rotate(it.rot||0);
     if(it.type===S.order[S.idx] && it.state==='fall'){ ctx.shadowColor='rgba(255,240,150,.95)'; ctx.shadowBlur=18; }
@@ -1009,11 +1411,7 @@ function draw(){
   // soft spotlight + shadow so the plate reads on every background
   const spot=ctx.createRadialGradient(px,plateY+4,4,px,plateY+4,pw*.9); spot.addColorStop(0,'rgba(255,255,230,.45)'); spot.addColorStop(1,'rgba(255,255,230,0)');
   ctx.fillStyle=spot; ctx.fillRect(px-pw, plateY-pw*.5, pw*2, pw);
-  ctx.fillStyle='rgba(20,10,40,.35)'; ctx.beginPath(); ctx.ellipse(px, plateY+11, pw*.6, 8, 0,0,7); ctx.fill();
-  const pg=ctx.createLinearGradient(0,plateY-9,0,plateY+12); pg.addColorStop(0,'#FFFFFF'); pg.addColorStop(1,'#D9D2F2');
-  ctx.fillStyle=pg; ctx.beginPath(); ctx.ellipse(px, plateY+3, pw*.62, 11, 0,0,7); ctx.fill();
-  ctx.strokeStyle='#2A1B4F'; ctx.lineWidth=2.5; ctx.stroke();
-  ctx.strokeStyle='#FF6FA8'; ctx.lineWidth=2.5; ctx.beginPath(); ctx.ellipse(px, plateY+3, pw*.5, 7, 0,0,7); ctx.stroke();
+  drawPlate(ctx, px, plateY, pw, plateLook());
   let y = plateY;
   const danger = S.riskT > 0;
   S.stack.forEach((t,i)=>{
@@ -1082,6 +1480,8 @@ function toast(msg){ const t=$('toast'); t.textContent=msg; t.hidden=false; t.st
 function showHome(){
   showScreen('home');
   $('homeLevel').textContent = 'Level ' + save.unlocked;
+  $('dailyDot').hidden = save.unlocked < DAILY_FROM || save.daily.day === today();
+  $('stickCount').textContent = stickerCount() + '/' + STICKERS.length;
   sizeHome();
 }
 const homeFall=[]; let hbW=0, hbH=0;
@@ -1115,9 +1515,47 @@ $('homeHow').onclick = () => openModal(`<button class="closeX" data-act="close" 
   <b>Stack</b><span>Catch the glowing ingredient. Follow the ticket from bottom bun to top bun.</span>
   <b>Hearts</b><span>Catching the wrong food or letting a customer give up costs a heart.</span>
   <b>Stars</b><span>Score more points for more stars. Fast service earns tips.</span>
-  <b>Boosters</b><span>Unlock them as you play, buy more in the shop, and pick them before a level.</span></div>
+  <b>Boosters</b><span>Unlock them as you play, buy more in the shop, and pick them before a level.</span>
+  <b>Specials</b><span>Tagged levels on the map play differently: tower builds, one-heart runs, Golden hour and The Critic.</span>
+  <b>Daily</b><span>One new challenge every day, with a coin prize and a streak to keep going.</span></div>
   <div class="modalBtns"><button class="btn green" data-act="close">Got it</button></div>`);
 $('mapHome').onclick = () => showHome();
+
+// ----- Daily challenge -----
+$('homeDaily').onclick = () => openDaily();
+function openDaily(){
+  if(save.unlocked < DAILY_FROM){
+    openModal(`<button class="closeX" data-act="close" aria-label="Close">✕</button><div class="ribbon">Daily challenge</div>
+      <div class="tip">A new special level every day, with a coin prize. It opens once you reach <b>level ${DAILY_FROM}</b>.</div>
+      <div class="modalBtns"><button class="btn green" data-act="close">OK</button></div>`);
+    return;
+  }
+  openIntro(dailyDef());
+}
+
+// ----- Sticker book -----
+function stickerIcon(st){
+  const c=document.createElement('canvas'); c.width=96; c.height=96; const g=c.getContext('2d');
+  if(st.food){ const w=78, h=H[st.food]*w; drawIng(g, st.food, 48, 48+h/2, w); }
+  else if(st.token) drawToken(g, st.token, 48, 48, 32, 0);
+  else if(st.face) drawCustomer(g, st.face==='vip' ? {skin:'#E9B48A',hair:'#2B1B12',shirt:'#8A6BE0',style:1,vip:true} : {skin:'#F7D2B0',hair:'#F2F2F2',shirt:'#2A1B4F',style:1,critic:true}, .8);
+  else {
+    const gr=g.createRadialGradient(36,32,4,48,48,36); gr.addColorStop(0,st.col[0]); gr.addColorStop(1,st.col[1]);
+    g.fillStyle=gr; g.beginPath(); g.arc(48,48,34,0,7); g.fill(); g.lineWidth=4; g.strokeStyle='#fff'; g.stroke();
+    g.font='40px "Lilita One", sans-serif'; g.textAlign='center'; g.textBaseline='middle'; g.lineJoin='round';
+    g.lineWidth=6; g.strokeStyle='rgba(42,27,79,.55)'; g.strokeText(st.glyph,48,51); g.fillStyle='#fff'; g.fillText(st.glyph,48,51);
+  }
+  return c;
+}
+$('homeStickers').onclick = () => {
+  const have = stickerCount();
+  openModal(`<button class="closeX" data-act="close" aria-label="Close">✕</button><div class="ribbon">Sticker book</div>
+    <div class="world">${have} of ${STICKERS.length} collected</div>
+    <div class="stickGrid" id="stickGrid">${STICKERS.map((s,i)=>`<button class="stick ${save.stickers[s.k]?'':'off'}" data-stick="${i}" aria-pressed="false"><span></span><b>${save.stickers[s.k]?s.name:'???'}</b></button>`).join('')}</div>
+    <div class="stickInfo" id="stickInfo">${have===STICKERS.length ? 'Full book! The <b>Golden plate</b> is yours. Find it in the shop.' : 'Tap a sticker to see how to earn it. Fill the whole book to win the <b>Golden plate</b>.'}</div>
+    <div class="modalBtns"><button class="btn green" data-act="close">Done</button></div>`);
+  $('stickGrid').querySelectorAll('.stick').forEach(el => el.firstChild.replaceWith(stickerIcon(STICKERS[+el.dataset.stick])));
+};
 function soundToggles(){ return `<div class="toggles">
   <button class="toggle" data-act="music" aria-pressed="${save.sound.music}">Music<i></i></button>
   <button class="toggle" data-act="sfx" aria-pressed="${save.sound.sfx}">Sound effects<i></i></button></div>`; }
@@ -1133,7 +1571,6 @@ const COIN_PACKS = [
   {coins:1400, price:'$5.99'},
   {coins:3000, price:'$9.99', flag:'Best value'},
 ];
-const today = () => new Date().toISOString().slice(0,10);
 function openShop(){ shopFrom = screen==='shop' ? shopFrom : screen; showScreen('shop'); renderShop(); $('shopBody').scrollTop=0; }
 $('shopBack').onclick = () => { if(shopFrom==='map') showMap(); else showHome(); };
 function renderShop(){
@@ -1150,6 +1587,15 @@ function renderShop(){
       `<div class="buy"><button class="buyBtn" data-buy="${b.k}" data-q="1" data-p="${b.price[0]}" ${save.coins<b.price[0]?'disabled':''}><span class="q">×1</span>${coin}${b.price[0]}</button>
        <button class="buyBtn" data-buy="${b.k}" data-q="3" data-p="${b.price[1]}" ${save.coins<b.price[1]?'disabled':''}><span class="q">×3</span>${coin}${b.price[1]}</button></div>`}</div>`;
   });
+  h += `<div class="shopH">Plate looks</div><div class="plateGrid">`;
+  PLATES.forEach(p=>{
+    const own = !!save.plates[p.k], on = plateLook().k === p.k;
+    h += `<div class="plateCard"><canvas data-plate="${p.k}" width="168" height="80"></canvas><b>${p.name}</b>
+      ${own ? `<button class="buyBtn ${on?'on':''}" data-use="${p.k}" ${on?'disabled':''}>${on?'In use':'Use'}</button>`
+        : p.price<0 ? `<small>Fill the sticker book (${stickerCount()}/${STICKERS.length})</small>`
+        : `<button class="buyBtn" data-plate="${p.k}" ${save.coins<p.price?'disabled':''}>${coin}${p.price}</button>`}</div>`;
+  });
+  h += `</div>`;
   h += `<div class="shopH">Coins <small>Test mode</small></div><div class="coinGrid">`;
   COIN_PACKS.forEach((p,i)=>{
     const n = Math.min(5, 2+i);
@@ -1158,12 +1604,18 @@ function renderShop(){
   h += `</div><p class="testNote">Real purchases turn on once Crumbstack is in the App Store, through Apple's in-app purchases. In this preview nothing is ever charged.</p>`;
   $('shopBody').innerHTML = h;
   $('shopBody').querySelectorAll('.bi[data-k]').forEach(el=>{ const c=boosterIcon(BOOSTERS.find(x=>x.k===el.dataset.k),26); c.style.cssText='width:52px;height:52px'; el.appendChild(c); });
+  $('shopBody').querySelectorAll('canvas[data-plate]').forEach(el=>{ const g=el.getContext('2d'); g.scale(1.3,1.3); drawPlate(g, 64.6, 26, 96, PLATES.find(p=>p.k===el.dataset.plate)); });
 }
 $('shopBody').addEventListener('click', e=>{
   if(e.target.closest('#giftBtn')){ if(save.giftDay===today()) return; save.giftDay=today(); save.coins+=25; persist(); Sound.play('coin'); refreshWallet(); toast('+25 coins'); renderShop(); return; }
   const b = e.target.closest('[data-buy]');
   if(b){ const p=+b.dataset.p, q=+b.dataset.q, k=b.dataset.buy; if(save.coins<p) return;
     save.coins-=p; save.inv[k]+=q; persist(); Sound.play('coin'); refreshWallet(); toast(`Got ${q} ${BOOSTERS.find(x=>x.k===k).name}${q>1?'s':''}`); renderShop(); return; }
+  const use = e.target.closest('[data-use]');
+  if(use){ save.plate = use.dataset.use; persist(); renderShop(); return; }
+  const pl = e.target.closest('button[data-plate]');
+  if(pl){ const p = PLATES.find(x=>x.k===pl.dataset.plate); if(!p || p.price<0 || save.plates[p.k] || save.coins<p.price) return;
+    save.coins -= p.price; save.plates[p.k] = true; save.plate = p.k; persist(); Sound.play('coin'); refreshWallet(); toast(`${p.name} plate is yours`); renderShop(); return; }
   const pk = e.target.closest('[data-pack]');
   if(pk){ const p=COIN_PACKS[+pk.dataset.pack];
     openModal(`<button class="closeX" data-act="close" aria-label="Close">✕</button><div class="ribbon">${p.coins.toLocaleString()} coins</div>
@@ -1189,9 +1641,9 @@ function openModal(html){ $('modal').innerHTML = html; $('modalWrap').hidden = f
 function closeModal(){ $('modalWrap').hidden = true; }
 function pause(){
   running = false;
-  openModal(`<div class="ribbon">Paused</div><p style="margin:6px 0 0;font-size:15px">Level ${S.L.n} · ${S.served} of ${S.L.goal} burgers served</p>
+  openModal(`<div class="ribbon">Paused</div><p style="margin:6px 0 0;font-size:15px">${S.L.daily?'Daily challenge':'Level '+S.L.n}${S.L.mode==='tall' ? ` · tower ${clamp(Math.round(towerFrac()*100),0,100)}% built` : ` · ${S.served} of ${S.L.goal} orders served`}</p>
     ${soundToggles()}
-    <div class="modalBtns"><button class="btn ghost" data-act="quit">Quit to map</button><button class="btn green" data-act="resume">Resume</button></div>`);
+    <div class="modalBtns"><button class="btn ghost" data-act="quit">${S.L.daily?'Quit':'Quit to map'}</button><button class="btn green" data-act="resume">Resume</button></div>`);
 }
 $('pauseBtn').onclick = () => { if(running) pause(); };
 
@@ -1220,32 +1672,62 @@ function tipIcon(kind){
   else if(kind==='wobble'){ let y=86; ['bunBottom','patty','cheese','lettuce','bunTop'].forEach((t,i)=>{ drawIng(g,t,40+i*i*1.6,y,62); y-=H[t]*62; }); }
   else if(kind==='timer'){ g.fillStyle='#FF5E57'; g.beginPath(); g.arc(48,52,34,0,7); g.fill(); g.fillStyle='#fff'; g.beginPath(); g.arc(48,52,27,0,7); g.fill();
     g.strokeStyle='#2A1B4F'; g.lineWidth=5; g.lineCap='round'; g.beginPath(); g.moveTo(48,52); g.lineTo(48,34); g.moveTo(48,52); g.lineTo(60,58); g.stroke(); g.fillStyle='#FF5E57'; g.fillRect(42,8,12,10); }
+  else if(kind.startsWith('food:')){ const t=kind.slice(5), w=84; drawIng(g,t,48,48+H[t]*w/2,w); }
+  else if(kind==='perfect') drawToken(g,'heart',48,48,34,0);
+  else if(kind==='frenzy'){ const gr=g.createLinearGradient(0,14,0,82); gr.addColorStop(0,'#FFE98A'); gr.addColorStop(1,'#F0A000');
+    g.fillStyle=gr; g.beginPath(); g.arc(48,48,34,0,7); g.fill(); g.lineWidth=4; g.strokeStyle='#B87400'; g.stroke();
+    g.strokeStyle='#FFF3B0'; g.lineWidth=3; g.beginPath(); g.arc(48,48,23,0,7); g.stroke();
+    g.strokeStyle='#B87400'; g.lineWidth=7; g.lineCap='round'; g.beginPath(); g.moveTo(48,36); g.lineTo(48,60); g.stroke(); }
+  else if(kind==='boss') drawCustomer(g,{skin:'#F7D2B0',hair:'#F2F2F2',shirt:'#2A1B4F',style:1,critic:true},.5);
+  else if(kind==='tall'){ let y=94; ['bunBottom','patty','cheese','tomato','patty','lettuce','bunTop'].forEach(t=>{ drawIng(g,t,48,y,50); y-=H[t]*50; });
+    g.strokeStyle='#FFB400'; g.lineWidth=3; g.setLineDash([6,5]); g.beginPath(); g.moveTo(4,y-3); g.lineTo(92,y-3); g.stroke(); g.setLineDash([]); }
+  else if(kind==='twist'){ g.fillStyle='#FF6FA8'; g.beginPath(); g.arc(48,48,34,0,7); g.fill(); g.lineWidth=4; g.strokeStyle='#fff'; g.stroke();
+    g.font='48px "Lilita One", sans-serif'; g.textAlign='center'; g.textBaseline='middle'; g.fillStyle='#fff'; g.fillText('!',48,51); }
   else if(kind==='fast'){ drawIng(g,'tomato',48,54,70); g.strokeStyle='#7FD3FF'; g.lineWidth=4; g.lineCap='round'; for(const x of [26,48,70]){ g.beginPath(); g.moveTo(x,10); g.lineTo(x,36); g.stroke(); } }
   return c;
 }
-function openLevel(n){
-  chosen = {};
-  const L = levelDef(n);
-  const best = save.best[n]||0, st = save.stars[n]||0;
-  const goalTxt = L.timed ? `Serve ${L.goal} burgers in ${Math.floor(L.timed/60)}:${String(L.timed%60).padStart(2,'0')}` : `Serve ${L.goal} burgers`;
-  const tip = TIPS[n];
+let introL = null;   // the level whose intro card is open
+function openLevel(n){ openIntro(levelDef(n)); }
+function openIntro(L){
+  chosen = {}; introL = L;
+  const n = L.n, m = MODES[L.mode], mmss = t => Math.floor(t/60)+':'+String(t%60).padStart(2,'0');
+  const best = L.daily ? 0 : save.best[n]||0, st = L.daily ? 0 : save.stars[n]||0;
+  const goalTxt = L.mode==='rush' ? `Serve ${L.goal} orders in ${mmss(L.timed)}`
+    : L.mode==='perfect' ? `Serve ${L.goal} orders, no mistakes`
+    : L.mode==='tall' ? `Stack up to the line in ${mmss(L.timed)}`
+    : L.mode==='frenzy' ? `Serve all you can in ${mmss(L.timed)}`
+    : L.mode==='boss' ? 'Serve 2 giant towers'
+    : `Serve ${L.goal} orders`;
+  const sub = L.mode==='frenzy' ? `Serve ${L.goal} to pass · no hearts to lose` : `${L.hearts} heart${L.hearts>1?'s':''}`;
+  // A level's own tip wins; otherwise special levels explain themselves. The daily adds its twist.
+  const tip = L.tip || (m.desc ? {text:m.desc} : null);
+  const tw = L.twist ? TWISTS[L.twist] : null;
+  const helpTxt = L.help ? (L.mode==='tall' ? `Tough one. Here's <b>${L.help*8} extra seconds</b> on the house.` : `Tough one. Here's <b>${L.help} extra heart${L.help>1?'s':''}</b> on the house.`) : '';
+  const claimed = L.daily && save.daily.day === L.daily;
   openModal(`<button class="closeX" data-act="close" aria-label="Close">✕</button>
-    <div class="ribbon">Level ${n}</div>
-    <div class="world">${L.world.name}</div>
-    <div class="starsRow">${star(st>0)}<svg viewBox="0 0 24 24" class="mid"><use href="#${st>1?'i-star':'i-star-off'}"/></svg>${star(st>2)}</div>
-    <div class="goalBox"><canvas id="goalIcon" width="112" height="88"></canvas><div><b>${goalTxt}</b><span>3 hearts${best?` · Best ${best}`:''}</span></div></div>
+    <div class="ribbon">${L.daily ? 'Daily challenge' : 'Level '+n}</div>
+    <div class="world">${L.world.name}${m.name ? ` <span class="modeTag">${m.name}</span>` : ''}</div>
+    ${L.daily ? '' : `<div class="starsRow">${star(st>0)}<svg viewBox="0 0 24 24" class="mid"><use href="#${st>1?'i-star':'i-star-off'}"/></svg>${star(st>2)}</div>`}
+    <div class="goalBox"><canvas id="goalIcon" width="112" height="88"></canvas><div><b>${goalTxt}</b><span>${sub}${best?` · Best ${best}`:''}</span></div></div>
     ${tip?`<div class="tip ${tip.icon?'new':''}" id="tipBox">${tip.icon?'<span id="tipIco"></span>':''}<div>${tip.isNew?'<span class="newPill">NEW</span>':''}${tip.text}</div></div>`:''}
-    <div class="thresholds">Stars at ${L.stars.join(' · ')} points</div>
+    ${helpTxt?`<div class="newStick">${helpTxt}</div>`:''}
+    ${tw?`<div class="tip new"><span id="twIco"></span><div><span class="newPill">TODAY</span><b>${tw.name}.</b> ${tw.desc}</div></div>`:''}
+    ${L.daily ? `<div class="thresholds">${claimed ? 'Prize collected today. You can still replay for fun.' : `Prize: ${DAILY_COINS + Math.min((save.daily.day===yesterday()?save.daily.streak:0)+1,7)*5} coins${save.daily.day===yesterday() ? ` · ${save.daily.streak} day streak` : ''}`}</div>`
+      : `<div class="thresholds">Stars at ${L.stars.join(' · ')} points</div>`}
     <div class="boostLabel">Boosters</div>
     <div class="boosters">${BOOSTERS.map(b=>boosterBtn(b)).join('')}</div>
-    <div class="modalBtns"><button class="btn green" data-act="play" data-n="${n}" style="width:100%">Play</button></div>`);
-  const gc = $('goalIcon').getContext('2d'); let y=80;
-  ['bunBottom','patty','cheese','lettuce','bunTop'].forEach(t=>{ drawIng(gc,t,56,y,80); y-=H[t]*80; });
+    <div class="modalBtns"><button class="btn green" data-act="${L.daily?'playdaily':'play'}" data-n="${n}" style="width:100%">Play</button></div>`);
+  const gc = $('goalIcon').getContext('2d');
+  if(L.mode==='tall'){ let y=86; ['bunBottom','patty','cheese','tomato','patty','lettuce','bunTop'].forEach(t=>{ drawIng(gc,t,56,y,58); y-=H[t]*58; }); }
+  else { let y=80; ['bunBottom','patty','cheese','lettuce','bunTop'].forEach(t=>{ drawIng(gc,t,56,y,80); y-=H[t]*80; }); }
   if(tip && tip.icon) $('tipIco').replaceWith(tipIcon(tip.icon));
+  if(tw) $('twIco').replaceWith(tipIcon('twist'));
   $('modal').querySelectorAll('.booster .bi').forEach(el=>{ const b=BOOSTERS.find(x=>x.k===el.dataset.k); el.appendChild(boosterIcon(b,20)); el.firstChild.style.cssText='width:40px;height:40px'; });
 }
 function boosterBtn(b){
   const locked = save.unlocked < b.unlock, own = save.inv[b.k], on = !!chosen[b.k];
+  // a magnet has nothing to pull in a tower level, so don't let one be wasted
+  if(!locked && b.k==='magnet' && introL && introL.mode==='tall') return `<button class="booster lockedB" disabled><div class="bi" data-k="${b.k}" style="background:${b.col}"></div><b>${b.name}</b><span style="color:var(--ink-2)">No use here</span></button>`;
   if(locked) return `<button class="booster lockedB" disabled><div class="bi" data-k="${b.k}" style="background:${b.col}"></div><b>${b.name}</b><span style="color:var(--ink-2)">Level ${b.unlock}</span></button>`;
   if(!own) return `<button class="booster get" data-act="shop"><div class="bi" data-k="${b.k}" style="background:${b.col}"></div><b>${b.name}</b><span>Get more</span></button>`;
   return `<button class="booster" data-boost="${b.k}" aria-pressed="${on}"><span class="cnt">${own}</span><div class="bi" data-k="${b.k}" style="background:${b.col}"></div><b>${b.name}</b><span style="color:${on?'var(--good)':'var(--ink-2)'}">${on?'Selected':'Tap to use'}</span></button>`;
@@ -1258,6 +1740,10 @@ function refreshBoosters(){
   });
 }
 $('modal').addEventListener('click', e=>{
+  const sk = e.target.closest('[data-stick]');
+  if(sk){ const s = STICKERS[+sk.dataset.stick], got = save.stickers[s.k];
+    $('modal').querySelectorAll('.stick').forEach(el => el.setAttribute('aria-pressed', el===sk));
+    $('stickInfo').innerHTML = got ? `<b>${s.name}</b> · collected. ${s.how}` : `<b>How to get it:</b> ${s.how}`; return; }
   const bst = e.target.closest('[data-boost]');
   if(bst){ const k=bst.dataset.boost; if(chosen[k]) delete chosen[k]; else chosen[k]=true; refreshBoosters(); return; }
   const a = e.target.closest('[data-act]'); if(!a) return;
@@ -1267,10 +1753,16 @@ $('modal').addEventListener('click', e=>{
     Object.keys(chosen).forEach(k=>{ save.inv[k] = Math.max(0, save.inv[k]-1); });
     persist(); startLevel(n, {...chosen});
   }
+  if(act==='playdaily'){
+    Object.keys(chosen).forEach(k=>{ save.inv[k] = Math.max(0, save.inv[k]-1); });
+    persist(); begin(introL && introL.daily ? introL : dailyDef(), {...chosen});
+  }
+  if(act==='home'){ running=false; S=null; closeModal(); showHome(); }
+  if(act==='daily'){ S=null; closeModal(); showHome(); openDaily(); }
   if(act==='shop'){ closeModal(); openShop(); }
   if(act==='music'||act==='sfx'){ const on = a.getAttribute('aria-pressed')!=='true'; a.setAttribute('aria-pressed', on); act==='music' ? Sound.setMusic(on) : Sound.setSfx(on); if(on) Sound.play('tap'); }
   if(act==='testcoins'){ const amt=+a.dataset.amt; save.coins += amt; persist(); refreshWallet(); Sound.play('coin'); closeModal(); toast(`+${amt} test coins`); renderShop(); }
-  if(act==='map'||act==='quit'){ running=false; S=null; closeModal(); showMap(); }
+  if(act==='map'||act==='quit'){ const daily = S && S.L.daily; running=false; S=null; closeModal(); daily ? showHome() : showMap(); }
   if(act==='next'||act==='open'){ S=null; closeModal(); if(!showMap()) openLevel(n); }
   if(act==='resume'){ closeModal(); running=true; last=performance.now(); }
 });
@@ -1302,7 +1794,9 @@ function showMap(){
   for(let n=1;n<=END;n++){
     const st = save.stars[n]||0, locked = n>cur, done = st>0;
     const cls = locked?'locked':(n===cur && !done)?'current':done?'done':'current';
-    html += `<button class="node ${cls}" data-level="${n}" style="left:${xOf(n)}%;top:${yOf(n)}px" ${locked?'aria-disabled="true"':''} aria-label="Level ${n}${locked?', locked':done?', '+st+' stars':''}">
+    const md = MODES[modeOf(n)];
+    html += `<button class="node ${cls}" data-level="${n}" style="left:${xOf(n)}%;top:${yOf(n)}px" ${locked?'aria-disabled="true"':''} aria-label="Level ${n}${md.name?', '+md.name:''}${locked?', locked':done?', '+st+' stars':''}">
+      ${md.tag?`<span class="ntag">${md.tag}</span>`:''}
       ${locked?'<svg class="lock" viewBox="0 0 24 24"><use href="#i-lock"/></svg>':n}
       ${done?`<span class="nstars">${[0,1,2].map(i=>star(i<st)).join('')}</span>`:''}</button>`;
   }
@@ -1325,6 +1819,7 @@ if (location.hash === '#shots') window.__cs = {
   get S(){ return S; }, get W(){ return W; }, get H(){ return Hh; }, get plateY(){ return plateY; },
   start: startLevel, stop(){ running = false; }, showMap, showHome, openLevel, finish, burst, pop,
   renderTicket, updateHud, renderHearts, newCustomer, closeModal,
+  heights: H, levelDef, dailyDef, begin, surprise, award, openDaily, get save(){ return save; },
 };
 showHome();
 requestAnimationFrame(loop);

@@ -17,7 +17,7 @@ const SAVE = { unlocked: 12, stars: {1:3,2:3,3:3,4:2,5:3,6:3,7:2,8:3,9:3,10:2,11
 // Each shot: a caption and a function that sets up the game state.
 const SHOTS = [
   { file: '1-stack.png', title: 'Stack every burger', accent: 'just right', setup: async p => {
-    await p.evaluate(() => { const c = __cs; c.start(7, {}); });
+    await p.evaluate(() => { const c = __cs; c.start(7, {}, 'classic'); });
     await p.waitForTimeout(1900);
     await p.evaluate(() => { const c = __cs, S = c.S, W = c.W, H = c.H; c.stop();
       S.order = ['bunBottom','patty','cheese','lettuce','tomato','bunTop']; S.idx = 3; S.stack = ['bunBottom','patty','cheese'];
@@ -34,7 +34,7 @@ const SHOTS = [
       c.burst(S.px, c.plateY - 50, ['#FFC62E', '#FFFFFF'], 10, 140);
       c.renderTicket(); c.updateHud(); }); } },
   { file: '2-vip.png', title: 'VIPs, flies and', accent: 'wobbly towers', setup: async p => {
-    await p.evaluate(() => { __cs.closeModal(); __cs.start(14, {}); });
+    await p.evaluate(() => { __cs.closeModal(); __cs.start(14, {}, 'classic'); });
     await p.waitForTimeout(1900);
     await p.evaluate(() => { const c = __cs, S = c.S, W = c.W, H = c.H; c.stop();
       S.order = ['bunBottom','patty','cheese','tomato','lettuce','patty','bunTop']; S.idx = 5; S.stack = ['bunBottom','patty','cheese','tomato','lettuce'];
@@ -52,7 +52,7 @@ const SHOTS = [
     await p.evaluate(() => { __cs.closeModal(); __cs.showMap(); });
     await p.waitForTimeout(600); } },
   { file: '4-stars.png', title: 'Serve fast.', accent: 'Earn every star.', setup: async p => {
-    await p.evaluate(() => { __cs.start(6, {}); });
+    await p.evaluate(() => { __cs.start(6, {}, 'classic'); });
     await p.waitForTimeout(1900);
     await p.evaluate(() => { const c = __cs, S = c.S; S.served = S.L.goal; S.score = S.L.stars[2] + 40; S.items = []; S.stack = []; c.updateHud(); c.finish(true); });
     await p.waitForTimeout(3600); } },
