@@ -1712,7 +1712,9 @@ const QUESTS = [
 ];
 function questAt(i){ if (i < QUESTS.length) return QUESTS[i];
   const k = i - QUESTS.length, r = Math.max(0, REGIONS.findLastIndex((R, j) => regionOpen(j)));
-  const kinds = [() => Q(`Take ${Math.min(ISLANDS_PER_REGION, save.cleared[r] + 1)} ${REGIONS[r].name} islands`, () => [save.cleared[r], Math.min(ISLANDS_PER_REGION, save.cleared[r] + 1)], { gems: 5 + r * 3 }),
+  const kinds = [() => { if (save.cleared[r] >= ISLANDS_PER_REGION) { const base = save.stats.wins; return Q('Win 2 battles', () => [Math.min(2, save.stats.wins - base), 2], { gems: 5 + r * 3 }); }
+      const n = Math.min(ISLANDS_PER_REGION, save.cleared[r] + 1);   // the target is fixed when the quest starts (it used to move with you and could never be finished)
+      return Q(n === 1 ? `Take your first ${REGIONS[r].name} island` : `Take ${n} ${REGIONS[r].name} islands`, () => [Math.min(n, save.cleared[r]), n], { gems: 5 + r * 3 }); },
     () => { const base = save.stats.merge; return Q('Merge critters twice', () => [save.stats.merge - base, 2], { food: 400 * (r + 1) }); },
     () => { const base = save.stats.builds; return Q('Finish 3 building upgrades', () => [save.stats.builds - base, 3], { coins: 600 * (r + 1) }); },
     () => { const base = save.stats.hatch; return Q('Hatch 2 eggs', () => [save.stats.hatch - base, 2], { gems: 5 }); }];
