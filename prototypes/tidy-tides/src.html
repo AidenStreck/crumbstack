@@ -1739,7 +1739,8 @@ function update(dt){
     S.touristT[a.id] -= dt;
     const outs = builtOutputs(a), all = builtOutputs();
     if (S.touristT[a.id] <= 0 && line.length < maxQ && all.length) {
-      S.touristT[a.id] = rnd(2.4, 4) / (1 + st.umbrella * .5) / (twist('rush') ? 2 : 1);
+      // a well-stocked counter draws a crowd: tourists come up to 35% sooner as the counter fills
+      S.touristT[a.id] = rnd(2.4, 4) / (1 + st.umbrella * .5) / (twist('rush') ? 2 : 1) * (1 - .35 * Math.min(1, dispCount(a) / dispCap(a)));
       // tourists mostly ask for what's on the counter, so the line keeps moving
       const onShow = Object.keys(A(a.id).disp).filter(k => A(a.id).disp[k] > 0);
       const want = onShow.length && Math.random() < .75 ? pick(onShow) : outs.length ? pick(outs) : pick(all);
