@@ -57,6 +57,7 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
 .logo{font-weight:700;font-size:clamp(52px,16vw,76px);line-height:.9;color:#fff;text-shadow:0 5px 0 var(--sea-deep),0 12px 30px rgba(0,0,0,.3);transform:rotate(-3deg)}
 .logo span{display:block;color:var(--gold)}
 .tag{color:#fff;font-size:18px;font-weight:500;max-width:28ch;line-height:1.3}
+.btn:disabled{filter:grayscale(1);opacity:.55}
 .btn{font-family:var(--display);font-weight:700;font-size:22px;border:0;border-radius:18px;padding:12px 34px;color:#fff;background:linear-gradient(#FF9A8C,var(--coral) 60%,var(--coral-d));box-shadow:0 5px 0 #A83A33,0 10px 20px rgba(0,0,0,.2)}
 .btn:active{transform:translateY(4px);box-shadow:0 1px 0 #A83A33}
 .btn.green{background:linear-gradient(#7BE8A8,#2BAE66);box-shadow:0 5px 0 #1F8A50}
@@ -468,13 +469,14 @@ function goalText(g){
 }
 // ---- Sea Stars: earned by setting sail, spent on perks that last forever ----
 const PERKS = [
-  { k:'income',   name:'Tide profits',  desc:'+10% coins from every sale.',                   max:20, cost: lv => 3 + lv * 2 },
-  { k:'machines', name:'Busy machines', desc:'Every machine works 8% faster.',                max:10, cost: lv => 4 + lv * 2 },
-  { k:'start',    name:'Head start',    desc:'Start each new coast with 150 more coins.',     max:5,  cost: lv => 3 + lv * 3 },
-  { k:'bag',      name:'Deep pockets',  desc:'Start each new coast with a bigger bag.',       max:3,  cost: lv => 5 + lv * 4 },
-  { k:'shoes',    name:'Quick feet',    desc:'Start each new coast with faster flip-flops.',  max:2,  cost: lv => 5 + lv * 4 },
-  { k:'crew',     name:'Loyal crew',    desc:'A helper is waiting at the first area of each new coast.', max:1, cost: () => 12 },
-  { k:'night',    name:'Night shift',   desc:'Your crew works 1 more hour while you\'re away.', max:5, cost: lv => 4 + lv * 2 },
+  // Sea Stars are scarce (about 10 a coast), so each level is a small, lasting nudge, never a shortcut past a coast
+  { k:'income',   name:'Tide profits',  desc:'+5% coins from every sale.',                    max:20, cost: lv => 4 + lv * 2 },
+  { k:'machines', name:'Busy machines', desc:'Every machine works 4% faster.',                max:10, cost: lv => 5 + lv * 3 },
+  { k:'start',    name:'Head start',    desc:'Start each new coast with 100 more coins.',     max:5,  cost: lv => 3 + lv * 3 },
+  { k:'bag',      name:'Deep pockets',  desc:'Start each new coast with a bigger bag.',       max:2,  cost: lv => 6 + lv * 5 },
+  { k:'shoes',    name:'Quick feet',    desc:'Start each new coast with faster flip-flops.',  max:1,  cost: () => 8 },
+  { k:'crew',     name:'Loyal crew',    desc:'A helper is waiting at the first area of each new coast.', max:1, cost: () => 15 },
+  { k:'night',    name:'Night shift',   desc:'Your crew works 1 more hour while you\'re away.', max:5, cost: lv => 5 + lv * 3 },
 ];
 
 // ================= SAVE =================
@@ -495,7 +497,7 @@ try {
     }
   }
 } catch(e){}
-const perk = k => save.perks[k] || 0;
+const perk = k => { const p = PERKS.find(x => x.k === k); return Math.min(save.perks[k] || 0, p ? p.max : 99); };
 function persist(){ save.lastSeen = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(save)); } catch(e){} }
 const A = id => save.areas[id];
 
@@ -1443,7 +1445,7 @@ const S = {
 AREAS.forEach(a => { S.trash[a.id] = []; S.spawnT[a.id] = 0; S.touristT[a.id] = 1 + a.i; });
 function mst(m){ const st = A(m.area.id).st; return st[m.id] || (st[m.id] = { in:0, out:0, t:0 }); }
 function mlv(m){ return A(m.area.id).mlv[m.id] || 0; }
-function mtime(m){ return 1.1 * Math.pow(.78, mlv(m)) / (1 + .08 * perk('machines')); }
+function mtime(m){ return 1.1 * Math.pow(.78, mlv(m)) / (1 + .04 * perk('machines')); }
 function mcap(m){ return 20 + mlv(m) * 10; }
 function built(m){ return !!A(m.area.id).built[m.id]; }
 function cap(){ return 6 + save.bag * 3; }
@@ -1467,10 +1469,12 @@ function builtOutputs(a){ return (a ? a.machines : MACHINES).filter(built).map(m
 const bargain = () => twist('bargain') ? .7 : 1;
 function areaUpCost(a, u){ const lv = A(a.id)[u.k]; return lv < u.max ? Math.round(u.base[lv] * a.mult * bargain()) : null; }
 function machUpCost(m){ const lv = mlv(m); return lv < MACH_UP.length ? Math.round(MACH_UP[lv] * m.area.mult * bargain()) : null; }
-function salePrice(it, a){ return Math.round(PRICE[it] * (1 + .1 * perk('income')) * (twist('golden') ? 1.5 : 1) * (1 + (a ? decorBonus(a) : 0))); }
-// Sea Stars for setting sail now: 10, plus up to 30 more for healing every area, plus a bonus on later tours
-function starsMax(){ return 40 + 5 * (COAST.tour - 1); }
-function starsNow(){ return 10 + 5 * (COAST.tour - 1) + Math.floor(AREAS.reduce((s, a) => s + health(a) * 100, 0) / 10); }
+function salePrice(it, a){ return Math.round(PRICE[it] * (1 + .05 * perk('income')) * (twist('golden') ? 1.5 : 1) * (1 + (a ? decorBonus(a) : 0))); }
+// Sea Stars for setting sail: 10 (the dock only appears once the coast is finished), plus 2 more per later tour.
+// The boat also needs supplies: a pile of coins you must have saved up before leaving.
+const SAIL_COST = 20000;
+function starsMax(){ return 10 + 2 * (COAST.tour - 1); }
+function starsNow(){ return starsMax(); }
 // Pacing gates: upgrades open up as the coast does, so nobody can max everything on the first beach.
 const GLOBAL_GATE = { bag:[2,4,6], shoes:[1,2,4] };   // highest level you can buy with 1, 2, 3 areas open
 function globalLocked(u){ return save[u.k] < u.max && save[u.k] >= GLOBAL_GATE[u.k][unlockedCount() - 1]; }
@@ -1768,7 +1772,7 @@ function update(dt){
 // ================= GOALS =================
 function goalAt(i){
   if (i < GOALS.length) return GOALS[i];
-  return { t:'sail', r:0, text:`Set sail to ${NEXT_COAST.name}` };
+  return { t:'sail', r:0, text: save.coins >= SAIL_COST ? `Set sail to ${NEXT_COAST.name}` : `Save ${SAIL_COST.toLocaleString('en-US')} coins to set sail` };
 }
 function statFor(g){
   if (g.t === 'recycle') return save.stats.rec[g.item] || 0;
@@ -2007,7 +2011,7 @@ function hud(){
 function renderGoal(force){
   const show = save.tutDone || tutStep >= 6;
   $('goal').hidden = !show; if (!show) return;
-  const g = goalAt(save.goal), [c, n] = goalProgress(g), key = save.goal + ':' + c + (g.t === 'sail' ? ':' + starsNow() : '');
+  const g = goalAt(save.goal), [c, n] = goalProgress(g), key = save.goal + ':' + c + (g.t === 'sail' ? ':' + (save.coins >= SAIL_COST) : '');
   if (!force && key === hudC.goal) return; hudC.goal = key;
   const done = c >= n;
   $('goal').innerHTML = done
@@ -2118,7 +2122,7 @@ function offlineCheck(){
   if (!save.lastSeen) return;
   const capS = (2 + perk('night')) * 3600, secs = Math.min(capS, (Date.now() - save.lastSeen) / 1000); if (secs < 120) return;
   let rate = 0; for (const a of AREAS) { const st = A(a.id); if (!st.unlocked) continue; rate += a.mult * (st.pelicans ? st.crabs * .012 + st.pelicans * .02 : st.crabs * .004); }
-  const amt = Math.floor(rate * secs * (1 + .1 * perk('income'))); if (amt < 5) return;
+  const amt = Math.floor(rate * secs * (1 + .05 * perk('income'))); if (amt < 5) return;
   const h = Math.floor(secs / 3600), mn = Math.floor(secs % 3600 / 60);
   const m = modal(`<h2>Welcome back!</h2><p>Your crew kept working for ${h ? h + ' hr ' : ''}${mn} min${secs >= capS - 1 ? ' (the most they can do alone)' : ''}.</p><div class="amt"><span class="coin"></span>${fmt(amt)}</div><button class="btn green" type="button" data-close>Collect</button>${ADS.on ? '<button class="btn ad" type="button" id="adDouble">Watch a video: double it</button>' : ''}`, () => { save.coins += amt; save.stats.earned += amt; SFX.claim(); persist(); });
   const ad = m.el.querySelector('#adDouble'); if (ad) ad.onclick = () => ADS.show(() => { save.coins += amt; save.stats.earned += amt; m.close(); toast(`Doubled! +${fmt(amt * 2)} coins`); });
@@ -2174,11 +2178,11 @@ function openSail(){
     <p>Next stop: <b>${nx.name}</b>. ${nx.blurb}${nx.tour === 1 ? ` New helpers: <b>${nx.collector.plural}</b> and <b>${nx.carrier.plural}</b>, and 9 new machines to build.` : ''}</p>
     ${nx.twist ? `<p class="twist">Twist: <b>${nx.twist.name}.</b> ${nx.twist.desc}</p>` : ''}
     <div class="amt"><span class="star"></span>+${now}</div>
-    <p>${now < max ? `Heal every area to 100% before you go to earn up to <b>${max}</b>.` : 'You healed the whole coast: full stars!'}</p>
+    <p>${save.coins >= SAIL_COST ? `The boat is stocked: your <b>${SAIL_COST.toLocaleString('en-US')}</b> coins of supplies are ready.` : `The boat needs <b>${SAIL_COST.toLocaleString('en-US')}</b> coins of supplies before it can leave. You have ${fmt(save.coins)}.`}</p>
     <div class="keep"><div><b>You keep</b>Sea Stars and perks, hats, album, decorations, your daily streak</div><div><b>Starts fresh</b>Coins, machines, helpers and areas</div></div>
     <p class="oneway"><b>This is a one-way trip.</b> You can't come back to ${COAST.name} once you leave, and everything you built here is left behind.</p>
-    <button class="btn green" type="button" id="sailGo">Set sail for good</button><button class="btn ghost" type="button" data-close>Not yet</button>`);
-  m.el.querySelector('#sailGo').onclick = () => { m.close(); doSail(now); };
+    <button class="btn green" type="button" id="sailGo" ${save.coins >= SAIL_COST ? '' : 'disabled'}>Set sail for good</button><button class="btn ghost" type="button" data-close>Not yet</button>`);
+  m.el.querySelector('#sailGo').onclick = () => { if (save.coins < SAIL_COST) return; m.close(); doSail(now); };
 }
 function doSail(earned){
   earned = earned == null ? starsNow() : earned;
@@ -2191,7 +2195,7 @@ function doSail(earned){
 }
 function welcomeCoast(){
   // perks kick in on each new coast
-  save.coins += 150 * perk('start'); save.bag = perk('bag'); save.shoes = perk('shoes'); A(AREAS[0].id).crabs = perk('crew'); delete save.freshCoast; ensureHelpers(); persist();
+  save.coins += 100 * perk('start'); save.bag = perk('bag'); save.shoes = perk('shoes'); A(AREAS[0].id).crabs = perk('crew'); delete save.freshCoast; ensureHelpers(); persist();
   const m = modal(`<h2>Welcome to ${COAST.name}!</h2><p>${COAST.blurb}${COAST.tour === 1 ? ` Your new helpers here are <b>${COAST.collector.plural}</b> and <b>${COAST.carrier.plural}</b>.` : ''}</p>
     ${COAST.twist ? `<p class="twist">Twist: <b>${COAST.twist.name}.</b> ${COAST.twist.desc}</p>` : ''}
     <div class="amt"><span class="star"></span>${save.stars}</div><p>You have ${save.stars} Sea Stars. Spend them on perks that last forever.</p>
@@ -2328,7 +2332,7 @@ function albumAdd(id, quiet){
   const c = creature(id);
   if (!quiet) { stickerPop(c); SFX.milestone(); }
   const page = CREATURES[c.page];
-  if (page.every(x => save.album[x[0]]) && !save.album['page:' + c.page]) { save.album['page:' + c.page] = 1; save.stars += 5; if (!quiet) setTimeout(() => toast(`Album page complete! +5 Sea Stars`), 2600); }
+  if (page.every(x => save.album[x[0]]) && !save.album['page:' + c.page]) { save.album['page:' + c.page] = 1; save.stars += 3; if (!quiet) setTimeout(() => toast(`Album page complete! +3 Sea Stars`), 2600); }
   persist(); return true;
 }
 function albumMilestone(i){ if (S.sailing) return; const c = CREATURES[COAST.id] && CREATURES[COAST.id][i]; if (c) albumAdd(c[0]); }
@@ -2602,7 +2606,7 @@ function jTasks(body, redo){
 }
 function jAlbum(body){
   body.innerHTML = PAGES.filter(p => !p.event || EVENT || CREATURES[p.id].some(c => save.album[c[0]])).map(p => { const list = CREATURES[p.id], have = list.filter(c => save.album[c[0]]).length;
-    return `<div class="page"><div class="phead"><b>${p.name}</b><span>${have}/${list.length}${save.album['page:' + p.id] ? ' · complete!' : ' · finish for +5 stars'}</span></div><div class="stickers" data-p="${p.id}"></div></div>`; }).join('');
+    return `<div class="page"><div class="phead"><b>${p.name}</b><span>${have}/${list.length}${save.album['page:' + p.id] ? ' · complete!' : ' · finish for +3 stars'}</span></div><div class="stickers" data-p="${p.id}"></div></div>`; }).join('');
   body.querySelectorAll('.stickers').forEach(box => CREATURES[box.dataset.p].forEach(c => { const own = !!save.album[c[0]], el = document.createElement('div'); el.className = 'sticker' + (own ? '' : ' missing') + (c[4] ? ' rare' : '');
     el.appendChild(creatureCanvas(c[2], c[3], 48, !own)); el.insertAdjacentHTML('beforeend', `<span>${own ? c[1] : c[4] ? 'Rare: ???' : '???'}</span>`); box.appendChild(el); }));
 }
