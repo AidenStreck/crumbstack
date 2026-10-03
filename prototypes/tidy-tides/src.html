@@ -440,11 +440,11 @@ const GOAL_PLAN = [
   { t:'recycle', m:0, n:5, r:15 }, { t:'sell', m:0, n:6, r:20 }, { t:'build', m:1, r:25 }, { t:'global', k:'bag', lv:1, r:30, text:'Get a bigger bag' },
   { t:'sell', m:1, n:8, r:40 }, { t:'hire', a:0, k:'crabs', n:1, r:40 }, { t:'mlv', m:0, lv:1, r:50 }, { t:'build', m:2, r:60 },
   { t:'hire', a:0, k:'pelicans', n:1, r:80 }, { t:'health', a:0, pct:50, r:100 }, { t:'sell', m:2, n:15, r:100 }, { t:'hire', a:0, k:'crabs', n:2, r:120 },
-  { t:'mlv', m:1, lv:2, r:150 }, { t:'health', a:0, pct:100, r:200, hat:2 }, { t:'earn', n:5000, r:200, text:'Earn 5,000 coins' }, { t:'area', a:1, r:300, hat:0 },
+  { t:'mlv', m:1, lv:2, r:150 }, { t:'health', a:0, pct:100, r:200, hat:2 }, { t:'save', a:1, r:200 }, { t:'area', a:1, r:300, hat:0 },
   { t:'sell', m:3, n:10, r:250 }, { t:'build', m:4, r:250 }, { t:'hire', a:1, k:'crabs', n:1, r:300 }, { t:'sell', m:4, n:12, r:350 },
   { t:'build', m:5, r:400 }, { t:'hire', a:1, k:'pelicans', n:1, r:450 }, { t:'mlv', m:3, lv:2, r:500 }, { t:'sell', m:5, n:15, r:500 },
   { t:'health', a:1, pct:50, r:600 }, { t:'mlv', m:4, lv:2, r:600 }, { t:'mlv', m:5, lv:2, r:700 }, { t:'hire', a:1, k:'pelicans', n:2, r:800 },
-  { t:'health', a:1, pct:100, r:1000 }, { t:'earn', n:40000, r:1000, text:'Earn 40,000 coins' }, { t:'area', a:2, r:1500, hat:1 }, { t:'sell', m:6, n:15, r:1200 },
+  { t:'health', a:1, pct:100, r:1000 }, { t:'save', a:2, r:1000 }, { t:'area', a:2, r:1500, hat:1 }, { t:'sell', m:6, n:15, r:1200 },
   { t:'build', m:7, r:1500 }, { t:'build', m:8, r:2000 }, { t:'health', a:2, pct:100, r:4000, text:'Heal the whole coast' },
   // the home stretch: get the last area nearly maxed out before the dock appears
   { t:'hire', a:2, k:'crabs', n:2, r:2000 }, { t:'hire', a:2, k:'pelicans', n:2, r:2500 }, { t:'mlv', m:6, lv:3, r:2500 }, { t:'mlv', m:7, lv:3, r:3000 },
@@ -453,7 +453,7 @@ const GOAL_PLAN = [
 if (WS) GOAL_PLAN.push({ t:'ws', r:4000, text:'Build the Gift Workshop' }, { t:'sell', item:'basket', n:10, r:8000, text:'Sell 10 gift baskets' });
 const GOALS = GOAL_PLAN.map(p => { const g = { ...p }, m = p.m != null ? MACHINES[p.m] : null;
   if (m) { g.id = m.id; g.item = p.t === 'recycle' ? m.input : m.output; }
-  if (p.a != null) { g.area = AREAS[p.a].id; if (p.t === 'area') g.id = g.area; }
+  if (p.a != null) { g.area = AREAS[p.a].id; if (p.t === 'area') g.id = g.area; if (p.t === 'save') g.n = AREAS[p.a].cost; }   // 'save': have the next area's price in hand
   g.hat = p.hat != null && COAST.tour === 1 ? COAST.hats[p.hat] : null;
   return g; });
 // What each area needs before you can pay to restore it
@@ -471,6 +471,7 @@ function goalText(g){
   if (g.t === 'build') return `Build the ${MBY[g.id].name}`;
   if (g.t === 'mlv') return `Upgrade the ${MBY[g.id].name}${g.lv > 1 ? ' to ★' + g.lv : ''}`;
   if (g.t === 'health') return `Heal ${a.name} to ${g.pct}%`;
+  if (g.t === 'save') return `Save ${g.n.toLocaleString('en-US')} coins`;
   if (g.t === 'area') return `Restore ${a.name}`;
   if (g.t === 'hire') { const h = g.k === 'crabs' ? COAST.collector : COAST.carrier, where = a.i ? ` at ${a.name}` : '';
     return g.n === 1 ? `Hire a ${h.name.toLowerCase()}${where}` : `Get ${g.n} ${h.plural}${where}`; }
@@ -1848,6 +1849,7 @@ function goalProgress(g){
     case 'mlv': return [Math.min(g.lv, mlv(MBY[g.id])), g.lv];
     case 'health': return [Math.min(g.pct, Math.round(health(AREAS.find(a => a.id === g.area)) * 100)), g.pct];
     case 'area': return [A(g.id).unlocked ? 1 : 0, 1];
+    case 'save': return [A(g.area).unlocked ? g.n : Math.min(g.n, Math.floor(save.coins + (save.pads['a:' + g.area] || 0))), g.n];   // coins in hand, plus any already paid toward that area
     case 'ws': return [wsBuilt() ? 1 : 0, 1];
     case 'sail': return [0, 1];
   }
