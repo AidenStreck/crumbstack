@@ -1444,7 +1444,7 @@ function mtime(m){ return 1.1 * Math.pow(.78, mlv(m)) / (1 + .08 * perk('machine
 function mcap(m){ return 20 + mlv(m) * 10; }
 function built(m){ return !!A(m.area.id).built[m.id]; }
 function cap(){ return 6 + save.bag * 3; }
-function speed(){ return 125 + save.shoes * 30; }
+function speed(){ return 125 + save.shoes * 16; }
 function health(a){ return Math.min(1, A(a.id).recycled / 100); }
 function dispCap(a){ return 12 + A(a.id).display * 8; }
 function dispCount(a){ return Object.values(A(a.id).disp).reduce((s, n) => s + n, 0); }
@@ -1468,6 +1468,12 @@ function salePrice(it, a){ return Math.round(PRICE[it] * (1 + .1 * perk('income'
 // Sea Stars for setting sail now: 10, plus up to 30 more for healing every area, plus a bonus on later tours
 function starsMax(){ return 40 + 5 * (COAST.tour - 1); }
 function starsNow(){ return 10 + 5 * (COAST.tour - 1) + Math.floor(AREAS.reduce((s, a) => s + health(a) * 100, 0) / 10); }
+// Pacing gates: upgrades open up as the coast does, so nobody can max everything on the first beach.
+const GLOBAL_GATE = { bag:[2,4,6], shoes:[1,2,4] };   // highest level you can buy with 1, 2, 3 areas open
+function globalLocked(u){ return save[u.k] < u.max && save[u.k] >= GLOBAL_GATE[u.k][unlockedCount() - 1]; }
+function builtIn(a){ return a.machines.filter(built).length; }
+function areaLocked(a, u){ const lv = A(a.id)[u.k]; return lv < u.max && builtIn(a) < lv + 1 + (3 - u.max); }   // helpers & counters grow with the machines built there
+function machLocked(m){ return mlv(m) < MACH_UP.length && mlv(m) >= [1, 2, 4][builtIn(m.area) - 1]; }
 function globalCost(u){ const lv = save[u.k]; return lv < u.max ? u.costs[lv] : null; }
 function canAffordAny(a){
   if (!A(a.id).unlocked) return false;
@@ -2034,22 +2040,23 @@ function renderBoard(){
   const a = AREAS.find(x => x.id === S.boardOpen); if (!a) return;
   const st = A(a.id), g = goalAt(save.goal), [gc, gn] = goalProgress(g), gOn = gc < gn;
   const rows = [
-    ...a.machines.filter(built).map(m => ({ goal: gOn && g.t === 'mlv' && g.id === m.id, icon: m.output, name: m.name, desc: 'Works faster and holds 10 more.', lv: mlv(m), max: MACH_UP.length, cost: machUpCost(m), buy: () => { st.mlv[m.id] = mlv(m) + 1; toast(`${m.name} upgraded!`); } })),
-    ...AREA_UPS.map(u => ({ goal: gOn && g.t === 'hire' && g.area === a.id && g.k === u.k, icon: u.k, name: u.name, desc: u.desc, lv: st[u.k], max: u.max, cost: areaUpCost(a, u), buy: () => { st[u.k]++; ensureHelpers(); toast(u.k === 'crabs' ? 'A hermit crab joined your crew!' : u.k === 'pelicans' ? 'A pelican courier joined your crew!' : `${u.name} added!`); } })),
-    ...GLOBAL_UPS.map(u => ({ goal: gOn && g.t === 'global' && g.k === u.k, icon: u.k, name: u.name, desc: u.desc, lv: save[u.k], max: u.max, cost: globalCost(u), buy: () => { save[u.k]++; toast(u.k === 'bag' ? `Your bag holds ${cap()} now` : 'You walk faster!'); } })),
+    ...a.machines.filter(built).map(m => ({ goal: gOn && g.t === 'mlv' && g.id === m.id, icon: m.output, name: m.name, desc: 'Works faster and holds 10 more.', lv: mlv(m), max: MACH_UP.length, cost: machUpCost(m), lock: machLocked(m) && 'Build another machine here first.', buy: () => { st.mlv[m.id] = mlv(m) + 1; toast(`${m.name} upgraded!`); } })),
+    ...AREA_UPS.map(u => ({ goal: gOn && g.t === 'hire' && g.area === a.id && g.k === u.k, icon: u.k, name: u.name, desc: u.desc, lv: st[u.k], max: u.max, cost: areaUpCost(a, u), lock: areaLocked(a, u) && 'Build another machine here first.', buy: () => { st[u.k]++; ensureHelpers(); toast(u.k === 'crabs' ? 'A hermit crab joined your crew!' : u.k === 'pelicans' ? 'A pelican courier joined your crew!' : `${u.name} added!`); } })),
+    ...GLOBAL_UPS.map(u => ({ goal: gOn && g.t === 'global' && g.k === u.k, icon: u.k, name: u.name, desc: u.desc, lv: save[u.k], max: u.max, cost: globalCost(u), lock: globalLocked(u) && (unlockedCount() < AREAS.length ? `Open ${AREAS[unlockedCount()].name} to go further.` : ''), buy: () => { save[u.k]++; toast(u.k === 'bag' ? `Your bag holds ${cap()} now` : 'You walk faster!'); } })),
   ];
   let el = document.querySelector('.sheet');
+  const fresh = !el, keep = el && el.querySelector('.list') ? el.querySelector('.list').scrollTop : 0;
   if (!el) { el = document.createElement('div'); el.className = 'sheet'; document.body.appendChild(el); }
   el.innerHTML = `<header><h3>Crew & Upgrades<small>${a.name}</small></h3><button class="closeX" style="position:static" type="button" aria-label="Close">✕</button></header><div class="list"></div>`;
   const list = el.querySelector('.list');
   rows.forEach(r => {
     const row = document.createElement('div'); row.className = 'up' + (r.goal ? ' hl' : '');
     row.appendChild(iconCanvas(r.icon, 44));
-    const maxed = r.cost == null;
-    row.insertAdjacentHTML('beforeend', `<b>${r.name}</b><button class="buy ${maxed ? 'max' : ''}" type="button" ${maxed ? '' : `data-cost="${r.cost}"`} ${maxed || r.cost > save.coins ? 'disabled' : ''}>${maxed ? 'Max' : `<span class="coin sm"></span>${fmt(r.cost)}`}</button><span>${r.desc}<span class="lv">${Array.from({ length: r.max }, (_, i) => `<i class="${i < r.lv ? 'on' : ''}"></i>`).join('')}</span></span>`);
+    const locked = r.cost != null && !!r.lock, maxed = r.cost == null || locked;
+    row.insertAdjacentHTML('beforeend', `<b>${r.name}</b><button class="buy ${maxed ? 'max' : ''}" type="button" ${maxed ? '' : `data-cost="${r.cost}"`} ${maxed || r.cost > save.coins ? 'disabled' : ''}>${locked ? 'Later' : maxed ? 'Max' : `<span class="coin sm"></span>${fmt(r.cost)}`}</button><span>${locked ? r.lock : r.desc}<span class="lv">${Array.from({ length: r.max }, (_, i) => `<i class="${i < r.lv ? 'on' : ''}"></i>`).join('')}</span></span>`);
     row.querySelector('.buy').onclick = () => { if (maxed || r.cost > save.coins) return; save.coins -= r.cost; r.buy(); bump('buys'); SFX.build(); sparkle(S.player.x, S.player.y - 20, ['#FFC83D', '#4CC38A', '#fff'], 18); persist(); renderBoard(); renderGoal(true); };
     list.appendChild(row);
-    if (r.goal) requestAnimationFrame(() => row.scrollIntoView({ block: 'nearest' }));
+    if (r.goal && fresh) requestAnimationFrame(() => row.scrollIntoView({ block: 'nearest' }));
   });
   if (ADS.on || save.boostUntil > Date.now()) {   // Crew Rush: a rewarded video makes every helper twice as fast for 5 minutes
     const row = document.createElement('div'), active = save.boostUntil > Date.now(); row.className = 'up rush';
@@ -2059,6 +2066,7 @@ function renderBoard(){
     row.querySelector('.buy').onclick = () => { if (save.boostUntil > Date.now()) return; ADS.show(() => { save.boostUntil = Date.now() + 5 * 60000; persist(); SFX.claim(); toast('Crew Rush! Twice as fast for 5 minutes'); if (S.boardOpen) renderBoard(); }); };
     list.prepend(row);
   }
+  list.scrollTop = keep;
   el.querySelector('.closeX').onclick = () => { S.boardDismissed = a.id; closeBoard(); };
 }
 
@@ -2298,7 +2306,7 @@ const life = k => save.life[k] || 0;
 function bump(k, n){ save.life[k] = (save.life[k] || 0) + (n == null ? 1 : n); }
 const bestMult = () => Math.max(...AREAS.filter(a => A(a.id).unlocked).map(a => a.mult));
 const hereArea = () => { const a = areaAt(S.player.x); return A(a.id).unlocked ? a : AREAS[0]; };
-Object.assign(S, { specials: [], msgT: rnd(50, 90), rareT: rnd(150, 300), vipT: rnd(80, 140), cleanT: rnd(300, 480), candyT: 5, cleanup: null, placing: null, bats: [] });
+Object.assign(S, { specials: [], msgT: rnd(50, 90), rareT: rnd(150, 300), vipT: rnd(80, 140), cleanT: rnd(300, 480), candyT: 20, cleanup: null, placing: null, bats: [] });
 
 // ---------- Sea Life Album ----------
 // [id, name, drawing, colour, rare?] — the first five come back as you heal each coast, the sixth is a rare sighting
@@ -2406,7 +2414,7 @@ function featuresTick(dt){
   // timers
   S.msgT -= dt; if (S.msgT <= 0) { S.msgT = rnd(70, 130); if (!S.specials.some(s => s.type === 'msg')) { const sp = spawnSpecial('msg', a); coach('first:msg', [{ target: tipAt(sp), text: "A <b>message in a bottle</b>! Walk over it to see what's inside: coins, a Sea Star, or a treasure map piece.", btn: 'Got it', done: () => sp.gone }]); } }
   S.rareT -= dt; if (S.rareT <= 0) { S.rareT = rnd(200, 380); const r = (CREATURES[COAST.id] || []).find(c => c[4]); if (r) { const sp = spawnSpecial('rare', a, r[0]); if (save.coached['first:rare']) toast('Something rare is on the beach! Go look'); coach('first:rare', [{ target: tipAt(sp, 30), text: `A rare <b>${r[1]}</b>! Walk over it before it swims away to add it to your album.`, btn: 'Got it', done: () => sp.gone }]); } }
-  if (EVENT) { S.candyT -= dt; if (S.candyT <= 0) { S.candyT = rnd(5, 10); if (S.specials.filter(s => s.type === 'candy').length < 4) { const sp = spawnSpecial('candy', a); coach('first:candy', [{ target: tipAt(sp), text: '<b>Candy wrappers!</b> Walk over them for Spooky Shore rewards. Your progress is in the Journal.', btn: 'Got it', done: () => sp.gone }]); } } }
+  if (EVENT) { S.candyT -= dt; if (S.candyT <= 0) { const ev = save.event; if (ev.day !== today()) { ev.day = today(); ev.dayN = 0; } S.candyT = ev.dayN < 10 ? rnd(40, 70) : rnd(240, 360); if (S.specials.filter(s => s.type === 'candy').length < 2) { ev.dayN++; const sp = spawnSpecial('candy', a); coach('first:candy', [{ target: tipAt(sp), text: '<b>Candy wrappers!</b> Walk over them for Spooky Shore rewards. Your progress is in the Journal.', btn: 'Got it', done: () => sp.gone }]); } } }
   if (save.chest && !S.specials.some(s => s.type === 'chest')) { const sp = spawnSpecial('chest', a); coach('first:chest', [{ target: tipAt(sp, 30), text: 'Your treasure map is complete! Stand on the <b>X</b> for a moment to dig up the treasure.', btn: 'Got it', done: () => sp.gone }]); }
   // specials: pick up by walking over them (the chest needs a moment of digging)
   for (const sp of S.specials) { sp.t += dt;
